@@ -30,14 +30,14 @@
     >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
      
-      <v-toolbar-title v-text="title"></v-toolbar-title>
-      <v-spacer></v-spacer>
-     
     </v-toolbar>
     <v-content>
-      <adencontent/>
+      <v-container>
+       <AdenCard></AdenCard>
+      </v-container>
+     
     </v-content>
-
+   
     <v-footer :fixed="fixed" app>
       <span>&copy; 2017</span>
     </v-footer>
@@ -46,12 +46,16 @@
 
 <script>
 // import HelloWorld from './components/HelloWorld'
-import adencontent from './components/aden-content'
+import AdenCard from './components/AdenCard'
+import AdenContainer from './components/AdenContainer'
+
 
 export default {
   name: 'App',
   components: {
-    adencontent
+     AdenCard,
+    AdenContainer
+   
   },
   data () {
     return {
@@ -61,14 +65,11 @@ export default {
       items: [{
         icon: 'bubble_chart',
         title: 'Inspire'
-      },{
-        icon:'settings',
-        title:'setting'
       }],
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'Flashcards'
+      title: 'Vuetify.js'
     }
   }
 }
