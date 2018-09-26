@@ -49,11 +49,10 @@
 import AdenCard from './components/AdenCard'
 import AdenContainer from './components/AdenContainer'
 
-
 export default {
   name: 'App',
   components: {
-     AdenCard,
+    AdenCard,
     AdenContainer
    
   },
