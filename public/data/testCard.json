@@ -4,11 +4,6 @@
             "id":"0",
             "front":"test1",
             "back":"test2"
-        },
-        {
-            "id":"1",
-            "front":"test2",
-            "back":"test3"
         }
     ]
 }
