@@ -1,24 +1,32 @@
 <template>
     <div class='aden-container'>
-        <div class='flip-wrap' v-for="card in cards" :key="card.id">
+        <div class='flip-wrap'
+        v-bind:class="{'flip-wrap-touch':flip}" 
+        v-for="card in cards" 
+        :key="card.id"
+        >
             <div class='flip'>
             <div class='card front'>
-                {{card.front}}
+                <textarea  class="card-display" v-model="card.front"></textarea>
             </div>
             <div class='card back'> 
-                {{card.back}}
+                <textarea  class="card-display" v-model="card.back"></textarea>
             </div>
+           
             </div>
+             <div v-on:click="flip=!flip">flip</div>
         </div>
     </div>
 </template>
 
 <script>
+import {GetCard} from '@/service/CardStore.js'
 
 export default {
     name:'AdenCard',
     data(){
         return {
+            flip:false,
             cards:[{"id":"","front":"","back":""}]
         }
     },
@@ -27,10 +35,16 @@ export default {
     },
     methods:{
         GetData(){
-            this.$http.get('./data/testCard.json').then(response=>{
-                this.cards= response.data.cards;
-            })
+            this.cards = GetCard({"index":0,"pageSize":10});
+            // this.$http.get('./data/testCard.json').then(response=>{
+            //     this.cards= response.data.cards;
+            // })
+        },
+        CardInput(){
+            event.preventDefault();
         }
+        
+       
     }
    
 }
@@ -69,9 +83,11 @@ export default {
     transform: rotateY(180deg);
     background-color: burlywood;
 }
-.flip-wrap:hover .flip{
+.flip-wrap-touch .flip{
     transform:rotateY(180deg);
 }
-
+.card-display{
+    border:none;
+}
 </style>
 
