@@ -46,7 +46,7 @@
 
 <script>
 // import HelloWorld from './components/HelloWorld'
-import AdenCard from './components/AdenCard'
+import AdenCard from './components/Card/AdenCard'
 import AdenContainer from './components/AdenContainer'
 
 export default {

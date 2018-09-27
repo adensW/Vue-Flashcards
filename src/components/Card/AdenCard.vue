@@ -7,26 +7,31 @@
         >
             <div class='flip'>
             <div class='card front'>
-                <textarea  class="card-display" v-model="card.front"></textarea>
+                <div>
+                    {{card.front}}
+                </div>
             </div>
-            <div class='card back'> 
-                <textarea  class="card-display" v-model="card.back"></textarea>
+            <div class='card back' > 
+                <div>
+                    {{card.front}}
+                </div>
             </div>
-           
             </div>
-             <div v-on:click="flip=!flip">flip</div>
+             <button v-on:click="flip=!flip">flip</button>
         </div>
     </div>
 </template>
 
 <script>
-import {GetCard} from '@/service/CardStore.js'
+// import {GetCard} from '@/service/CardStore.js'
 
 export default {
     name:'AdenCard',
     data(){
         return {
             flip:false,
+            isInputFront:false,
+            isInputBack:false,
             cards:[{"id":"","front":"","back":""}]
         }
     },
@@ -35,10 +40,10 @@ export default {
     },
     methods:{
         GetData(){
-            this.cards = GetCard({"index":0,"pageSize":10});
-            // this.$http.get('./data/testCard.json').then(response=>{
-            //     this.cards= response.data.cards;
-            // })
+            // this.cards = GetCard({"index":0,"pageSize":10});
+            this.$http.get('./data/testCard.json').then(response=>{
+                this.cards= response.data.cards;
+            })
         },
         CardInput(){
             event.preventDefault();
@@ -87,6 +92,8 @@ export default {
     transform:rotateY(180deg);
 }
 .card-display{
+     width:100%;
+    height:100%;
     border:none;
 }
 </style>
