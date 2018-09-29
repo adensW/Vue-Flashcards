@@ -6,13 +6,12 @@
         :key="card.id"
         >
             <div class='flip'>
-            <div class='card front'>
-                <textarea  class="card-display" v-model="card.front"></textarea>
-            </div>
-            <div class='card back'> 
-                <textarea  class="card-display" v-model="card.back"></textarea>
-            </div>
-           
+                <div class='card front'>
+                    <textarea  class="card-display" v-model="card.front"></textarea>
+                </div>
+                <div class='card back'> 
+                    <textarea  class="card-display" v-model="card.back"></textarea>
+                </div>
             </div>
              <div v-on:click="flip=!flip">flip</div>
         </div>
@@ -20,7 +19,7 @@
 </template>
 
 <script>
-import {GetCard} from '@/service/CardStore.js'
+// import {GetCard} from '@/service/CardStore.js'
 
 export default {
     name:'AdenCard',
@@ -35,16 +34,14 @@ export default {
     },
     methods:{
         GetData(){
-            this.cards = GetCard({"index":0,"pageSize":10});
-            // this.$http.get('./data/testCard.json').then(response=>{
-            //     this.cards= response.data.cards;
-            // })
+            // this.cards = GetCard({"index":0,"pageSize":10});
+            this.$http.get('./data/testCard.json').then(response=>{
+                this.cards= response.data.cards.pop();
+            })
         },
         CardInput(){
             event.preventDefault();
         }
-        
-       
     }
    
 }
