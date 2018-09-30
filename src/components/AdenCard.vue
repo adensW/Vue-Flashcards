@@ -7,27 +7,46 @@
         >
             <div class='flip'>
                 <div class='card front'>
-                    <textarea  class="card-display" v-model="card.front"></textarea>
+                   {{card.front}}
                 </div>
                 <div class='card back'> 
-                    <textarea  class="card-display" v-model="card.back"></textarea>
+                    {{card.back}}
                 </div>
             </div>
              <div v-on:click="flip=!flip">flip</div>
         </div>
+         <AdenMask></AdenMask>
+         <div class="aden-wrapper">
+             <div class="input-field">
+                <input v-model="card.front">
+             </div>
+             <div class="input-field">
+                 <input v-model="card.back">
+             </div>
+             <div class="input-field">
+                 <textarea v-model="card.comment"></textarea>
+             </div>
+         </div>
+
     </div>
+   
 </template>
 
 <script>
 // import {GetCard} from '@/service/CardStore.js'
+import AdenMask from './childcomponent/AdenMask'
 
 export default {
     name:'AdenCard',
     data(){
         return {
             flip:false,
+            card:{"id":"","front":"","back":"","commnet":""},
             cards:[{"id":"","front":"","back":""}]
         }
+    },
+    components:{
+        AdenMask
     },
     mounted(){
         this.GetData();
