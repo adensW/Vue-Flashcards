@@ -39,6 +39,7 @@ import AdenMask from './childcomponent/AdenMask'
 export default {
     name:'AdenCard',
     data(){
+
         return {
             flip:false,
             card:{"id":"","front":"","back":"","commnet":""},
@@ -55,7 +56,7 @@ export default {
         GetData(){
             // this.cards = GetCard({"index":0,"pageSize":10});
             this.$http.get('./data/testCard.json').then(response=>{
-                this.cards= response.data.cards.pop();
+                this.cards= response.data.cards;
             })
         },
         CardInput(){
