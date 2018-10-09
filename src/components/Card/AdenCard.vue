@@ -6,6 +6,7 @@
         :key="card.id"
         >
             <div class='flip'>
+<<<<<<< HEAD:src/components/Card/AdenCard.vue
             <div class='card front'>
                 <div>
                     {{card.front}}
@@ -16,24 +17,57 @@
                     {{card.front}}
                 </div>
             </div>
+=======
+                <div class='card front'>
+                   {{card.front}}
+                </div>
+                <div class='card back'> 
+                    {{card.back}}
+                </div>
+>>>>>>> c7998963508dd62f1d97e56fcdd0c1aa66a9a789:src/components/AdenCard.vue
             </div>
              <button v-on:click="flip=!flip">flip</button>
         </div>
+         <AdenMask></AdenMask>
+         <div class="aden-wrapper">
+             <div class="input-field">
+                <input v-model="card.front">
+             </div>
+             <div class="input-field">
+                 <input v-model="card.back">
+             </div>
+             <div class="input-field">
+                 <textarea v-model="card.comment"></textarea>
+             </div>
+         </div>
+
     </div>
+   
 </template>
 
 <script>
 // import {GetCard} from '@/service/CardStore.js'
+<<<<<<< HEAD:src/components/Card/AdenCard.vue
+=======
+import AdenMask from './childcomponent/AdenMask'
+>>>>>>> c7998963508dd62f1d97e56fcdd0c1aa66a9a789:src/components/AdenCard.vue
 
 export default {
     name:'AdenCard',
     data(){
         return {
             flip:false,
+<<<<<<< HEAD:src/components/Card/AdenCard.vue
             isInputFront:false,
             isInputBack:false,
+=======
+            card:{"id":"","front":"","back":"","commnet":""},
+>>>>>>> c7998963508dd62f1d97e56fcdd0c1aa66a9a789:src/components/AdenCard.vue
             cards:[{"id":"","front":"","back":""}]
         }
+    },
+    components:{
+        AdenMask
     },
     mounted(){
         this.GetData();
@@ -42,14 +76,16 @@ export default {
         GetData(){
             // this.cards = GetCard({"index":0,"pageSize":10});
             this.$http.get('./data/testCard.json').then(response=>{
+<<<<<<< HEAD:src/components/Card/AdenCard.vue
                 this.cards= response.data.cards;
+=======
+                this.cards= response.data.cards.pop();
+>>>>>>> c7998963508dd62f1d97e56fcdd0c1aa66a9a789:src/components/AdenCard.vue
             })
         },
         CardInput(){
             event.preventDefault();
         }
-        
-       
     }
    
 }

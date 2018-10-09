@@ -11,7 +11,7 @@ export default {
     
     data(){ return {
         name:"",
-        value:"啊实打实的",
+        value:"",
         label:"",
         hint:""
         }
