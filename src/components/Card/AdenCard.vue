@@ -33,7 +33,7 @@
 </template>
 
 <script>
-// import {GetCard} from '@/service/CardStore.js'
+import {GetCard} from '@/service/CardStore.js'
 import AdenMask from './childcomponent/AdenMask'
 
 export default {
@@ -57,7 +57,9 @@ export default {
             // this.cards = GetCard({"index":0,"pageSize":10});
             this.$http.get('./data/testCard.json').then(response=>{
                 this.cards= response.data.cards;
+                
             })
+            GetCard({})
         },
         CardInput(){
             event.preventDefault();
