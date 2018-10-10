@@ -2,8 +2,14 @@
     [
         {
             "id":"0",
-            "front":"test1",
-            "back":"test2"
+            "front":"abandon",
+            "back":"放弃"
+        },
+        
+        {
+            "id":"1",
+            "front":"ability",
+            "back":"能力"
         }
     ]
 }

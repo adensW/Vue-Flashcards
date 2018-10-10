@@ -1,6 +1,8 @@
 <template>
-    <div class='aden-container'>
-        <div class='flip-wrap'
+    <div>
+    <div class='aden-container aden-slider-wrap'>
+        
+        <div class='flip-wrap aden-slider'
         v-bind:class="{'flip-wrap-touch':flip}" 
         v-for="card in cards" 
         :key="card.id"
@@ -13,23 +15,12 @@
                     {{card.back}}
                 </div>
             </div>
-             <button v-on:click="flip=!flip">flip</button>
+             
         </div>
-         <AdenMask></AdenMask>
-         <div class="aden-wrapper">
-             <div class="input-field">
-                <input v-model="card.front">
-             </div>
-             <div class="input-field">
-                 <input v-model="card.back">
-             </div>
-             <div class="input-field">
-                 <textarea v-model="card.comment"></textarea>
-             </div>
-         </div>
-
+        
     </div>
-   
+   <button v-on:click="flip=!flip">flip</button>
+   </div>
 </template>
 
 <script>
@@ -73,6 +64,17 @@ export default {
     height:100%;
     width:100%;
 }
+.aden-slider-wrap{
+    position:relative;
+    width:100%;
+    height:220px;
+    
+}
+.aden-slider{
+   float: left;
+    height:100%;
+    text-align:center;
+}
 .flip-wrap{
     width:210px;
     height:220px;
@@ -106,9 +108,12 @@ export default {
     transform:rotateY(180deg);
 }
 .card-display{
-     width:100%;
+    width:100%;
     height:100%;
     border:none;
+}
+.hidden{
+    display:none;
 }
 </style>
 

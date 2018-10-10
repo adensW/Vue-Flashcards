@@ -34,6 +34,7 @@
     <v-content>
       <v-container>
        <AdenCard></AdenCard>
+       <aden-btn-new></aden-btn-new>
       </v-container>
      
     </v-content>
@@ -48,18 +49,20 @@
 // import HelloWorld from './components/HelloWorld'
 import AdenCard from './components/Card/AdenCard'
 import AdenContainer from './components/AdenContainer'
+import AdenBtnNew from './components/button/AdenBtnNew'
 
 export default {
   name: 'App',
   components: {
     AdenCard,
-    AdenContainer
+    AdenContainer,
+    AdenBtnNew
    
   },
   data () {
     return {
       clipped: false,
-      drawer: true,
+      drawer: false,
       fixed: false,
       items: [{
         icon: 'bubble_chart',
