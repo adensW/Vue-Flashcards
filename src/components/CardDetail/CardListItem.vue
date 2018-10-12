@@ -4,24 +4,28 @@
             v-bind:class="{'flip__wrap--flip':flip}" 
             >
                 <div class='flip__container flipcard--animflip'
-                 v-on:click.stop='focus'
+                
                  >
                     <div class='flipcard flipcard--front'>
                         <textarea class="flipcard__textarea front"
+                            
                             id='textarea-front'
+                            v-if='!flip'
                             v-model="data_card.front"
                             v-on:input="$emit('frontinput',$event.target.value)"
                             v-bind="{'readonly':flip}"
-                           
+                             v-on:click.stop='focus'
                          >
                          </textarea>
                     </div>
                     <div class='flipcard flipcard--back'> 
                         <textarea class="flipcard__textarea back"
                             id='textarea-back'
+                            v-if='flip'
                             v-model="data_card.back"
                             v-on:input="$emit('backinput',$event.target.value)"
                             v-bind="{'readonly':!flip}"
+                             v-on:click.stop='focus'
                          >
                          </textarea>
                     </div>
@@ -35,7 +39,7 @@ export default {
     props:['card','flip'],
     data(){
         return{
-            
+            is_focus:false,
             data_card:
             {
                 id:"",
@@ -55,13 +59,25 @@ export default {
         focus:function(event){
             let back = document.getElementById('textarea-back');
             let front = document.getElementById('textarea-front');
-            if(this.flip){
-                back.focus();
-                // console.log(back)         
-            }else{
-                front.focus();
-                // console.log(front)
+           
+                if(this.flip){
+                    back.focus();
+                    this.is_focus=true;
+                    // console.log(this.is_focus)
+                }else{
+                    front.focus();
+                    this.is_focus=true;
+                    // console.log(this.is_focus)
+                }
+            
+        },
+        lostfocus:function(event){
+            if(event.target.id==='textarea-front'&&this.flip==false){
+                this.is_focus=false;
+            }else if(event.target.id==='textarea-back'&&this.flip==true){
+                 this.is_focus=false;
             }
+            console.log(this.is_focus)
         }
     }    
 }
@@ -98,12 +114,18 @@ export default {
     background-color: aquamarine;
 }
 .flipcard--back{
-    z-index: 2;
+    z-index:1;
     transform: rotateY(180deg);
     background-color: burlywood;
 }
 .flipcard__textarea{
     width:100%;
     height:100%;
+}
+@keyframes anim-flip {
+    0% {transform:rotateY(0deg);}
+   
+
+    100% {transform:rotateY(180deg);}
 }
 </style>
