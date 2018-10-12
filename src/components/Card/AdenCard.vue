@@ -8,7 +8,19 @@
                   
                 </div>
             </div>
-            
+            <div class='aden-slider flip-wrap'
+            v-bind:class="{'flip-wrap-touch':flip}" 
+            >
+                <div class='flip'>
+                    <div class='card front'>
+                    {{cards[1].front}}
+                    </div>
+                    <div class='card back'> 
+                    {{cards[1].back}}
+                    </div>
+                </div>
+                
+            </div>
             <div class='aden-slider aden-slider__rightpart'>
                 <div class='card'>
                     

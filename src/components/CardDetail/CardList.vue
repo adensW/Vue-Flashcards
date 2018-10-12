@@ -2,11 +2,15 @@
     <div class="container--template">
         <div class='AClayout'>
             <card-list-item 
-                v-bind:front="cards.front"
-                v-on:input="cards.front=$event"
+                v-bind:flip="flip"
+                v-bind:card="cards"
+
+                v-on:frontinput="cards.front=$event"
+                v-on:backinput="cards.back=$event"
             >
             </card-list-item>
         </div>
+        <button v-on:click="flip=!flip">flip</button>
     </div>
 </template>
 <script>
@@ -19,14 +23,19 @@ export default {
     data(){
         return{
             "uuid":"",
+            flip:false,
             "cards":
             {
-                "id":"",
-                "front":"tetsetsmoremroemoreasesttestmoermoeasdasdasdasdaasdasd"+
+                id:"0",
+                front:"tetsetsmoremroemoreasesttestmoermoeasdasdasdasdaasdasd"+
                     "setssdssdasdadsadasdasdaasdasdasdsadasdasdasdasd"+
                     "asdasdasdsgsdfgdjytjsdfgcvbtsrtadfdfSeregdfg",
-                "back":"",
-                "comment":""
+                back:"backbackbackbackbackbackbackbackbackbackbackbackbackback"+
+                    "backbackbackbackbackbackbackbackbackbackbackback"+
+                    "backbackbackbackbackbackbackbackbackbackback",
+                comment:"commentcommentcommentcommentcommentcommentcommentcomment"+
+                    "commentcommentcommentcommentcommentcommentcommentcomment"+
+                    "commentcommentcommentcommentcommentcomment"
             }
         }
     },
