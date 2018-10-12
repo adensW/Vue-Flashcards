@@ -6,7 +6,10 @@
                 <div class='flip__container flipcard--animflip'
                 
                  >
-                    <div class='flipcard flipcard--front'>
+                    <div class='flipcard flipcard--front'
+                     v-bind:class="{'flipcard__pointevent':flip}"
+                        
+                        >
                         <textarea class="flipcard__textarea front"
                             
                             id='textarea-front'
@@ -17,8 +20,16 @@
                              v-on:click.stop='focus'
                          >
                          </textarea>
+                          <div class="flipcard__displayarea"
+                             v-if='flip'
+                             
+                         >
+                            {{data_card.front}}
+                         </div>
                     </div>
-                    <div class='flipcard flipcard--back'> 
+                    <div class='flipcard flipcard--back'
+                            v-bind:class="{'flipcard__pointevent':!flip}"
+                    > 
                         <textarea class="flipcard__textarea back"
                             id='textarea-back'
                             v-if='flip'
@@ -28,6 +39,11 @@
                              v-on:click.stop='focus'
                          >
                          </textarea>
+                         <div class='flipcard__displayarea'
+                             v-if='!flip'
+                         >
+                            {{data_card.back}}
+                         </div>
                     </div>
                 </div>
             </div>
@@ -46,6 +62,9 @@ export default {
                 front:"",
                 back:"",
                 comment:""
+            },
+            pointevents:{
+                'pointer-events': 'none'
             }
         }
     },
@@ -83,6 +102,9 @@ export default {
 }
 </script>
 <style scoped>
+.flipcard__pointevent{
+    pointer-events: none;
+}
 .flip__wrap{
     width:200px;
     height:200px;
@@ -100,7 +122,7 @@ export default {
 .flipcard{
     width:100%;
     height:100%;
-    position: absolute;/*让背面和正面重叠*/
+    
    
 }
 .flipcard--animflip{
@@ -110,17 +132,23 @@ export default {
     transform-style: preserve-3d; /*子元素将保留其 3D 位置。*/   
 }
 .flipcard--front{
-    z-index: 2;
+    z-index: 999;
+    position: relative;/*让背面和正面重叠*/
     background-color: aquamarine;
 }
 .flipcard--back{
-    z-index:1;
+    z-index:100;
+    top:-200px;
+    position: relative;/*让背面和正面重叠*/
     transform: rotateY(180deg);
     background-color: burlywood;
 }
 .flipcard__textarea{
     width:100%;
     height:100%;
+}
+.flipcard__displayarea{
+    overflow-wrap: break-word;
 }
 @keyframes anim-flip {
     0% {transform:rotateY(0deg);}
