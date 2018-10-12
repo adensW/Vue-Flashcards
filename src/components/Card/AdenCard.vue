@@ -1,26 +1,26 @@
 <template>
-    <div>
-    <div class='aden-container aden-slider-wrap'>
-        
-        <div class='flip-wrap aden-slider'
-        v-bind:class="{'flip-wrap-touch':flip}" 
-        v-for="card in cards" 
-        :key="card.id"
-        >
-            <div class='flip'>
-                <div class='card front'>
-                   {{card.front}}
-                </div>
-                <div class='card back'> 
-                    {{card.back}}
+<div>
+    <div class='aden-slider-wrap'>
+        <div class='aden-container aden-slider-container'>
+            <div class='aden-slider aden-slider__leftpart'
+            v-bind:class="{'aden-slider-anim':silderLeft}">
+                <div class='card'>
+                  
                 </div>
             </div>
-             
+            
+            <div class='aden-slider aden-slider__rightpart'>
+                <div class='card'>
+                    
+                </div>
+            </div>
         </div>
-        
-    </div>
-   <button v-on:click="flip=!flip">flip</button>
+   
    </div>
+   <button v-on:click="flip=!flip">flip</button>
+   <button v-on:click="silderLeft=!silderLeft">prev</button>
+   <button v-on:click="silderRight=!silderRight">next</button>
+</div>
 </template>
 
 <script>
@@ -33,8 +33,10 @@ export default {
 
         return {
             flip:false,
+            silderLeft:false,
+            silderRight:false,
             card:{"id":"","front":"","back":"","commnet":""},
-            cards:[{"id":"","front":"","back":""}]
+            cards:[{"id":"","front":"","back":""},{},{}]
         }
     },
     components:{
@@ -54,26 +56,55 @@ export default {
         },
         CardInput(){
             event.preventDefault();
+        },
+        prev(){
+
+        },
+        next(){
+
         }
     }
    
 }
 </script>
 <style scoped>
+
 .aden-container{
     height:100%;
     width:100%;
 }
+.aden-slider-container{
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%; /* 横向排列 5张图片 宽度应为主容器5倍 */
+    height: 100%;
+    font-size: 0;
+}
 .aden-slider-wrap{
-    position:relative;
-    width:100%;
-    height:220px;
+    position: relative;
+    width: 630px;
+    height: 220px;
+    margin: 100px auto;
+    overflow: hidden;
+    vertical-align: middle;
     
 }
 .aden-slider{
-   float: left;
+    float: left;
     height:100%;
+    margin: 0px 0px 0px 0px; 
     text-align:center;
+  
+}
+.aden-slider__leftpart{
+    width: 160px;
+}
+.aden-slider__rightpart{
+    width:160px;
+    float: right;
+}
+.aden-slider-anim{
+      animation:anim-slider-left 0.2s linear infinite;
 }
 .flip-wrap{
     width:210px;
@@ -82,7 +113,7 @@ export default {
     perspective:800px;
 }
 .flip{
-    width:210px;
+    width:100%;
     height:220px;
     backface-visibility:hidden;/*背对屏幕时隐藏*/
     transition: all 1s ease; /*为翻牌添加过渡效果*/
@@ -114,6 +145,12 @@ export default {
 }
 .hidden{
     display:none;
+}
+@keyframes anim-slider-left {
+    0% {transform: translate(0,0);}
+   
+
+    100% {transform: translate(-100%,0);} /* 复位到第一张图片 */
 }
 </style>
 

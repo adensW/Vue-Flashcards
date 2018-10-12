@@ -10,6 +10,21 @@
             "id":"1",
             "front":"ability",
             "back":"能力"
+        },
+        {
+            "id":"2",
+            "front":"able",
+            "back":"能够"
+        },
+        {
+            "id":"3",
+            "front":"about",
+            "back":"关于"
+        },
+        {
+            "id":"4",
+            "front":"accent",
+            "back":"口音"
         }
     ]
 }

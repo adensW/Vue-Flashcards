@@ -33,7 +33,7 @@
     </v-toolbar>
     <v-content>
       <v-container>
-       <AdenCard></AdenCard>
+       <CardList></CardList>
        <aden-btn-new></aden-btn-new>
       </v-container>
      
@@ -47,15 +47,14 @@
 
 <script>
 // import HelloWorld from './components/HelloWorld'
-import AdenCard from './components/Card/AdenCard'
-import AdenContainer from './components/AdenContainer'
+
+import CardList from './components/CardDetail/CardList'
 import AdenBtnNew from './components/button/AdenBtnNew'
 
 export default {
   name: 'App',
   components: {
-    AdenCard,
-    AdenContainer,
+    CardList,
     AdenBtnNew
    
   },
