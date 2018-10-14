@@ -106,8 +106,10 @@ export default {
     pointer-events: none;
 }
 .flip__wrap{
-    width:200px;
-    height:200px;
+    width: 35rem; 
+    height:35rem; 
+    /* width: 60vw; 
+    height:70vh; */
     margin:0 auto;
     perspective:800px;
 }
@@ -122,8 +124,6 @@ export default {
 .flipcard{
     width:100%;
     height:100%;
-    
-   
 }
 .flipcard--animflip{
     /*backface-visibility:hidden;背对屏幕时隐藏*/
@@ -132,13 +132,11 @@ export default {
     transform-style: preserve-3d; /*子元素将保留其 3D 位置。*/   
 }
 .flipcard--front{
-    z-index: 999;
-    position: relative;/*让背面和正面重叠*/
+    z-index: 2;
+    position: absolute;/*让背面和正面重叠*/
     background-color: aquamarine;
 }
 .flipcard--back{
-    z-index:100;
-    top:-200px;
     position: relative;/*让背面和正面重叠*/
     transform: rotateY(180deg);
     background-color: burlywood;
