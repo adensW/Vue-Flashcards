@@ -1,8 +1,9 @@
 (function (global, factory) {
     "use strict";
-
+    // eslint-disable-next-line
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
+        // eslint-disable-next-line
         define([], factory);
       } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but
@@ -12,7 +13,7 @@
         factory( global, true ) :
         function( w ) {
             if ( !w.document ) {
-                throw new Error( "jQuery requires a window with a document" );
+                throw new Error( "aTween requires a window with a document" );
             }
             return factory( w );
         };
@@ -21,6 +22,7 @@
         factory( global );
       }
     // Pass this if window is not defined yet
+    // eslint-disable-next-line
 })(typeof window !== "undefined" ? window : this, function( window, noGlobal ) {
     var getProto = Object.getPrototypeOf;
     var class2type = {};
@@ -45,13 +47,9 @@
     }
     aTween.fn = aTween.prototype = {
         constructor: aTween,
-        // init:function()
-        // {
-        //     console.log("aTween init");
-        //     return this;
-        // },
         animate: function () {
-            console.log("animate");
+            // eslint-disable-next-line
+            return this;
         }
     }
     aTween.extend = aTween.fn.extend = function () {
@@ -70,7 +68,7 @@
         }
 
         // Handle case when target is a string or something (possible in deep copy)
-        if (typeof target !== "object" && !aTween.isFunction(target)) {
+        if (typeof target !== "object" && !isFunction(target)) {
             target = {};
         }
 
@@ -94,10 +92,10 @@
                     }
 
                     // Recurse if we're merging plain objects or arrays
-                    if (deep && copy && (aTween.isPlainObject(copy) || (copyIsArray = aTween.isArray(copy)))) {
+                    if (deep && copy && (aTween.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
                         if (copyIsArray) {
                             copyIsArray = false;
-                            clone = src && aTween.isArray(src) ? src : [];
+                            clone = src && Array.isArray(src) ? src : [];
 
                         } else {
                             clone = src && aTween.isPlainObject(src) ? src : {};
@@ -115,14 +113,13 @@
         }
 
         // Return the modified object
+        
         return target;
     };
     aTween.fn.init=function(){
-        console.log("aTween init");
+        
         return this;
     }
-
-
     aTween.isFunction = isFunction;
     aTween.isArray = Array.isArray;
     
@@ -148,14 +145,17 @@
             return typeof Ctor === "function" && fnToString.call(Ctor) === ObjectFunctionString;
         }
     });
-    aTween.extend({
-        isExtended: function () {
-            console.log("extended");
-        }
-    });
+   
     aTween.fn.init.prototype = aTween.fn;
     window.aTween = aTween;
     // function atween(){
     //     return aTween();
     // }
+    aTween.fn.extend({
+        istest:"test",
+        isExtended: function () {
+            
+            return true;
+        }
+    });
 })

@@ -38,7 +38,7 @@
 </template>
 <script>
 import CardListItem from './CardListItem'
-import atween from '@/plugins/atween.js'
+import {} from '@/plugins/atween.js'
 export default {
     name:"CardList",
     components:{
@@ -69,8 +69,9 @@ export default {
     },
     methods:{
         init:function(){
+            
             console.log(aTween().animate())
-            console.log("init")
+            console.log(aTween().isExtended())
         },
         slider:function(dir){
             if(typeof dir!='undefined'){
@@ -80,6 +81,7 @@ export default {
                         const element = cardElemList[index];
                         element.style.transform 
                     }
+                    
                     console.log(cardElemList);    
                 }
                 else{

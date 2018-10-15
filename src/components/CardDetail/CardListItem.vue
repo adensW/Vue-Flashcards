@@ -75,16 +75,19 @@ export default {
         initCard(){
             this.data_card=this.card;
         },
+        // eslint-disable-next-line
         focus:function(event){
             let back = document.getElementById('textarea-back');
             let front = document.getElementById('textarea-front');
            
                 if(this.flip){
                     back.focus();
+                    
                     this.is_focus=true;
                     // console.log(this.is_focus)
                 }else{
                     front.focus();
+                    
                     this.is_focus=true;
                     // console.log(this.is_focus)
                 }
@@ -96,6 +99,7 @@ export default {
             }else if(event.target.id==='textarea-back'&&this.flip==true){
                  this.is_focus=false;
             }
+            // eslint-disable-next-line
             console.log(this.is_focus)
         }
     }    
