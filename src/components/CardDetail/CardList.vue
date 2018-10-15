@@ -69,9 +69,10 @@ export default {
     },
     methods:{
         init:function(){
-            
+            console.log(aTween)
             console.log(aTween().animate())
-            console.log(aTween().isExtended())
+            
+
         },
         slider:function(dir){
             if(typeof dir!='undefined'){

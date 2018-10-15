@@ -20,3 +20,4 @@ yarn-error.log*
 *.sln
 *.sw*
 src/plugins/jQuery.*.js
+src/plugins/animate-lib/*
