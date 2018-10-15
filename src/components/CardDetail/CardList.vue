@@ -71,8 +71,6 @@ export default {
         init:function(){
             console.log(aTween)
             console.log(aTween().animate())
-            
-
         },
         slider:function(dir){
             if(typeof dir!='undefined'){
@@ -110,7 +108,7 @@ export default {
     /* position: absolute; */
 }
 .anim__container{
-
+    height:100%;
 }
 .anim__slider{
     transition: transform 0.5s linear 0s;
@@ -122,7 +120,7 @@ export default {
     transform: translate(50%,0)
 }
 .layout__item--current{
-    
+    height:100%;
 }
 </style>
 
