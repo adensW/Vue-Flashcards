@@ -45,6 +45,7 @@
     var aTween = function () {
         return new aTween.fn.init();
     }
+    
     aTween.fn = aTween.prototype = {
         constructor: aTween,
         Clips: [
@@ -57,21 +58,7 @@
         during: 100,
         raf: 0,
         play: function () {
-            raf = requestAnimationFrame(step);
-        },
-        step: function () {
-            const activeLength = Clips.length;
-            if (activeLength) {
-                let i = 0;
-                while (i < activeLength) {
-                    if (Clips[i]) Clips[i].tick(t);
-                    i++;
-                }
-                play();
-            } else {
-                cancelAnimationFrame(raf);
-                raf = 0;
-            }
+            engine();
         },
         animate: function () {
             var start = 0, during = 100;
@@ -83,8 +70,6 @@
                     requestAnimationFrame(run);
                 }
             }
-
-
             run()
 
         }
@@ -346,5 +331,37 @@
             return true;
         }
     });
+    function Clip(params={}){
+        let instance = {
+
+        }
+        let activeInstances = [];
+        let raf = 0;
+      
+        const engine = (() => {
+          function play() { 
+              raf = requestAnimationFrame(step); 
+            }
+          function step(t) {
+            const activeLength = activeInstances.length;
+            if (activeLength) {
+              let i = 0;
+              while (i < activeLength) {
+                if (activeInstances[i]) activeInstances[i].tick(t);
+                i++;
+              }
+              play();
+            } else {
+              cancelAnimationFrame(raf);
+              raf = 0;
+            }
+          }
+          return play;
+        })();
+        instance.tick(t){
+            
+        }
+        return instance;
+    }
     return aTween;
 })
