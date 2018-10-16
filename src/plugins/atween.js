@@ -358,7 +358,7 @@
           }
           return play;
         })();
-        instance.tick(t){
+        instance.tick=function(t){
             
         }
         return instance;
