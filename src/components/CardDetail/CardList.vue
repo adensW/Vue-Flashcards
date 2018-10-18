@@ -2,6 +2,9 @@
     <div class="container--template">
         <div class='layout__viewport'>
             <div class='layout__container anim__container'>
+                <vue-anime :animate="{
+                    translateX:'-20'
+                }" :playing='true'>
                 <card-list-item class="layout__item anim__slider"
                 v-bind:flip="flip"
                 v-bind:card="cards"
@@ -10,6 +13,10 @@
                 v-on:backinput="cards.back=$event"
             >
             </card-list-item>
+                </vue-anime>
+                <vue-anime :animate="{
+                    translateX:'0'
+                }" :playing='true'>
             <card-list-item 
                 class="layout__item layout__item--current anim__slider"
                 v-bind:flip="flip"
@@ -19,7 +26,10 @@
                 v-on:backinput="cards.back=$event"
             >
            
-            </card-list-item>
+            </card-list-item></vue-anime>
+             <vue-anime :animate="{
+                    translateX:'20'
+                }" :playing='true'>
             <card-list-item
                 class="layout__item anim__slider"
                 v-bind:flip="flip"
@@ -28,6 +38,8 @@
                 v-on:frontinput="cards.front=$event"
                 v-on:backinput="cards.back=$event"
             ></card-list-item>
+
+             </vue-anime>
             </div>
            
         </div>
@@ -39,10 +51,12 @@
 <script>
 import CardListItem from './CardListItem'
 import {} from '@/plugins/atween.js'
+import {VueAnime} from 'vue-anime'
 export default {
     name:"CardList",
     components:{
-        CardListItem
+        CardListItem,
+        VueAnime
     },
     data(){
         return{
@@ -69,8 +83,10 @@ export default {
     },
     methods:{
         init:function(){
-            console.log(aTween)
-            console.log(aTween().animate())
+            console.log(this.anime)
+            let target = document.getElementsByClassName('anim__slider');
+           
+            // console.log(aTween(target,{'transform':'-50%'}).animate())
         },
         slider:function(dir){
             if(typeof dir!='undefined'){
@@ -78,7 +94,10 @@ export default {
                 if(dir===-1){
                     for (let index = 0; index < cardElemList.length; index++) {
                         const element = cardElemList[index];
-                        element.style.transform 
+                        // anime({
+                        //     target:element,
+                        //     translateX:'-50%'
+                        // });
                     }
                     
                     console.log(cardElemList);    
@@ -95,7 +114,6 @@ export default {
 .layout__container{
     width: 100%; /* card width */
     height:70vh;
-    display: flex;
 }
 .layout__viewport{
     width:100%;
@@ -111,7 +129,7 @@ export default {
     height:100%;
 }
 .anim__slider{
-    transition: transform 0.5s linear 0s;
+    position:absolute;
 }
 .anim__slider--left{
     transform: translate(-50%,0)

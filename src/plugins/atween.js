@@ -42,8 +42,8 @@
         return typeof obj === "function" && typeof obj.nodeType !== "number";
     };
 
-    var aTween = function () {
-        return new aTween.fn.init();
+    var aTween = function (target,params) {
+        return new aTween.fn.init(target,params);
     }
     
     aTween.fn = aTween.prototype = {
@@ -139,8 +139,9 @@
 
         return target;
     };
-    aTween.fn.init = function () {
-
+    aTween.fn.init = function ( target,params) {
+        console.log(target);
+        console.log(params)
         return this;
     }
     aTween.isFunction = isFunction;
