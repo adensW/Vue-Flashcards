@@ -14,6 +14,7 @@
     "store": "^2.0.12",
     "vue": "^2.5.17",
     "vue-anime": "^0.2.3",
+    "vue-route": "^1.5.1",
     "vuetify": "^1.2.0"
   },
   "devDependencies": {

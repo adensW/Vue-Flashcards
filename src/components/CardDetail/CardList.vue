@@ -2,44 +2,30 @@
     <div class="container--template">
         <div class='layout__viewport'>
             <div class='layout__container anim__container'>
-                <vue-anime :animate="{
-                    translateX:'-20'
-                }" :playing='true'>
+            <transition name='anim__slider' mode='out-in'>
                 <card-list-item class="layout__item anim__slider"
+                v-if='isSlider'
                 v-bind:flip="flip"
                 v-bind:card="cards"
 
                 v-on:frontinput="cards.front=$event"
                 v-on:backinput="cards.back=$event"
-            >
-            </card-list-item>
-                </vue-anime>
-                <vue-anime :animate="{
-                    translateX:'0'
-                }" :playing='true'>
-            <card-list-item 
+                >
+                </card-list-item>
+            </transition>
+            <transition name='anim__slider--next' mode="out-in">
+                <card-list-item 
                 class="layout__item layout__item--current anim__slider"
                 v-bind:flip="flip"
                 v-bind:card="cards"
-
+                v-if='!isSlider'
                 v-on:frontinput="cards.front=$event"
                 v-on:backinput="cards.back=$event"
-            >
-           
-            </card-list-item></vue-anime>
-             <vue-anime :animate="{
-                    translateX:'20'
-                }" :playing='true'>
-            <card-list-item
-                class="layout__item anim__slider"
-                v-bind:flip="flip"
-                v-bind:card="cards"
-
-                v-on:frontinput="cards.front=$event"
-                v-on:backinput="cards.back=$event"
-            ></card-list-item>
-
-             </vue-anime>
+                >
+                </card-list-item>
+               
+            </transition>
+             
             </div>
            
         </div>
@@ -62,6 +48,7 @@ export default {
         return{
             "uuid":"",
             flip:false,
+            isSlider:false,
             "cards":
             {
                 id:"0",
@@ -92,18 +79,20 @@ export default {
             if(typeof dir!='undefined'){
                 let cardElemList = document.getElementsByClassName("anim__slider");
                 if(dir===-1){
-                    for (let index = 0; index < cardElemList.length; index++) {
-                        const element = cardElemList[index];
-                        // anime({
-                        //     target:element,
-                        //     translateX:'-50%'
-                        // });
-                    }
+                    // for (let index = 0; index < cardElemList.length; index++) {
+                    //     const element = cardElemList[index];
+                    //     // anime({
+                    //     //     target:element,
+                    //     //     translateX:'-50%'
+                    //     // });
+                    // }
                     
-                    console.log(cardElemList);    
+                    // console.log(cardElemList);   
+                    this.isSlider=true; 
                 }
                 else{
                     console.log(1);
+                     this.isSlider=false;
                 }
             }
         }
@@ -129,16 +118,18 @@ export default {
     height:100%;
 }
 .anim__slider{
+    transition: all .5s;
     position:absolute;
 }
-.anim__slider--left{
-    transform: translate(-50%,0)
+.anim__slider-enter-active{
+    transition: all .5s;
 }
-.anim__slider--right{
-    transform: translate(50%,0)
+.anim__slider{
+    transform: translateX(50%)
 }
-.layout__item--current{
-    height:100%;
+.layout__item--next-leave-active{
+    transition: all .5s;
+  transform: translateX(50%);
 }
 </style>
 
