@@ -1,37 +1,27 @@
 <template>
     <div class="container--template">
-        <div class='layout__viewport'>
-            <div class='layout__container anim__container'>
-            <transition name='anim__slider' mode='out-in'>
-                <card-list-item class="layout__item anim__slider"
-                v-if='isSlider'
-                v-bind:flip="flip"
-                v-bind:card="cards"
-
-                v-on:frontinput="cards.front=$event"
-                v-on:backinput="cards.back=$event"
+       
+            <div class='layout__viewport anim__container'>
+           
+               <div class="anim__slider layout__container" v-bind:class="{'anim__slider--active':isSlider,'anim__silder--reverse':!isSlider}">
+                <card-list-item class="layout__item"
+                v-for="card in cards" :key="card.id"
+                v-bind:flipId="flipId"
+                v-bind:card="card"
+                
+                v-on:frontinput.self="card.front=$event"
+                v-on:backinput.self="card.back=$event"
                 >
                 </card-list-item>
-            </transition>
-            <transition name='anim__slider--next' mode="out-in">
-                <card-list-item 
-                class="layout__item layout__item--current anim__slider"
-                v-bind:flip="flip"
-                v-bind:card="cards"
-                v-if='!isSlider'
-                v-on:frontinput="cards.front=$event"
-                v-on:backinput="cards.back=$event"
-                >
-                </card-list-item>
-               
-            </transition>
-             
-            </div>
+                </div>
            
         </div>
-        <button v-on:click="flip=!flip">flip</button>
-        <button v-on:click="slider(-1)">left</button>
-        <button v-on:click="slider(1)">right</button>
+        <div>
+            <button v-on:click="flipCard()">flip</button>
+            <button v-on:click="slider(-1)">left</button>
+            <button v-on:click="slider(1)">right</button>
+        </div>
+      
     </div>
 </template>
 <script>
@@ -47,11 +37,12 @@ export default {
     data(){
         return{
             "uuid":"",
-            flip:false,
+            flipId:"0",
             isSlider:false,
-            "cards":
+            currentCardId:0,
+            cards:[
             {
-                id:"0",
+                id:0,
                 front:"tetsetsmoremroemoreasesttestmoermoeasdasdasdasdaasdasd"+
                     "setssdssdasdadsadasdasdaasdasdasdsadasdasdasdasd"+
                     "asdasdasdsgsdfgdjytjsdfgcvbtsrtadfdfSeregdfg",
@@ -61,19 +52,23 @@ export default {
                 comment:"commentcommentcommentcommentcommentcommentcommentcomment"+
                     "commentcommentcommentcommentcommentcommentcommentcomment"+
                     "commentcommentcommentcommentcommentcomment"
-            }
+            },{
+                id:1,
+                front:"1",
+                back:"2",
+                comment:"3"
+            }]
         }
     },
     mounted(){
-        // atween();
-        this.init();
+       this.init();
     },
     methods:{
+        flipCard:function(){
+            this.flipId = this.currentCardId;
+        },
         init:function(){
-            console.log(this.anime)
-            let target = document.getElementsByClassName('anim__slider');
-           
-            // console.log(aTween(target,{'transform':'-50%'}).animate())
+            this.currentCardId = 0;
         },
         slider:function(dir){
             if(typeof dir!='undefined'){
@@ -87,12 +82,13 @@ export default {
                     //     // });
                     // }
                     
-                    // console.log(cardElemList);   
+                    // console.log(cardElemList); 
+                    this.currentCardId = this.cards[this.currentCardId].id+1
                     this.isSlider=true; 
                 }
                 else{
-                    console.log(1);
-                     this.isSlider=false;
+                        this.currentCardId = this.cards[this.currentCardId].id-1
+                        this.isSlider=false;
                 }
             }
         }
@@ -100,18 +96,24 @@ export default {
 }
 </script>
 <style scoped>
+.container--template{
+    display:block;
+    height:80vh;
+    
+}
 .layout__container{
     width: 100%; /* card width */
     height:70vh;
+    display: flex;
 }
 .layout__viewport{
     width:100%;
-    height:70vh;
+    height:600px;
     overflow: hidden;
 }
 .layout__item{
     margin-right: 10%;
-    transform: translate(-50%,0);
+    /* transform: translate(-50%,0); */
     /* position: absolute; */
 }
 .anim__container{
@@ -121,15 +123,11 @@ export default {
     transition: all .5s;
     position:absolute;
 }
-.anim__slider-enter-active{
-    transition: all .5s;
+.anim__slider--active{
+    transform: translateX(-50%)
 }
-.anim__slider{
+.anim__slider--reverse{
     transform: translateX(50%)
-}
-.layout__item--next-leave-active{
-    transition: all .5s;
-  transform: translateX(50%);
 }
 </style>
 

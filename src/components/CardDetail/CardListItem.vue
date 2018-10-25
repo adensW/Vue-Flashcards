@@ -7,22 +7,21 @@
                 
                  >
                     <div class='flipcard flipcard--front'
-                     v-bind:class="{'flipcard__pointevent':flip}"
-                        
+                     v-bind:class="{'flipcard__pointevent':!flip}"
                         >
                         <textarea class="flipcard__textarea front"
                             
-                            id='textarea-front'
+                            
+                            v-bind:id="frontID"
                             v-if='!flip'
                             v-model="data_card.front"
-                            v-on:input="$emit('frontinput',$event.target.value)"
+                            v-on:input.self="$emit('frontinput',$event.target.value)"
                             v-bind="{'readonly':flip}"
-                             v-on:click.stop='focus'
+                            v-on:click.stop='focus'
                          >
                          </textarea>
                           <div class="flipcard__displayarea"
                              v-if='flip'
-                             
                          >
                             {{data_card.front}}
                          </div>
@@ -31,16 +30,16 @@
                             v-bind:class="{'flipcard__pointevent':!flip}"
                     > 
                         <textarea class="flipcard__textarea back"
-                            id='textarea-back'
+                            v-bind:id="backID"
                             v-if='flip'
                             v-model="data_card.back"
-                            v-on:input="$emit('backinput',$event.target.value)"
+                            v-on:input.self="$emit('backinput',$event.target.value)"
                             v-bind="{'readonly':!flip}"
                              v-on:click.stop='focus'
                          >
                          </textarea>
                          <div class='flipcard__displayarea'
-                             v-if='!flip'
+                             v-if='flip'
                          >
                             {{data_card.back}}
                          </div>
@@ -52,10 +51,12 @@
 <script>
 export default {
     name:"CardListItem",
-    props:['card','flip'],
+    props:['card','flipId'],
     data(){
         return{
             is_focus:false,
+            frontID:"",
+            backID:"",
             data_card:
             {
                 id:"",
@@ -65,22 +66,33 @@ export default {
             },
             pointevents:{
                 'pointer-events': 'none'
-            }
+            },
+            flip:false
         }
     },
     mounted(){
         this.initCard();
     },
+    watch:{
+        flipId:function(){
+            if(this.flipId == this.data_card.id){
+                this.flip=!this.flip;
+            }
+        }
+    },
     methods:{
         initCard(){
             this.data_card=this.card;
+            this.frontID = "textarea-front-"+this.card.id;
+            this.backID = "textarea-back-"+this.card.id;
+            
         },
         // eslint-disable-next-line
         focus:function(event){
-            let back = document.getElementById('textarea-back');
-            let front = document.getElementById('textarea-front');
+            let back = document.getElementById(this.backID);
+            let front = document.getElementById(this.frontID);
            
-                if(this.flip){
+                if(this.flipId==this.data_card.id){
                     back.focus();
                     
                     this.is_focus=true;
@@ -92,16 +104,8 @@ export default {
                     // console.log(this.is_focus)
                 }
             
-        },
-        lostfocus:function(event){
-            if(event.target.id==='textarea-front'&&this.flip==false){
-                this.is_focus=false;
-            }else if(event.target.id==='textarea-back'&&this.flip==true){
-                 this.is_focus=false;
-            }
-            // eslint-disable-next-line
-            console.log(this.is_focus)
         }
+       
     }    
 }
 </script>

@@ -34,7 +34,7 @@
     <v-content>
       <v-container>
        <CardList></CardList>
-       <aden-btn-new></aden-btn-new>
+
       </v-container>
      
     </v-content>
