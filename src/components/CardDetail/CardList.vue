@@ -8,7 +8,7 @@
                 v-for="card in cards" :key="card.id"
                 v-bind:flipId="flipId"
                 v-bind:card="card"
-                
+                v-bind:isFlip="isFlip"
                 v-on:frontinput.self="card.front=$event"
                 v-on:backinput.self="card.back=$event"
                 >
@@ -38,6 +38,7 @@ export default {
         return{
             "uuid":"",
             flipId:"0",
+            isFlip:false,
             isSlider:false,
             currentCardId:0,
             cards:[
@@ -66,6 +67,7 @@ export default {
     methods:{
         flipCard:function(){
             this.flipId = this.currentCardId;
+            this.isFlip = !this.isFlip;
         },
         init:function(){
             this.currentCardId = 0;

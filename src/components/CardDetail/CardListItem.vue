@@ -39,7 +39,7 @@
                          >
                          </textarea>
                          <div class='flipcard__displayarea'
-                             v-if='flip'
+                             v-if='!flip'
                          >
                             {{data_card.back}}
                          </div>
@@ -51,7 +51,7 @@
 <script>
 export default {
     name:"CardListItem",
-    props:['card','flipId'],
+    props:['card','flipId','isFlip'],
     data(){
         return{
             is_focus:false,
@@ -74,7 +74,7 @@ export default {
         this.initCard();
     },
     watch:{
-        flipId:function(){
+        isFlip:function(){
             if(this.flipId == this.data_card.id){
                 this.flip=!this.flip;
             }
