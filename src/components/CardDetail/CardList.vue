@@ -3,7 +3,10 @@
        
             <div class='layout__viewport anim__container'>
            
-               <div class="anim__slider layout__container" v-bind:class="{'anim__slider--active':isSlider,'anim__silder--reverse':!isSlider}">
+               <div class="anim__slider layout__container" 
+            
+               v-bind:class="{'anim__slider--active':isSlider,'anim__silder--reverse':!isSlider}"
+               >
                 <card-list-item class="layout__item"
                 v-for="card in cards" :key="card.id"
                 v-bind:flipId="flipId"
@@ -13,7 +16,7 @@
                 v-on:backinput.self="card.back=$event"
                 >
                 </card-list-item>
-                </div>
+               </div>
            
         </div>
         <div>
@@ -36,8 +39,8 @@ export default {
     },
     data(){
         return{
-            "uuid":"",
             flipId:"0",
+            offset:0,
             isFlip:false,
             isSlider:false,
             currentCardId:0,
@@ -56,8 +59,23 @@ export default {
             },{
                 id:1,
                 front:"1",
+                back:"1",
+                comment:"1"
+            },{
+                id:2,
+                front:"2",
                 back:"2",
+                comment:"2"
+            },{
+                id:3,
+                front:"3",
+                back:"3",
                 comment:"3"
+            },{
+                id:4,
+                front:"4",
+                back:"4",
+                comment:"4"
             }]
         }
     },
@@ -66,31 +84,41 @@ export default {
     },
     methods:{
         flipCard:function(){
-            this.flipId = this.currentCardId;
+            this.flipId = this.currentCardId*1;
             this.isFlip = !this.isFlip;
         },
         init:function(){
-            this.currentCardId = 0;
+            this.currentCardId = 0*1;
         },
         slider:function(dir){
             if(typeof dir!='undefined'){
-                let cardElemList = document.getElementsByClassName("anim__slider");
                 if(dir===-1){
-                    // for (let index = 0; index < cardElemList.length; index++) {
-                    //     const element = cardElemList[index];
-                    //     // anime({
-                    //     //     target:element,
-                    //     //     translateX:'-50%'
-                    //     // });
-                    // }
                     
-                    // console.log(cardElemList); 
-                    this.currentCardId = this.cards[this.currentCardId].id+1
-                    this.isSlider=true; 
+                    if(this.currentCardId>=this.cards.length-1){
+                        this.currentCtiardId = this.cards.length;
+                    }else{
+                       
+                        this.currentCardId = this.cards[this.currentCardId+1].id
+                        this.isSlider=true; 
+                        let elem = document.getElementsByClassName("anim__slider")
+                         
+                        let cssstyle = elem.item(0).style
+                        this.offset=this.offset+(-50)
+                        cssstyle.transform="translateX("+this.offset+"%)"
+                        
+                    }
                 }
                 else{
-                        this.currentCardId = this.cards[this.currentCardId].id-1
+                    if(this.currentCardId<=0){
+                        this.currentCardId=0*1;
+                    }else{
+                        this.currentCardId = this.cards[this.currentCardId-1].id
                         this.isSlider=false;
+                        let elem = document.getElementsByClassName("anim__slider")
+                        let cssstyle = elem.item(0).style
+                        this.offset= this.offset+(50)
+                        cssstyle.transform="translateX("+this.offset+"%)"
+                    }
                 }
             }
         }
