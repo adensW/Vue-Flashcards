@@ -7,11 +7,9 @@
                 
                  >
                     <div class='flipcard flipcard--front'
-                     v-bind:class="{'flipcard__pointevent':!flip}"
+                     v-bind:class="{'flipcard__pointevent':flip}"
                         >
                         <textarea class="flipcard__textarea front"
-                            
-                            
                             v-bind:id="frontID"
                             v-if='!flip'
                             v-model="data_card.front"
@@ -89,21 +87,8 @@ export default {
         },
         // eslint-disable-next-line
         focus:function(event){
-            let back = document.getElementById(this.backID);
-            let front = document.getElementById(this.frontID);
-           
-                if(this.flipId==this.data_card.id){
-                    back.focus();
-                    
-                    this.is_focus=true;
-                    // console.log(this.is_focus)
-                }else{
-                    front.focus();
-                    
-                    this.is_focus=true;
-                    // console.log(this.is_focus)
-                }
-            
+            event.target.focus();
+            this.is_focus=true;
         }
        
     }    

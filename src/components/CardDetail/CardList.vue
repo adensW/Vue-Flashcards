@@ -4,7 +4,6 @@
             <div class='layout__viewport anim__container'>
            
                <div class="anim__slider layout__container" 
-            
                v-bind:class="{'anim__slider--active':isSlider,'anim__silder--reverse':!isSlider}"
                >
                 <card-list-item class="layout__item"
@@ -44,39 +43,7 @@ export default {
             isFlip:false,
             isSlider:false,
             currentCardId:0,
-            cards:[
-            {
-                id:0,
-                front:"tetsetsmoremroemoreasesttestmoermoeasdasdasdasdaasdasd"+
-                    "setssdssdasdadsadasdasdaasdasdasdsadasdasdasdasd"+
-                    "asdasdasdsgsdfgdjytjsdfgcvbtsrtadfdfSeregdfg",
-                back:"backbackbackbackbackbackbackbackbackbackbackbackbackback"+
-                    "backbackbackbackbackbackbackbackbackbackbackback"+
-                    "backbackbackbackbackbackbackbackbackbackback",
-                comment:"commentcommentcommentcommentcommentcommentcommentcomment"+
-                    "commentcommentcommentcommentcommentcommentcommentcomment"+
-                    "commentcommentcommentcommentcommentcomment"
-            },{
-                id:1,
-                front:"1",
-                back:"1",
-                comment:"1"
-            },{
-                id:2,
-                front:"2",
-                back:"2",
-                comment:"2"
-            },{
-                id:3,
-                front:"3",
-                back:"3",
-                comment:"3"
-            },{
-                id:4,
-                front:"4",
-                back:"4",
-                comment:"4"
-            }]
+            cards:[]
         }
     },
     mounted(){
@@ -89,7 +56,8 @@ export default {
         },
         init:function(){
             this.currentCardId = 0*1;
-            console.log(this.$store)
+            this.cards = this.$store.getters.AllCards
+            
         },
         slider:function(dir){
             if(typeof dir!='undefined'){
@@ -104,8 +72,8 @@ export default {
                         let elem = document.getElementsByClassName("anim__slider")
                          
                         let cssstyle = elem.item(0).style
-                        this.offset=this.offset+(-50)
-                        cssstyle.transform="translateX("+this.offset+"%)"
+                        this.offset=this.offset+(-45)
+                        cssstyle.transform="translateX("+this.offset+"rem)"
                         
                     }
                 }
@@ -117,8 +85,8 @@ export default {
                         this.isSlider=false;
                         let elem = document.getElementsByClassName("anim__slider")
                         let cssstyle = elem.item(0).style
-                        this.offset= this.offset+(50)
-                        cssstyle.transform="translateX("+this.offset+"%)"
+                        this.offset= this.offset+(45)
+                        cssstyle.transform="translateX("+this.offset+"rem)"
                     }
                 }
             }
@@ -143,7 +111,7 @@ export default {
     overflow: hidden;
 }
 .layout__item{
-    margin-right: 10%;
+    margin-right: 10rem;
     /* transform: translate(-50%,0); */
     /* position: absolute; */
 }
