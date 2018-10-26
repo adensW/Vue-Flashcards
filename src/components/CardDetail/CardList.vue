@@ -89,6 +89,7 @@ export default {
         },
         init:function(){
             this.currentCardId = 0*1;
+            console.log(this.$store)
         },
         slider:function(dir){
             if(typeof dir!='undefined'){
