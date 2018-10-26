@@ -11,7 +11,7 @@
                 v-bind:flipId="flipId"
                 v-bind:card="card"
                 v-bind:isFlip="isFlip"
-                v-on:frontinput.self="card.front=$event"
+                v-on:frontinput.self="getInput(card,$event)"
                 v-on:backinput.self="card.back=$event"
                 >
                 </card-list-item>
@@ -49,7 +49,15 @@ export default {
     mounted(){
        this.init();
     },
+    watch:{
+        cards:function(target){
+            console.log(target)
+        }
+    },
     methods:{
+        getInput:function(card,event){
+            console.log(card.id)
+        },
         flipCard:function(){
             this.flipId = this.currentCardId*1;
             this.isFlip = !this.isFlip;
@@ -129,4 +137,6 @@ export default {
     transform: translateX(50%)
 }
 </style>
+
+
 

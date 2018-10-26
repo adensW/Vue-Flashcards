@@ -41,9 +41,26 @@ const getters={
     }
 }
 const actions={
-
+    UpdateCard(context,prop){
+        //actions
+        context.commit('UpdateCard',prop);
+    }
 }
 const mutations={
+    UpdateCard:(state,prop)=>{
+        let index = -1;
+        for (let i = 0; i < state.cards.length; i++) {
+            const element = state.cards[i];
+            if(element.id===prop.id)
+            {
+                index = i;
+            }
+        }
+        if(index!=-1)
+        {
+            state.cards[index] = prop;
+        }
+    }
 
 }
 export default {
