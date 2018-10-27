@@ -16,7 +16,8 @@ module.exports = {
           "preventFullImport": true
         }
       }
-    ]
+    ],
+    ["@babel/plugin-syntax-dynamic-import"]
     
   ]
 }

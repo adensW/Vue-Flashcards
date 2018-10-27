@@ -57,6 +57,7 @@ export default {
     methods:{
         getInput:function(card,event){
             console.log(card.id)
+            console.log(event)
         },
         flipCard:function(){
             this.flipId = this.currentCardId*1;
@@ -65,7 +66,7 @@ export default {
         init:function(){
             this.currentCardId = 0*1;
             this.cards = this.$store.getters.AllCards
-            
+            console.log(this)
         },
         slider:function(dir){
             if(typeof dir!='undefined'){

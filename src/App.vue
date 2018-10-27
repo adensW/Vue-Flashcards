@@ -8,12 +8,14 @@
       enable-resize-watcher
       fixed
       app
+      :stateless='true'
     >
       <v-list>
         <v-list-tile
           value="true"
           v-for="(item, i) in items"
           :key="i"
+          :to="{path:item.path}"
         >
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>
@@ -32,13 +34,11 @@
      
     </v-toolbar>
     <v-content>
-      <v-container>
-       <CardList></CardList>
-
-      </v-container>
-     
+        <v-container> 
+          <router-view></router-view> 
+        </v-container>
     </v-content>
-   
+       <!-- <CardList></CardList> -->
     <v-footer :fixed="fixed" app>
       <span>&copy; 2017</span>
     </v-footer>
@@ -63,14 +63,38 @@ export default {
       clipped: false,
       drawer: false,
       fixed: false,
-      items: [{
+      items: [
+        {
+        icon: 'dashboard',
+        title: 'index',
+        path:"/"
+      },
+      {
         icon: 'bubble_chart',
-        title: 'Inspire'
-      }],
+        title: 'card',
+        path:"/card"
+      },
+      {
+        icon:'cloud_download',
+        title:'library',
+        path:'/library'
+      }
+      ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
       title: 'Vuetify.js'
+    }
+  },
+  mounted(){
+    this.init()
+    this.$router.push('/');
+    this.$router.push('/card');
+
+  },
+  methods:{
+    init:function(){
+      console.log(this.$router)
     }
   }
 }

@@ -14,11 +14,12 @@
     "store": "^2.0.12",
     "vue": "^2.5.17",
     "vue-anime": "^0.2.3",
-    "vue-route": "^1.5.1",
+    "vue-router": "^3.0.1",
     "vuetify": "^1.2.0",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@vue/cli-plugin-babel": "^3.0.3",
     "@vue/cli-plugin-eslint": "^3.0.3",
     "@vue/cli-service": "^3.0.3",
