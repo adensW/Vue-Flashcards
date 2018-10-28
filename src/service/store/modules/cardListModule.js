@@ -1,3 +1,4 @@
+import {dbcontext} from '@/service/context/dbcontext-class'
 const state={
     cards:[
         {
@@ -37,6 +38,12 @@ const state={
 }
 const getters={
     AllCards:(state)=>{
+        let carddbcontext1= new dbcontext();
+        console.log(carddbcontext1.open("test",1));
+        let carddbcontext2= new dbcontext('test2',2);
+        carddbcontext2.open();
+        carddbcontext1.open();
+
         return state.cards
     }
 }

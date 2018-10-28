@@ -5,9 +5,10 @@ import cardlist from '@/components/CardDetail/CardList.vue'
 import Library from '@/components/Library/Library.vue'
 Vue.use(VueRouter)
 const routes=[
-    {path:'/',component:Dashboard},
-    {path:'/card',component:cardlist},
-   {path:'/library',component:Library}
+    {path:'/',redirect:'/index'},
+    {path:'/index',component:Dashboard},
+    {path:'/card/:id',name:'card',component:cardlist},
+    {path:'/library',component:Library}
 ]
 export default new VueRouter({
    mode:'history',

@@ -38,6 +38,7 @@
           <router-view></router-view> 
         </v-container>
     </v-content>
+    
        <!-- <CardList></CardList> -->
     <v-footer :fixed="fixed" app>
       <span>&copy; 2017</span>
@@ -67,17 +68,21 @@ export default {
         {
         icon: 'dashboard',
         title: 'index',
-        path:"/"
-      },
-      {
-        icon: 'bubble_chart',
-        title: 'card',
-        path:"/card"
+        path:"/index"
       },
       {
         icon:'cloud_download',
         title:'library',
         path:'/library'
+      },
+       {
+        icon:'settings',
+        title:'setting',
+        path:'/setting'
+      }, {
+        icon:'close',
+        title:'close',
+        path:'/close'
       }
       ],
       miniVariant: false,
@@ -88,13 +93,10 @@ export default {
   },
   mounted(){
     this.init()
-    this.$router.push('/');
-    this.$router.push('/card');
-
   },
   methods:{
     init:function(){
-      console.log(this.$router)
+      
     }
   }
 }
