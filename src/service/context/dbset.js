@@ -23,11 +23,11 @@ export class dbset{
             return null;
         }
         if(!this.database.objectStoreNames.contains(name)){
-            this.schame = database.createObjectStore(name, prop)
+            this.schame = this.database.createObjectStore(name, prop)
         }
     }
     isSchameExist(){
-        if(typeof this.database===null||typeof this.database==='undefined'){
+        if(Object.keys(this.database).length === 0||typeof this.database==='undefined'){
             return false;
         }
         return true;
