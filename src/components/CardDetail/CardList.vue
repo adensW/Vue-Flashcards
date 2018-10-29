@@ -66,7 +66,7 @@ export default {
         init:function(){
             this.currentCardId = 0*1;
             this.cards = this.$store.getters.AllCards
-            console.log(this.$route.params)
+            // console.log(this.$route.params)
         },
         slider:function(dir){
             if(typeof dir!='undefined'){
