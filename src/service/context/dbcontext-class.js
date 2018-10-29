@@ -23,10 +23,10 @@ class context{
     }
     createTable(name,prop){
         let self = this;
-        this.open(this._dbname,this._version,"","",function(){
-            console.log(self.database)
-            let objectStore = a.datebase.createObjectStore(name, prop);
-            console.log(objectStore)
+        this.open(this._dbname,this._version,"","",function(database){
+            console.log(database)
+            let objectStore = database.createObjectStore(name, prop);
+            console.log(self)
         })
     }
     open(dbname,version,success,error,upgrade){
@@ -63,7 +63,7 @@ class context{
         request.onupgradeneeded = function(event){
             self.database = event.target.result;
             if (upgrade && (typeof upgrade === 'function')) {
-                upgrade(self);
+                upgrade(self.database);
             }
             console.log("upgrade"+new Date())
            
