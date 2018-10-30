@@ -124,6 +124,9 @@ export default {
     /* transform: translate(-50%,0); */
     /* position: absolute; */
 }
+.layout__item:first-child{
+    margin-left: 8rem;
+}
 .anim__container{
     height:100%;
 }
@@ -132,10 +135,10 @@ export default {
     position:absolute;
 }
 .anim__slider--active{
-    transform: translateX(-50%)
+    transform: translateX(0)
 }
 .anim__slider--reverse{
-    transform: translateX(50%)
+    transform: translateX(0)
 }
 </style>
 
