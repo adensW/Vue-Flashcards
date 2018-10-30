@@ -46,7 +46,12 @@ const getters={
         }).catch((result)=>{
             console.log(result)
         })
-        carddbcontext.get()
+        carddbcontext.get().then((result)=>{
+            console.log(result)
+            console.log(carddbcontext)
+        }).catch((result)=>{
+            console.log(result)
+        })
         
         return state.cards
     }

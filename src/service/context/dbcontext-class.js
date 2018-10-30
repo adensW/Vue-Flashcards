@@ -72,7 +72,8 @@ class context{
     }
     get(){
         let self= this;
-        this.open(this._dbname,this._version,function(database){
+        const promise = new Promise(function(resolve,reject){
+            self.open(self._dbname,self._version,function(database){
             var transaction = database.transaction(['testtable']);
             var objectStore = transaction.objectStore('testtable');
             var request = objectStore.get(1);
@@ -83,6 +84,7 @@ class context{
                     message:'get data failed',
                     data:null
                 }
+                reject(self.result)
                 console.log('事务失败');
             };
 
@@ -93,6 +95,7 @@ class context{
                         message:'get data success',
                         data:request.result
                     }
+                    resolve(self.result);
                     console.log('Name: ' + request.result.name);
                     console.log('Age: ' + request.result.age);
                     console.log('Email: ' + request.result.email);
@@ -101,7 +104,8 @@ class context{
                 }
             };
         })
-        
+    })
+    return promise;
     }
     add(){
         let self = this;
