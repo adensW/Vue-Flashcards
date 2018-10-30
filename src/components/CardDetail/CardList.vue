@@ -81,7 +81,7 @@ export default {
                         let elem = document.getElementsByClassName("anim__slider")
                          
                         let cssstyle = elem.item(0).style
-                        this.offset=this.offset+(-45)
+                        this.offset=this.offset+(-21)
                         cssstyle.transform="translateX("+this.offset+"rem)"
                         
                     }
@@ -94,7 +94,7 @@ export default {
                         this.isSlider=false;
                         let elem = document.getElementsByClassName("anim__slider")
                         let cssstyle = elem.item(0).style
-                        this.offset= this.offset+(45)
+                        this.offset= this.offset+(21)
                         cssstyle.transform="translateX("+this.offset+"rem)"
                     }
                 }
@@ -106,21 +106,21 @@ export default {
 <style scoped>
 .container--template{
     display:block;
-    height:80vh;
+    height:20rem;
     
 }
 .layout__container{
     width: 100%; /* card width */
-    height:70vh;
+    height:20rem;
     display: flex;
 }
 .layout__viewport{
     width:100%;
-    height:600px;
+    height:20rem;
     overflow: hidden;
 }
 .layout__item{
-    margin-right: 10rem;
+    margin-right: 2rem;
     /* transform: translate(-50%,0); */
     /* position: absolute; */
 }

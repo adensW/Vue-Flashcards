@@ -94,28 +94,21 @@ class context{
         
     }
     add(){
-        var request = this.database.transaction(['testtable'], 'readwrite')
-        .objectStore('testtable')
-        .add({ id: 1, name: '张三', age: 24, email: 'zhangsan@example.com' });
-    
-        request.onsuccess = function (event) {
-            console.log('数据写入成功');
-        };
+        let self = this;
+        this.open(this._dbname,this._version,"","",function(database){
+            var request = database.transaction(['testtable'], 'readwrite')
+            .objectStore('testtable')
+            .add({ id: 1, name: '张三', age: 24, email: 'zhangsan@example.com' });
         
-        request.onerror = function (event) {
-            console.log('数据写入失败');
-        }
+            request.onsuccess = function (event) {
+                console.log('数据写入成功');
+            };
+            
+            request.onerror = function (event) {
+                console.log('数据写入失败');
+            }
+        })
+       
     }
-    // createTable(name,prop){
-    //     let self = this;
-    //     self.open(self._dbname,self._version).then(function(){
-
-    //         self.tables.push(new dbset(self.request,name,prop))
-
-    //     })
-
-    //     return self;
-    // }
-
 }
 export {context as dbcontext};

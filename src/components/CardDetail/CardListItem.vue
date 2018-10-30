@@ -99,8 +99,8 @@ export default {
     pointer-events: none;
 }
 .flip__wrap{
-    width: 35rem; 
-    height:35rem; 
+    width: 20rem; 
+    height:20rem; 
     /* width: 60vw; 
     height:70vh; */
     margin:0 auto;
