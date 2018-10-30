@@ -45,7 +45,7 @@ class context{
                 data:null
             }
             if (success && (typeof success === 'function')) {
-                success();
+                success(self.database);
             }
             console.log("open success"+new Date())
         };
@@ -72,9 +72,9 @@ class context{
     }
     get(){
         let self= this;
-        this.open().then(function(){
-            var transaction = self.database.transaction(['testdb']);
-            var objectStore = transaction.objectStore('testtable2');
+        this.open(this._dbname,this._version,function(database){
+            var transaction = database.transaction(['testtable']);
+            var objectStore = transaction.objectStore('testtable');
             var request = objectStore.get(1);
 
             request.onerror = function(event) {
@@ -95,7 +95,7 @@ class context{
     }
     add(){
         let self = this;
-        this.open(this._dbname,this._version,"","",function(database){
+        this.open(this._dbname,this._version,function(database){
             var request = database.transaction(['testtable'], 'readwrite')
             .objectStore('testtable')
             .add({ id: 1, name: '张三', age: 24, email: 'zhangsan@example.com' });
