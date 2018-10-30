@@ -78,11 +78,21 @@ class context{
             var request = objectStore.get(1);
 
             request.onerror = function(event) {
+                self.result={
+                    code:20,
+                    message:'get data failed',
+                    data:null
+                }
                 console.log('事务失败');
             };
 
             request.onsuccess = function( event) {
                 if (request.result) {
+                    self.result={
+                        code:20,
+                        message:'get data success',
+                        data:request.result
+                    }
                     console.log('Name: ' + request.result.name);
                     console.log('Age: ' + request.result.age);
                     console.log('Email: ' + request.result.email);
@@ -95,20 +105,35 @@ class context{
     }
     add(){
         let self = this;
-        this.open(this._dbname,this._version,function(database){
-            var request = database.transaction(['testtable'], 'readwrite')
-            .objectStore('testtable')
-            .add({ id: 1, name: '张三', age: 24, email: 'zhangsan@example.com' });
-        
-            request.onsuccess = function (event) {
-                console.log('数据写入成功');
-            };
+        const promise = new Promise(function(resolve,reject){
+            self.open(self._dbname,self._version,function(database){
+                var request = database.transaction(['testtable'], 'readwrite')
+                .objectStore('testtable')
+                .add({ id: 1, name: '张三', age: 24, email: 'zhangsan@example.com' });
             
-            request.onerror = function (event) {
-                console.log('数据写入失败');
-            }
+                request.onsuccess = function (event) {
+                    self.result={
+                        code:10,
+                        message:'write data success',
+                        data:null
+                    }
+                    resolve(self.result);
+                    console.log('数据写入成功');
+                };
+                
+                request.onerror = function (event) {
+                    self.result={
+                        code:-10,
+                        message:'write data failed',
+                        data:null
+                    }
+                    reject(self.result)
+                    console.log('数据写入失败');
+                }
+            })
         })
        
+       return promise;
     }
 }
 export {context as dbcontext};

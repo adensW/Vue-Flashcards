@@ -41,7 +41,11 @@ const getters={
         let carddbcontext= new dbcontext('testdb',1);
 
         carddbcontext.createTable('testtable',{ keyPath: 'id' })
-        // carddbcontext.add()
+        carddbcontext.add().then((result)=>{
+            console.log(result)
+        }).catch((result)=>{
+            console.log(result)
+        })
         carddbcontext.get()
         
         return state.cards
