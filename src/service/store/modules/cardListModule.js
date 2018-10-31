@@ -41,12 +41,13 @@ const getters={
         let carddbcontext= new dbcontext('testdb',1);
 
         carddbcontext.createTable('testtable',{ keyPath: 'id' })
-        carddbcontext.add().then((result)=>{
-            console.log(result)
-        }).catch((result)=>{
-            console.log(result)
-        })
-        carddbcontext.get().then((result)=>{
+        carddbcontext.add('testtable',{ id: 1, name: '张三', age: 24, email: 'zhangsan@example.com' })
+            .then((result)=>{
+                console.log(result)
+            }).catch((result)=>{
+                console.log(result)
+            })
+        carddbcontext.get('testtable',1).then((result)=>{
             console.log(result)
             console.log(carddbcontext)
         }).catch((result)=>{

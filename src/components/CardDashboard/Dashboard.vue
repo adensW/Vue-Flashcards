@@ -6,6 +6,7 @@
             class='flex__item '
             >
             <router-link :to="{name:'card',params:{id:set.id}}">
+           
             <div class='folder shadow--2 shadow__hoverable'>
                 <i><div class='folder__name'>{{set.name}}</div></i>
             </div>
@@ -83,12 +84,13 @@ export default {
     margin-bottom: 4rem;
 }
 .folder{
+    z-index: 1;
     position: relative;
-    top: 2rem;
+    top: 1rem;
     left: 0;
     background: #eee;
-    width: 20rem;
-    height: 10rem;
+    width: 9rem;
+    height: 6.2rem;
     box-sizing: border-box;
     border: 8px solid #82befa;
     border-top-width: 2rem;
@@ -112,30 +114,32 @@ export default {
   position: absolute;
 }
 .folder:before {
-    width: 6.5rem;
-    height: 1rem;
-    bottom: 9rem;
+    z-index: 0;
+    width: 4rem;
+    height: 0.8rem;
+    bottom:5.5rem;
     left: -8px;
     border-radius: 3.25px 3.25px 0 0;
 }
 .folder i,
 .folder:after {
-  width: 20rem;
-  height: 9rem;
-  line-height: 10rem;
-  text-align: center;
-  bottom: -8px;
-  left: -8px;
-  transition: transform 0.2s, background 0.2s;
-  transform-origin: 0% 100%;
+    z-index: 1;
+    width: 9rem;
+    height: 6rem;
+    line-height: 6rem;
+    text-align: center;
+    bottom: -8px;
+    left: -8px;
+    transition: transform 0.2s, background 0.2s;
+    transform-origin: 0% 100%;
 }
 .folder:after {
-  background: #63a7eb;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 3.25px;
+    background: #63a7eb;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 3.25px;
 }
 .folder i {
-  z-index: 1;
+  z-index: 2;
   
   color: #437eba;
   font-size: 2rem;
@@ -173,9 +177,7 @@ export default {
 .shadow--5{
     box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
 }
-.folder--muti{
-    /* background-color: burlywood; */
-}
+
 .folder--muti::after{
     content: " ";
     float: left;
