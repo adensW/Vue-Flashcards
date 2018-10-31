@@ -90,7 +90,7 @@ export default {
     left: 0;
     background: #eee;
     width: 9rem;
-    height: 6.2rem;
+    height: 6.5rem;
     box-sizing: border-box;
     border: 8px solid #82befa;
     border-top-width: 2rem;
@@ -120,6 +120,13 @@ export default {
     bottom:5.5rem;
     left: -8px;
     border-radius: 3.25px 3.25px 0 0;
+}
+@media screen and (min-width: 800px) {
+    .folder:before {
+    
+    height: 0.6rem;
+    bottom:6rem;
+    }
 }
 .folder i,
 .folder:after {
