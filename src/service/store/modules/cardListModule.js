@@ -8,9 +8,10 @@ const state={
 const getters={
     AllCards:(state)=>{
         
-        let context = new dbcontext("DB_Vue_FlashCard",1);
-        context.open('DB_Vue_FlashCard').getAll().then(function(data){
-            console.log(data)
+        let context = new dbcontext("DB_Vue_FlashCard",2);
+        context.open('DB_Vue_FlashCard').set("Cards").getAll().then(function(data){
+            state.cards= data;
+            // console.log(data)
         });
         // result.then(function(data){
         //     console.log(data);

@@ -93,18 +93,35 @@ export default {
     }
   },
   mounted(){
-    this.init()
+    this.$nextTick(function(){
+          this.init()
+    })
+    // 
+   
   },
   methods:{
     init:function(){
-      //create database
-      let carddbcontext= new dbcontext('DB_Vue_FlashCard',1);
-      carddbcontext.open('DB_Vue_FlashCard',1).createTable("Cards",{keyPath:'id'});
+      //init Sets
+     
       
+      //create database
+      let carddbcontext= new dbcontext('DB_Vue_FlashCard',2);
+      carddbcontext.open('DB_Vue_FlashCard',2);
+      // carddbcontext.open('DB_Vue_FlashCard',1).createTable("Cards",{keyPath:'id'});
+      // carddbcontext.open('DB_Vue_FlashCard',2).createTable("Sets",{keyPath:'id'});
       // seed data
-      let result = carddbcontext.open('DB_Vue_FlashCard',1).set("Cards").add(
-                {id:0,front:'front_0',back:'back_0',comment:'comment_0'}
-                )
+      // let result = carddbcontext.open('DB_Vue_FlashCard',1).set("Cards").add(
+      //           {id:0,front:'front_0',back:'back_0',comment:'comment_0'}
+      //           )
+      // let a = carddbcontext.open('DB_Vue_FlashCard').set("Sets").add(
+      //           {id:0,name:'English',details:'for English word remember'});
+      // a.then(function(){})
+      // carddbcontext.open('DB_Vue_FlashCard').set("Sets").add(
+      //           {id:1,name:'Internet',details:'For Internet acknowledge'});
+      // carddbcontext.open('DB_Vue_FlashCard').set("Sets").add(
+      //           {id:2,name:'MySQL',details:'For Database acknowledge'});
+      // carddbcontext.open('DB_Vue_FlashCard').set("Sets").add(
+      //           {id:3,name:'Poem',details:'For some awosome poem'})
       }
   }
 }
