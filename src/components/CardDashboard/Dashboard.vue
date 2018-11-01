@@ -11,8 +11,6 @@
                 <i><div class='folder__name'>{{set.name}}</div></i>
             </div>
             </router-link>
-           
-
                 <!-- <div class='folder__bar'>
                     <div>...</div><div>+</div>                    
                 </div> -->

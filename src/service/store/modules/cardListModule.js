@@ -39,25 +39,18 @@ const state={
 const getters={
     AllCards:(state)=>{
         let carddbcontext= new dbcontext('testdb',1);
-        let result= carddbcontext.open('testdb',1).set("testtable");
-        console.log(result);
-
-        
-        
-        // carddbcontext.createTable('testtable',{ keyPath: 'id' })
-        // carddbcontext.add('testtable',{ id: 1, name: '张三', age: 24, email: 'zhangsan@example.com' })
-        //     .then((result)=>{
-        //         console.log(result)
-        //     }).catch((result)=>{
-        //         console.log(result)
-        //     })
-        // carddbcontext.get('testtable',1).then((result)=>{
-        //     console.log(result)
-        //     console.log(carddbcontext)
-        // }).catch((result)=>{
-        //     console.log(result)
+        let result= carddbcontext.open('testdb',3).set("testtable").getAll();
+        result.then(function(data){
+            console.log(data);
+        });
+        // let b =carddbcontext.open('testdb',3).createTable('cardtest',{keyPath:'id'})
+        // b.then(function(data){
+        //     console.log(data)
         // })
-        
+        // let a = carddbcontext.open('testdb',1).set("testtable").delete(3)
+        // a.then(function(data){
+        //     console.log(data)
+        // })
         return state.cards
     }
 }

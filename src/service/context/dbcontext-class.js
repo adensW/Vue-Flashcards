@@ -1,5 +1,14 @@
 import {} from '@/service/context/dbset'
+const  Code={
+    Init:0,
+    OpenSuccess:1,
+    OpenFailed:-1,
+    ExecutionSuccess:10,
+    ExecutionFailed:-10,
+    Fatel:-999,
+    Blocked:-998,
 
+}
 class context{
     constructor(dbname,ver){
         if(!window.indexedDB)
@@ -16,23 +25,29 @@ class context{
             message:"",
             data:null,
         };
+        this.table="",
         this.database = null;
         this.transaction = null;
-        console.log("init")
     }
     createTable(name,prop){
         let self = this;
-        this.open(self._dbname,self._version,"","",function(database){
-            let objectStore = database.createObjectStore(name, prop);
-            
+        let promise = new Promise(function(resolve,reject){
+            self.PromiseQueue.then(function(){
+                console.log(self.database)
+                if (!self.database.objectStoreNames.contains(name)) {
+                    self.database.createObjectStore(name, prop);
+                    self._version=self.database.version
+                }
+            }).catch(function(){
+                console.log("error")
+            })
         })
+        
+       return promise;
     }
     set(table){
         let self = this;
-        let promise = new Promise(function(resolve,reject){
-            console.log(self)
-        })
-        this.PromiseQueue = Promise.all(this.PromiseQueue,promise)
+        self.table = table;
         return self;
     }
     open(dbname,version){
@@ -42,12 +57,12 @@ class context{
             return null;
         }
         let promise = new Promise(function(resolve,reject){
-            const request = window.indexedDB.open(dbname,version);
+            const request = window.indexedDB.open(dbname,version=version||self._version);
             request.onsuccess = function(event){
                 self.database = event.target.result;
                 self.result={
                     result:false,
-                    code:1,
+                    code:Code.OpenSuccess,
                     message:'open database success',
                     data:null
                 }
@@ -56,7 +71,7 @@ class context{
             request.onerror =function(event){
                     self.result={
                         result:false,
-                        code:-1,
+                        code:Code.OpenFailed,
                         message:'open database failed',
                         Exception:event,
                         data:null
@@ -70,7 +85,7 @@ class context{
             request.onblocked = function(event){
                 self.result={
                     result:false,
-                    code:-1,
+                    code:Code.Blocked,
                     message:'last database openning',
                     Exception:event,
                     data:null
@@ -78,66 +93,115 @@ class context{
                 reject();
             }
         })
-        this.PromiseQueue.Promise.All(promise);
+        this.PromiseQueue=promise;
         return self;
     }
-    get(table,id){
+    get(id){
         let self= this;
+        if(self.table===""){
+            return null;
+        }
+       
         const promise = new Promise(function(resolve,reject){
-            self.open(self._dbname,self._version,function(database){
-            var transaction = database.transaction([table]);
-            var objectStore = transaction.objectStore(table);
-            var request = objectStore.get(id);
+            self.PromiseQueue.then(function(){
+                let transaction = self.database.transaction([self.table])
+                var objectStore = transaction.objectStore(self.table);
+                var request = objectStore.get(id);
 
-            request.onerror = function(event) {
-                self.result={
-                    result :false,
-                    code:20,
-                    exception:event,
-                    message:'get data failed',
-                    data:null
-                }
-                reject(self.result)
-            };
+                request.onerror = function(event) {
+                    self.result ={
+                        code:Code.ExecutionFailed,
+                        message:"Get Data Failed with key "+id,
+                        exception:event,
+                        data:null
+                    }
+                    reject(event.target.result);
+                    self.database.close();
+                };
 
-            request.onsuccess = function( event) {
-                if (request.result) {
-                    self.result={
-                        result:true,
-                        code:20,
-                        event:event,
-                        message:'get data success',
-                        data:request.result
+                request.onsuccess = function(event) {
+                    if (request.result) {
+                        self.result={
+                            code:Code.ExecutionSuccess,
+                            message:"Get Data Success",
+                            exception:null,
+                            data:event.target.result
+
+                        }
+                        resolve(event.target.result);
+                        self.database.close();
+                    } else {
+                        self.result={
+                            code:Code.ExecutionFailed,
+                            message:"Get Data failed",
+                            exception:event,
+                            data:null
+
+                        }
+                        reject(event.target.result);
+                        self.database.close();
                     }
-                    resolve(self.result);
-                    
-                } else {
-                    self.result={
-                        result:true,
-                        code:20,
-                        message:'transaction execution success but no date return',
-                        data:request.result
-                    }
-                    resolve(self.result);
-                }
-            };
-        })
-    })
-    return promise;
+                };
+            })
+                
+            }).catch(function(){
+                console.log("open database failed");
+                console.log(self);
+                self.database.close();
+    
+            })
+        this.PromiseQueue = promise;
+        return promise;
     }
-    getAll(query){}
-    add(table,data){
+    getAll(){
+        let self= this;
+        if(self.table===""){
+            return null;
+        }
+        const promise = new Promise(function(resolve,reject){
+            self.PromiseQueue.then(function(){
+                let transaction = self.database.transaction(self.table,'readonly');
+                let objectStore = transaction.objectStore(self.table);
+                if ('getAll' in objectStore) {
+                    // IDBObjectStore.getAll() will return the full set of items in our store.
+                    objectStore.getAll().onsuccess = function(event) {
+                        self.result = {
+                            code:Code.ExecutionSuccess,
+                            message:"get data success",
+                            exception:null,
+                            data:event.target.result
+                        }
+                        resolve(event.target.result);
+                    };
+                  } else {
+                    // Fallback to the traditional cursor approach if getAll isn't supported.
+                    var data = [];
+                    objectStore.openCursor().onsuccess = function(event) {
+                      var cursor = event.target.result;
+                      if (cursor) {
+                        data.push(cursor.value);
+                        cursor.continue();
+                      } else {
+                        reject(event);
+                      }
+                    };
+                  }
+            })
+        })
+        return promise;
+    }
+    add(data){
         let self = this;
         const promise = new Promise(function(resolve,reject){
-            self.open(self._dbname,self._version,function(database){
-                var request = database.transaction([table], 'readwrite')
-                .objectStore(table)
+            self.PromiseQueue.then(function(){
+                var request = self.database.transaction([self.table], 'readwrite')
+                .objectStore(self.table)
                 .add(data);
             
                 request.onsuccess = function (event) {
                     self.result={
                         result :true,
-                        code:10,
+                        code:Code.ExecutionSuccess,
                         event:event,
                         message:'write data success',
                         data:null
@@ -148,7 +212,41 @@ class context{
                 request.onerror = function (event) {
                     self.result={
                         result :false,
-                        code:-10,
+                        code:Code.ExecutionFailed,
+                        exception:event.target,
+                        message:'write data failed, please see more details in exception',
+                        data:null
+                    }
+                    reject(self.result)
+                }
+            })
+        })
+       
+       return promise;
+    }
+    put(data){
+        let self = this;
+        const promise = new Promise(function(resolve,reject){
+            self.PromiseQueue.then(function(){
+                var request = self.database.transaction([self.table], 'readwrite')
+                .objectStore(self.table)
+                .put(data);
+            
+                request.onsuccess = function (event) {
+                    self.result={
+                        result :true,
+                        code:getComputedStyle.ExecutionSuccess,
+                        event:event,
+                        message:'write data success',
+                        data:null
+                    }
+                    resolve(self.result);
+                };
+                
+                request.onerror = function (event) {
+                    self.result={
+                        result :false,
+                        code:Code.ExecutionFailed,
                         exception:event,
                         message:'write data failed',
                         data:null
@@ -160,11 +258,39 @@ class context{
        
        return promise;
     }
-    put(data,key){
-
-    }
     delete(key){
-
+        let self = this;
+        const promise = new Promise(function(resolve,reject){
+            self.PromiseQueue.then(function(){
+                var request = self.database.transaction([self.table], 'readwrite')
+                .objectStore(self.table)
+                .delete(key);
+            
+                request.onsuccess = function (event) {
+                    self.result={
+                        result :true,
+                        code:Code.ExecutionSuccess,
+                        event:event.target,
+                        message:'Delete data success',
+                        data:null
+                    }
+                    resolve(self.result);
+                };
+                
+                request.onerror = function (event) {
+                    self.result={
+                        result :false,
+                        code:Code.ExecutionFailed,
+                        exception:event.target,
+                        message:'delete data failed, please see more details in exception',
+                        data:null
+                    }
+                    reject(self.result)
+                }
+            })
+        })
+       
+       return promise;
     }
 }
 export {context as dbcontext};
