@@ -51,6 +51,7 @@
 
 import CardList from './components/CardDetail/CardList'
 import AdenBtnNew from './components/button/AdenBtnNew'
+import {dbcontext} from './service/context/dbcontext-class.js'
 
 export default {
   name: 'App',
@@ -96,7 +97,9 @@ export default {
   },
   methods:{
     init:function(){
-      
+      //create database
+      // let carddbcontext= new dbcontext('DB_Vue_FlashCard',1);
+      // let result= carddbcontext.open('DB_Vue_FlashCard',1).creatTable("Cards");
     }
   }
 }

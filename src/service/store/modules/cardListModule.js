@@ -38,11 +38,10 @@ const state={
 }
 const getters={
     AllCards:(state)=>{
-        let carddbcontext= new dbcontext('testdb',1);
-        let result= carddbcontext.open('testdb',3).set("testtable").getAll();
-        result.then(function(data){
-            console.log(data);
-        });
+        
+        // result.then(function(data){
+        //     console.log(data);
+        // });
         // let b =carddbcontext.open('testdb',3).createTable('cardtest',{keyPath:'id'})
         // b.then(function(data){
         //     console.log(data)

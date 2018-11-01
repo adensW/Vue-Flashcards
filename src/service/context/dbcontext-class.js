@@ -265,7 +265,6 @@ class context{
                 var request = self.database.transaction([self.table], 'readwrite')
                 .objectStore(self.table)
                 .delete(key);
-            
                 request.onsuccess = function (event) {
                     self.result={
                         result :true,
