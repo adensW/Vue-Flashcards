@@ -98,9 +98,14 @@ export default {
   methods:{
     init:function(){
       //create database
-      // let carddbcontext= new dbcontext('DB_Vue_FlashCard',1);
-      // let result= carddbcontext.open('DB_Vue_FlashCard',1).creatTable("Cards");
-    }
+      let carddbcontext= new dbcontext('DB_Vue_FlashCard',1);
+      carddbcontext.open('DB_Vue_FlashCard',1).createTable("Cards",{keyPath:'id'});
+      
+      // seed data
+      let result = carddbcontext.open('DB_Vue_FlashCard',1).set("Cards").add(
+                {id:0,front:'front_0',back:'back_0',comment:'comment_0'}
+                )
+      }
   }
 }
 </script>
