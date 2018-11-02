@@ -17,7 +17,7 @@
             </div>
             <div class='flex__item '>
                 <div class='folder--outline shadow--2 shadow__hoverable'>
-                    <i><v-btn round fab color='pink'> <v-icon dark>add</v-icon></v-btn></i>
+                    <i><v-btn outline fab color='#1f7cda'><v-icon dark>add</v-icon></v-btn></i>
                 </div>
                  
             </div>
@@ -72,6 +72,7 @@ export default {
     position: relative;
     top: 1rem;
     left: 0;
+    /* color: rgba(255, 192, 203, 0.685); */
     background: #eee;
     width: 9rem;
     height: 6.5rem;
@@ -83,19 +84,40 @@ export default {
     transform-origin: 0% 100%;
     cursor: pointer;
 }
+.folder--outline{
+    background-color: #bbd9f7;
+    border: 1px dashed  #1f7cda;
+    position: relative;
+    width:9rem;
+    height:6.5rem;
+    border-radius: 0 3.25px 3.25px;
+    cursor: pointer;
+    text-align: center;
+}
 .folder--outline:before{
-    background-color: transparent;
-    border: 2px solid #80befa
+    background: #bbd9f7;
+    content: " ";
 }
 .folder:before,
 .folder:after {
   content: '';
   background: #82befa;
 }
+.folder--outline:before,
 .folder:before,
 .folder:after,
 .folder i {
   position: absolute;
+}
+.folder--outline:before{
+     z-index: 0;
+    width: 4rem;
+    height: 0.8rem;
+    bottom:6.3rem;
+    left: -1px;
+    border: 1px dashed #1f7cda;
+    border-bottom: none;
+    border-radius: 3.25px 3.25px 0 0;
 }
 .folder:before {
     z-index: 0;

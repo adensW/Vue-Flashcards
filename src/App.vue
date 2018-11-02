@@ -105,13 +105,25 @@ export default {
      
       
       //create database
-      let carddbcontext= new dbcontext('DB_Vue_FlashCard',2);
-      carddbcontext.open('DB_Vue_FlashCard',2);
+      // let carddbcontext= new dbcontext('DB_Vue_FlashCard');
+      // carddbcontext.open('DB_Vue_FlashCard',1);
       // carddbcontext.open('DB_Vue_FlashCard',1).createTable("Cards",{keyPath:'id'});
       // carddbcontext.open('DB_Vue_FlashCard',2).createTable("Sets",{keyPath:'id'});
       // seed data
-      // let result = carddbcontext.open('DB_Vue_FlashCard',1).set("Cards").add(
-      //           {id:0,front:'front_0',back:'back_0',comment:'comment_0'}
+      // let result = carddbcontext.open('DB_Vue_FlashCard').set("Cards").add(
+      //           {id:0,front:'front_0',back:'back_0',comment:'comment_0',setId:0}
+      //           )
+      //           carddbcontext.open('DB_Vue_FlashCard').set("Cards").add(
+      //           {id:1,front:'front_1',back:'back_1',comment:'comment_1',setId:0}
+      //           )
+      //           carddbcontext.open('DB_Vue_FlashCard').set("Cards").add(
+      //           {id:2,front:'front_2',back:'back_2',comment:'comment_2',setId:0}
+      //           )
+      //           carddbcontext.open('DB_Vue_FlashCard').set("Cards").add(
+      //           {id:3,front:'front_3',back:'back_3',comment:'comment_3',setId:1}
+      //           )
+      //           carddbcontext.open('DB_Vue_FlashCard').set("Cards").add(
+      //           {id:4,front:'front_4',back:'back_4',comment:'comment_4',setId:1}
       //           )
       // let a = carddbcontext.open('DB_Vue_FlashCard').set("Sets").add(
       //           {id:0,name:'English',details:'for English word remember'});
