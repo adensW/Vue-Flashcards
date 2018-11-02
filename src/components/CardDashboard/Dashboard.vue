@@ -39,19 +39,15 @@ export default {
             
         }
     },
-    mounted(){
+    created (){
         this.init();
+    },
+    mounted(){
+        
     },
     methods:{
         init:function(){
-             let context = new dbcontext("DB_Vue_FlashCard",2);
-            context.open('DB_Vue_FlashCard').set("Sets").getAll().then((data)=>{
-            this.$store.commit("initSets",data)
              this.sets =this.$store.getters.AllSets
-            }).catch(function(data){
-                console.log(data);
-            });
-           
         }
     }
     
