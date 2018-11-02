@@ -1,6 +1,12 @@
 <template>
     <div class='container--tempalte'>
-        <div class='container--flex'>
+        <div v-if="loading">
+            loading
+        </div>
+         <div v-if="error">
+            error
+        </div>
+        <div v-if="sets" class='container--flex'>
             <div v-for="set in sets" 
             :key="set.id"
             class='flex__item '
@@ -33,25 +39,34 @@ export default {
     name:'Dashboad',
     data(){
         return{
+            error:false,
+            loading:true,
             sets:[
                
             ]
             
         }
     },
-    mounted(){
+    created(){
         this.init();
     },
+    mounted(){
+        
+    },
+   
     methods:{
         init:function(){
-             let context = new dbcontext("DB_Vue_FlashCard",2);
+            let context = new dbcontext("DB_Vue_FlashCard",2);
             context.open('DB_Vue_FlashCard').set("Sets").getAll().then((data)=>{
-            this.$store.commit("initSets",data)
-             this.sets =this.$store.getters.AllSets
+                this.$store.commit("initSets",data)
+                this.sets =this.$store.getters.AllSets
+                this.loading = false;
             }).catch(function(data){
-                console.log(data);
-            });
-           
+                this.error = true;
+            })
+        },
+        initCardStore(id){
+            console.log(id)
         }
     }
     

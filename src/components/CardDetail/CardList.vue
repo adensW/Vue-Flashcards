@@ -1,21 +1,26 @@
 <template>
     <div class="container--template">
+       <div v-if="loading">
+           loading
+       </div>
+       <div v-if="error">
+           error
+       </div>
+        <div v-if="cards" class='layout__viewport anim__container'>
        
-            <div class='layout__viewport anim__container'>
-           
-               <div class="anim__slider layout__container" 
-               v-bind:class="{'anim__slider--active':isSlider,'anim__silder--reverse':!isSlider}"
-               >
-                <card-list-item class="layout__item"
-                v-for="card in cards" :key="card.id"
-                v-bind:flipId="flipId"
-                v-bind:card="card"
-                v-bind:isFlip="isFlip"
-                v-on:frontinput.self="getInput(card,$event)"
-                v-on:backinput.self="card.back=$event"
-                >
-                </card-list-item>
-               </div>
+           <div class="anim__slider layout__container" 
+           v-bind:class="{'anim__slider--active':isSlider,'anim__silder--reverse':!isSlider}"
+           >
+            <card-list-item class="layout__item"
+            v-for="card in cards" :key="card.id"
+            v-bind:flipId="flipId"
+            v-bind:card="card"
+            v-bind:isFlip="isFlip"
+            v-on:frontinput.self="getInput(card,$event)"
+            v-on:backinput.self="card.back=$event"
+            >
+            </card-list-item>
+           </div>
            
         </div>
         <div>
@@ -30,6 +35,8 @@
 import CardListItem from './CardListItem'
 import {} from '@/plugins/atween.js'
 import {VueAnime} from 'vue-anime'
+import {dbcontext} from '@/service/context/dbcontext-class.js'
+
 export default {
     name:"CardList",
     components:{
@@ -38,6 +45,8 @@ export default {
     },
     data(){
         return{
+            loading:true,
+            error:false,
             flipId:"0",
             offset:0,
             isFlip:false,
@@ -46,15 +55,23 @@ export default {
             cards:[]
         }
     },
+   
+    created(){
+        this.init();
+    },
     mounted(){
-       this.init();
+    //    this.init();
     },
     watch:{
         cards:function(target){
            
-        }
+        },
+        '$route': 'init'
     },
     methods:{
+        initCardStore(id){
+            console.log(id)
+        },
         getInput:function(card,event){
             console.log(card.id)
             console.log(event)
@@ -64,8 +81,18 @@ export default {
             this.isFlip = !this.isFlip;
         },
         init:function(){
-            this.currentCardId = 0*1;
-            this.cards = this.$store.getters.AllCards
+            let setId = this.$route.params.id;
+            let context = new dbcontext("DB_Vue_FlashCard",2);
+            context.open('DB_Vue_FlashCard').set("Cards").getAll().then((data)=>{
+                console.log(data)
+                this.$store.commit("initCards",data)
+                this.cards =this.$store.getters.AllCards
+                this.loading = false;
+            }).catch(function(data){
+                this.error = true;
+            })
+            // this.currentCardId = id;
+            // this.cards = this.$store.getters.AllCards
             // console.log(this.$route.params)
         },
         slider:function(dir){

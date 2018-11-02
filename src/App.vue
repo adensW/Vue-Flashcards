@@ -38,8 +38,6 @@
           <router-view></router-view> 
         </v-container>
     </v-content>
-    
-       <!-- <CardList></CardList> -->
     <v-footer :fixed="fixed" app>
       <span>&copy; 2017</span>
     </v-footer>
@@ -92,10 +90,8 @@ export default {
       title: 'Vuetify.js'
     }
   },
-  mounted(){
-    this.$nextTick(function(){
-          this.init()
-    })
+  created(){
+    this.init()
     // 
    
   },
@@ -134,6 +130,7 @@ export default {
       //           {id:2,name:'MySQL',details:'For Database acknowledge'});
       // carddbcontext.open('DB_Vue_FlashCard').set("Sets").add(
       //           {id:3,name:'Poem',details:'For some awosome poem'})
+      
       }
   }
 }
