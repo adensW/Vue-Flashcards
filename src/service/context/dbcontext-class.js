@@ -1,7 +1,7 @@
 import { } from '@/service/context/dbset'
 const Code = {
     Init: 0,
-    InitFailed:-997,
+    InitFailed: -997,
     OpenSuccess: 1,
     OpenFailed: -1,
     ExecutionSuccess: 10,
@@ -15,9 +15,9 @@ class context {
         if (!window.indexedDB) {
             // console.error("Your browser doesn't support a stable version of IndexedDB. Such and such feature will not be available.")
             return {
-                code:Code.InitFailed,
-                message:"Your browser doesn't support a stable version of IndexedDB. Such and such feature will not be available.",
-                result : false
+                code: Code.InitFailed,
+                message: "Your browser doesn't support a stable version of IndexedDB. Such and such feature will not be available.",
+                result: false
             };
         }
         this.PromiseQueue = Promise.resolve(1);
@@ -37,7 +37,7 @@ class context {
         let self = this;
         let promise = new Promise(function (resolve, reject) {
             self.PromiseQueue.then(function () {
-                
+
                 if (!self.database.objectStoreNames.contains(name)) {
                     self.database.createObjectStore(name, prop);
                     self._version = self.database.version;
@@ -46,9 +46,9 @@ class context {
             }).catch(function () {
                 reject();
                 return {
-                    code:Code.ExecutionFailed,
-                    message:'Create Table Failed',
-                    result :false
+                    code: Code.ExecutionFailed,
+                    message: 'Create Table Failed',
+                    result: false
                 }
             })
         })
@@ -64,9 +64,9 @@ class context {
         let self = this;
         if (dbname != self._dbname) {
             return {
-                result :false,
-                code:Code.Fatel,
-                message:"you are already opened a context instance using database name " + self.name,
+                result: false,
+                code: Code.Fatel,
+                message: "you are already opened a context instance using database name " + self.name,
             };
         }
         let promise = new Promise(function (resolve, reject) {
@@ -168,8 +168,8 @@ class context {
         if (typeof query != "object") {
             return null;
         }
-        if(Array.isArray(query)){
-            query = {id:query}
+        if (Array.isArray(query)) {
+            query = { id: query }
         }
 
         if (self.table === "") {
@@ -181,9 +181,14 @@ class context {
             self.PromiseQueue.then(function () {
                 let transaction = self.database.transaction(self.table, 'readonly');
                 let objectStore = transaction.objectStore(self.table);
-                let cursor = objectStore.openCursor();
                 let data = [];
-                cursor.onsuccess = function (event) {
+
+                let cursorObject = objectStore.openCursor();
+
+                cursorObject.onerror = function (event) {
+                    self._error(event, reject)
+                }
+                cursorObject.onsuccess = function (event) {
                     let cursor = event.target.result;
                     if (cursor) {
                         if (isInCondition(cursor.value)) {
@@ -208,13 +213,13 @@ class context {
                     let queryKeys = Object.keys(query);
                     for (let i = 0; i < queryKeys.length; i++) {
                         if (itemKeys.includes(queryKeys[i])) {
-                            if(Array.isArray(query[queryKeys[i]])){
+                            if (Array.isArray(query[queryKeys[i]])) {
                                 //handle {id:[1,2,3,4]}
-                                if(!query[queryKeys[i]].includes(item[queryKeys[i]])){
+                                if (!query[queryKeys[i]].includes(item[queryKeys[i]])) {
                                     checked = false;
                                 }
                             }
-                            else if(item[queryKeys[i]] != query[queryKeys[i]]) {
+                            else if (item[queryKeys[i]] != query[queryKeys[i]]) {
                                 //handle {id:1}
                                 checked = false;
                             }
@@ -227,11 +232,10 @@ class context {
                     return checked;
                 }
 
-                cursor.onerror = self._error(event, reject);
+                // 
             })
         })
         return promise;
-
     }
     getAll() {
         let self = this;
@@ -256,7 +260,7 @@ class context {
                 } else {
                     // Fallback to the traditional cursor approach if getAll isn't supported.
                     var data = [];
-                    let cursorObject= objectStore.openCursor();
+                    let cursorObject = objectStore.openCursor();
                     cursorObject.onsuccess = function (event) {
                         var cursor = event.target.result;
                         if (cursor) {
@@ -266,7 +270,7 @@ class context {
                             resolve(data);
                         }
                     };
-                    cursorObject.onerror=reject;
+                    cursorObject.onerror = reject;
                 }
             })
         })
