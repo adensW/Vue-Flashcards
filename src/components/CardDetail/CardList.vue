@@ -84,7 +84,7 @@ export default {
             let setId = this.$route.params.id;
             let context = new dbcontext("DB_Vue_FlashCard",2);
             context.open('DB_Vue_FlashCard').set("Cards").getAll().then((data)=>{
-                console.log(data)
+                // console.log(data)
                 this.$store.commit("initCards",data)
                 this.cards =this.$store.getters.AllCards
                 this.loading = false;

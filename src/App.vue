@@ -98,7 +98,17 @@ export default {
   methods:{
     init:function(){
       //init Sets
-     
+      let carddbcontext= new dbcontext('DB_Vue_FlashCard');
+      carddbcontext.open("DB_Vue_FlashCard").set("Cards").getQuery([2,3]).then(function(data){
+        console.log(data);
+      })
+      // carddbcontext.open("DB_Vue_FlashCard").set("Cards").add([{
+      //   id:1,front:'front_1',back:'back_1',comment:'comment_1',setId:0
+      //   },{
+      //   id:2,front:'front_1',back:'back_1',comment:'comment_1',setId:0
+      //   },{id:3,front:'front_1',back:'back_1',comment:'comment_1',setId:0
+
+      //   }]);
       
       //create database
       // let carddbcontext= new dbcontext('DB_Vue_FlashCard');
