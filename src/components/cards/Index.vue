@@ -30,7 +30,7 @@
     </div>
 </template>
 <script>
-import CardListItem from "./CardListItem";
+import CardListItem from "./Item";
 import {} from "@/plugins/atween.js";
 import { VueAnime } from "vue-anime";
 import { dbcontext } from "@/service/context/dbcontext-class.js";

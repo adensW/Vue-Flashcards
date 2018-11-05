@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Dashboard from '@/components/CardDashboard/Dashboard.vue'
-import cardlist from '@/components/CardDetail/CardList.vue'
-import Library from '@/components/Library/Library.vue'
-import Loading from '@/components/CardDashboard/Loading.vue'
-import Error from '@/components/Views/Error.vue'
+import Dashboard from '@/components/dashboard/Index.vue'
+import cardlist from '@/components/cards/Index.vue'
+import Library from '@/components/library/Index.vue'
+import Loading from '@/components/views/Loading.vue'
+import Error from '@/components/views/Error.vue'
 
 Vue.use(VueRouter)
 const routes=[
