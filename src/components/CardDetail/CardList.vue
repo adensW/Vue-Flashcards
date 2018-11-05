@@ -59,9 +59,6 @@ export default {
        this.init();
     },
     watch:{
-        cards:function(target){
-           
-        },
         '$route': 'init'
     },
     methods:{
