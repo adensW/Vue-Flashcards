@@ -6,25 +6,23 @@
        <div v-if="error">
            error
        </div>
-        <div v-if="cards" class='layout__viewport anim__container'>
+        <div v-if="cards" class='layout__viewport anim__container'
+             v-finger:swipe="swipe"
+        >
        
            <div class="anim__slider layout__container" 
            v-bind:class="{'anim__slider--active':isSlider,'anim__silder--reverse':!isSlider}"
            >
             <card-list-item class="layout__item"
             v-for="card in cards" :key="card.id"
-            v-bind:flipId="flipId"
             v-bind:card="card"
-            v-bind:isFlip="isFlip"
             v-on:frontinput.self="getInput(card,$event)"
             v-on:backinput.self="card.back=$event"
             >
             </card-list-item>
            </div>
-           
         </div>
         <div>
-            <button v-on:click="flipCard()">flip</button>
             <button v-on:click="slider(-1)">left</button>
             <button v-on:click="slider(1)">right</button>
         </div>
@@ -47,9 +45,7 @@ export default {
         return{
             loading:true,
             error:false,
-            flipId:"0",
             offset:0,
-            isFlip:false,
             isSlider:false,
             currentCardId:0,
             cards:[]
@@ -57,10 +53,10 @@ export default {
     },
    
     created(){
-        this.init();
+        // this.init();
     },
     mounted(){
-    //    this.init();
+       this.init();
     },
     watch:{
         cards:function(target){
@@ -69,6 +65,44 @@ export default {
         '$route': 'init'
     },
     methods:{
+        swipe: function(evt) {
+            switch(evt.direction){
+                case 'Left':
+                 if(this.currentCardId>=this.cards.length-1){
+                        this.currentCtiardId = this.cards.length;
+                    }else{
+                       
+                        this.currentCardId = this.cards[this.currentCardId+1].id
+                        this.isSlider=true; 
+                        let elem = document.getElementsByClassName("anim__slider")
+                         
+                        let cssstyle = elem.item(0).style
+                        this.offset=this.offset+(-21)
+                        cssstyle.transform="translateX("+this.offset+"rem)"
+                        
+                    }
+               
+                break;
+                case 'Right':
+                 if(this.currentCardId<=0){
+                        this.currentCardId=0*1;
+                    }else{
+                        this.currentCardId = this.cards[this.currentCardId-1].id
+                        this.isSlider=false;
+                        let elem = document.getElementsByClassName("anim__slider")
+                        let cssstyle = elem.item(0).style
+                        this.offset= this.offset+(21)
+                        cssstyle.transform="translateX("+this.offset+"rem)"
+                    }
+                   
+                break;
+                case 'Up':
+                break;
+                case 'Down':
+                break;
+                }
+          console.log(evt)
+        },
         initCardStore(id){
             console.log(id)
         },
@@ -76,14 +110,10 @@ export default {
             console.log(card.id)
             console.log(event)
         },
-        flipCard:function(){
-            this.flipId = this.currentCardId*1;
-            this.isFlip = !this.isFlip;
-        },
         init:function(){
             let setId = this.$route.params.id;
             let context = new dbcontext("DB_Vue_FlashCard",2);
-            context.open('DB_Vue_FlashCard').set("Cards").getAll().then((data)=>{
+            context.open('DB_Vue_FlashCard').set("Cards").getQuery({setId:setId}).then((data)=>{
                 // console.log(data)
                 this.$store.commit("initCards",data)
                 this.cards =this.$store.getters.AllCards
@@ -133,17 +163,17 @@ export default {
 <style scoped>
 .container--template{
     display:block;
-    height:20rem;
+    height:24rem;
     
 }
 .layout__container{
     width: 100%; /* card width */
-    height:20rem;
+    height:24rem;
     display: flex;
 }
 .layout__viewport{
     width:100%;
-    height:20rem;
+    height:2rem;
     overflow: hidden;
 }
 .layout__item{
@@ -156,6 +186,7 @@ export default {
 }
 .anim__container{
     height:100%;
+    margin-bottom: 4rem;
 }
 .anim__slider{
     transition: all .5s;

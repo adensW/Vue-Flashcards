@@ -12,7 +12,9 @@ const routes=[
     {path:'/loading',component:Loading},
     {path:'/error',component:Error},
     {path:'/index',component:Dashboard},
+    {path:'/index/:meta',component:Dashboard},    
     {path:'/card/:id',name:'card',component:cardlist},
+    {path:'/card',redirect:'/error'},
     {path:'/library',component:Library}
 ]
 export default new VueRouter({

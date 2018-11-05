@@ -7,8 +7,12 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import VueResource from 'vue-resource'
 import store from './service/store/store'
 import Router from './service/router/router'
-
+import AlloyFinger from 'alloyfinger'
+import AlloyFingerPlugin from './plugins/alloyfinger.vue'
 Vue.use(VueResource)
+Vue.use(AlloyFingerPlugin,{
+  AlloyFinger
+})
 
 Vue.config.productionTip = false
 new Vue({

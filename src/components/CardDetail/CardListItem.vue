@@ -1,55 +1,52 @@
 <template>
     <div class="container--template">
         <div class='flip__wrap'
-            v-bind:class="{'flip__wrap--flip':flip}" 
-            >
-                <div class='flip__container flipcard--animflip'
-                
-                 >
-                    <div class='flipcard flipcard--front'
-                     v-bind:class="{'flipcard__pointevent':flip}"
-                        >
+             v-bind:class="{'flip__wrap--flip':flip}" >
+            <div class='flip__container flipcard--animflip'>
+                <div class='flipcard flipcard--front'
+                        v-bind:class="{'flipcard__pointevent':flip}">
                         <textarea class="flipcard__textarea front"
                             v-bind:id="frontID"
                             v-if='!flip'
                             v-model="data_card.front"
                             v-on:input.self="$emit('frontinput',$event.target.value)"
                             v-bind="{'readonly':flip}"
-                            v-on:click.stop='focus'
-                         >
+                            v-on:click.stop='focus'>
                          </textarea>
                           <div class="flipcard__displayarea"
-                             v-if='flip'
-                         >
+                             v-if='flip'>
                             {{data_card.front}}
                          </div>
-                    </div>
-                    <div class='flipcard flipcard--back'
-                            v-bind:class="{'flipcard__pointevent':!flip}"
-                    > 
+                </div>
+                <div class='flipcard flipcard--back'
+                        v-bind:class="{'flipcard__pointevent':!flip}"> 
                         <textarea class="flipcard__textarea back"
                             v-bind:id="backID"
                             v-if='flip'
                             v-model="data_card.back"
                             v-on:input.self="$emit('backinput',$event.target.value)"
                             v-bind="{'readonly':!flip}"
-                             v-on:click.stop='focus'
-                         >
+                             v-on:click.stop='focus'>
                          </textarea>
                          <div class='flipcard__displayarea'
-                             v-if='!flip'
-                         >
+                             v-if='!flip'>
                             {{data_card.back}}
                          </div>
-                    </div>
                 </div>
             </div>
+        </div>
+        <div class='card__foot'>
+             <v-btn flat icon color="green"
+                    v-on:click='flip=!flip'>
+                <v-icon>cached</v-icon>
+            </v-btn>
+        </div>
     </div>
 </template>
 <script>
 export default {
     name:"CardListItem",
-    props:['card','flipId','isFlip'],
+    props:['card'],
     data(){
         return{
             is_focus:false,
@@ -70,13 +67,6 @@ export default {
     },
     mounted(){
         this.initCard();
-    },
-    watch:{
-        isFlip:function(){
-            if(this.flipId == this.data_card.id){
-                this.flip=!this.flip;
-            }
-        }
     },
     methods:{
         initCard(){
@@ -100,7 +90,7 @@ export default {
 }
 .flip__wrap{
     width: 20rem; 
-    height:20rem; 
+    height:24rem; 
     /* width: 60vw; 
     height:70vh; */
     margin:0 auto;
@@ -132,7 +122,7 @@ export default {
 .flipcard--back{
     position: relative;/*让背面和正面重叠*/
     transform: rotateY(180deg);
-    background-color: burlywood;
+    background-color: aquamarine;
 }
 .flipcard__textarea{
     width:100%;
