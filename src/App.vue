@@ -47,7 +47,7 @@
 <script>
 // import HelloWorld from './components/HelloWorld'
 
-import CardList from './components/cards/Index'
+import CardList from './components/cards/CardList'
 import AdenBtnNew from './components/button/AdenBtnNew'
 import {dbcontext} from './service/context/dbcontext-class.js'
 

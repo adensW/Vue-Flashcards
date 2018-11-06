@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Dashboard from '@/components/dashboard/Index.vue'
-import cardlist from '@/components/cards/Index.vue'
-import Library from '@/components/library/Index.vue'
+import Dashboard from '@/components/dashboard/Dashboard.vue'
+import CardList from '@/components/cards/CardList.vue'
+import Library from '@/components/library/Library.vue'
 import Loading from '@/components/views/Loading.vue'
 import Error from '@/components/views/Error.vue'
 
@@ -13,7 +13,7 @@ const routes=[
     {path:'/error',component:Error},
     {path:'/index',component:Dashboard},
     {path:'/index/:meta',component:Dashboard},    
-    {path:'/card/:id',name:'card',component:cardlist},
+    {path:'/card/:id',name:'card',component:CardList},
     {path:'/card',redirect:'/error'},
     {path:'/library',component:Library}
 ]
