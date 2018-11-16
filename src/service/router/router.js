@@ -18,7 +18,7 @@ const routes=[
     {path:'/library',component:Library}
 ]
 export default new VueRouter({
-   mode:'history',
+//    mode:'history',
    base: __dirname,
     routes
 })
