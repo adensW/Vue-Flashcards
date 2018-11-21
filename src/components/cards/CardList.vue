@@ -119,12 +119,9 @@ export default {
           break;
       }
     },
-    initCardStore(id) {
-      console.log(id);
-    },
+    
     getInput: function(card, event) {
-      console.log(card.id);
-      console.log(event);
+     
     },
     init: function() {
       let setId = this.$route.params.id;
@@ -138,9 +135,6 @@ export default {
           this.$store.commit("initCards", data);
           this.cards = this.$store.getters.AllCards;
           this.loading = false;
-        })
-        .catch(function(data) {
-          this.error = true;
         });
       // this.currentCardId = id;
       // this.cards = this.$store.getters.AllCards

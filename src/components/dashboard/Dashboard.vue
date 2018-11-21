@@ -61,8 +61,6 @@ export default {
                 this.$store.commit("initSets",data)
                 this.sets =this.$store.getters.AllSets
                 this.loading = false;
-            }).catch(function(data){
-                this.error = true;
             })
         },
         initCardStore(id){

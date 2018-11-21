@@ -49,7 +49,7 @@
 
 import CardList from './components/cards/CardList'
 import AdenBtnNew from './components/button/AdenBtnNew'
-import {dbcontext} from './service/context/dbcontext-class.js'
+// import {dbcontext} from './service/context/dbcontext-class.js'
 
 export default {
   name: 'App',

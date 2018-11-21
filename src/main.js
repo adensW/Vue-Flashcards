@@ -14,10 +14,14 @@ Vue.use(AlloyFingerPlugin,{
   AlloyFinger
 })
 
-Vue.config.productionTip = false
-new Vue({
-  store,
-  router:Router,
-  render: h => h(App),
-}).$mount('#app')
+Vue.config.productionTip = false;
+// document.addEventListener('deviceready', function() {
+  new Vue({
+    store,
+    router:Router,
+    render: h => h(App),
+  }).$mount('#app')
+//   window.navigator.splashscreen.hide()
+// },false)
+
 
