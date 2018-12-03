@@ -5,7 +5,7 @@ import CardList from '@/components/cards/CardList.vue'
 import Library from '@/components/library/Library.vue'
 import Loading from '@/components/views/Loading.vue'
 import Error from '@/components/views/Error.vue'
-import ToDo from '@/components/todo/ToDo.vue'
+import ToDo from '@/components/todo/ToDoContainer.vue'
 import UI from '@/components/ui/UI.vue'
 Vue.use(VueRouter)
 const routes=[

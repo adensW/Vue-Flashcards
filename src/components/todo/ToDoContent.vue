@@ -1,13 +1,12 @@
 <template>
     <div>
-      <input v-model="item.title">
+        ToDoContent
     </div>
 </template>
 
 <script>
 export default {
-  name: "ToDoItem",
-  props:['item'],
+  name: "ToDoContent",
   data() {
     return {};
   },
@@ -16,6 +15,5 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style>
 </style>
