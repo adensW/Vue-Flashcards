@@ -36,7 +36,7 @@ export default {
         background-color:rgb(255, 100, 0);
     }
     50%{
-        width:26px;
+         width:26px;
         height:26px;
         border: 10px solid rgb(255, 100, 0);
         border-radius:50%;

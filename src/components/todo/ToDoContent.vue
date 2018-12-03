@@ -1,12 +1,12 @@
 <template>
     <div>
-      ToDoItem
+        ToDoContent
     </div>
 </template>
 
 <script>
 export default {
-  name: "ToDoItem",
+  name: "ToDoContent",
   data() {
     return {};
   },
@@ -15,6 +15,5 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style>
 </style>

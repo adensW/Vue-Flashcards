@@ -1,15 +1,23 @@
 <template>
-    <div>
-        <to-do-item></to-do-item>
+<div>
+        <div>
+        <to-do-content></to-do-content>
     </div>
+    <div>
+        <to-do></to-do>
+    </div>
+    </div>
+
 </template>
 
 <script>
-import ToDoItem from './ToDoItem'
+import ToDo from './ToDo'
+import ToDoContent from './ToDoContent'
 export default {
-    name:"ToDo",
+    name:"ToDoContainer",
     components:{
-        ToDoItem
+        ToDo,
+        ToDoContent
     },
     data(){
         return{
