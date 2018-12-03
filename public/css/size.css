@@ -1,0 +1,319 @@
+*:before,
+*:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.nopadding{
+    padding:0 0 0 0 ;
+}
+.column:before,
+.column:after {
+    display: table;
+    content: " ";
+}
+
+.column:after {
+    clear: both;
+}
+
+.clearfix:after {
+    content: " ";
+    display: table;
+    clear: both;
+}
+.width-1 {
+    width: 8.333333333333334%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+  }
+  .width-2 {
+    width: 16.666666666666668%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+  }
+  .width-3 {
+    width: 25%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+  }
+  .width-4 {
+    width: 33.333333333333336%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+  }
+  .width-5 {
+    width: 41.666666666666664%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+  }
+  .width-6 {
+    width: 50%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+  }
+  .width-7 {
+    width: 58.333333333333336%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+  }
+  .width-8 {
+    width: 66.66666666666667%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+  }
+  .width-9 {
+    width: 75%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+  }
+  .width-10 {
+    width: 83.33333333333333%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+  }
+  .width-11 {
+    width: 91.66666666666667%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+  }
+  .width-12 {
+    width: 100%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+  }
+  .offset-1 {
+    margin-left: 8.333333333333334%;
+  }
+  .offset-2 {
+    margin-left: 16.666666666666668%;
+  }
+  .offset-3 {
+    margin-left: 25%;
+  }
+  .offset-4 {
+    margin-left: 33.333333333333336%;
+  }
+  .offset-5 {
+    margin-left: 41.666666666666664%;
+  }
+  .offset-6 {
+    margin-left: 50%;
+  }
+  .offset-7 {
+    margin-left: 58.333333333333336%;
+  }
+  .offset-8 {
+    margin-left: 66.66666666666667%;
+  }
+  .offset-9 {
+    margin-left: 75%;
+  }
+  .offset-10 {
+    margin-left: 83.33333333333333%;
+  }
+  .offset-11 {
+    margin-left: 91.66666666666667%;
+  }
+  .offset-12 {
+    margin-left: 100%;
+  }
+  .top-1 {
+    top: 60px;
+  }
+  .page-margin-1 {
+    top: 10px;
+    left: 10px;
+  }
+  .margin-vertical-1 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  .top-2 {
+    top: 120px;
+  }
+  .page-margin-2 {
+    top: 20px;
+    left: 20px;
+  }
+  .margin-vertical-2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .top-3 {
+    top: 180px;
+  }
+  .page-margin-3 {
+    top: 30px;
+    left: 30px;
+  }
+  .margin-vertical-3 {
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+  .top-4 {
+    top: 240px;
+  }
+  .page-margin-4 {
+    top: 40px;
+    left: 40px;
+  }
+  .margin-vertical-4 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  .top-5 {
+    top: 300px;
+  }
+  .page-margin-5 {
+    top: 50px;
+    left: 50px;
+  }
+  .margin-vertical-5 {
+    margin-top: 25px;
+    margin-bottom: 25px;
+  }
+  .top-6 {
+    top: 360px;
+  }
+  .page-margin-6 {
+    top: 60px;
+    left: 60px;
+  }
+  .margin-vertical-6 {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+  .top-7 {
+    top: 420px;
+  }
+  .page-margin-7 {
+    top: 70px;
+    left: 70px;
+  }
+  .margin-vertical-7 {
+    margin-top: 35px;
+    margin-bottom: 35px;
+  }
+  .top-8 {
+    top: 480px;
+  }
+  .page-margin-8 {
+    top: 80px;
+    left: 80px;
+  }
+  .margin-vertical-8 {
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+  .top-9 {
+    top: 540px;
+  }
+  .page-margin-9 {
+    top: 90px;
+    left: 90px;
+  }
+  .margin-vertical-9 {
+    margin-top: 45px;
+    margin-bottom: 45px;
+  }
+  .top-10 {
+    top: 600px;
+  }
+  .page-margin-10 {
+    top: 100px;
+    left: 100px;
+  }
+  .margin-vertical-10 {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+  .top-11 {
+    top: 660px;
+  }
+  .page-margin-11 {
+    top: 110px;
+    left: 110px;
+  }
+  .margin-vertical-11 {
+    margin-top: 55px;
+    margin-bottom: 55px;
+  }
+  .top-12 {
+    top: 720px;
+  }
+  .page-margin-12 {
+    top: 120px;
+    left: 120px;
+  }
+  .margin-vertical-12 {
+    margin-top: 60px;
+    margin-bottom: 60px;
+  }
+  .space-1 {
+    margin-top: 20px;
+  }
+  .space-2 {
+    margin-top: 40px;
+  }
+  .space-3 {
+    margin-top: 60px;
+  }
+  .space-4 {
+    margin-top: 80px;
+  }
+  .space-5 {
+    margin-top: 100px;
+  }
+  .space-6 {
+    margin-top: 120px;
+  }
+  .space-7 {
+    margin-top: 140px;
+  }
+  .space-8 {
+    margin-top: 160px;
+  }
+  .space-9 {
+    margin-top: 180px;
+  }
+  .space-10 {
+    margin-top: 200px;
+  }
+  

@@ -6,7 +6,7 @@
         <div class='block block__40'>
             <to-do v-bind:todos="SortedTodos"></to-do>
         </div>
-        <i><v-btn outline fab color='#1f7cda' v-on:click="add"><v-icon dark>add</v-icon></v-btn></i>
+        <i><v-btn float fab color='#1f7cda' v-on:click="add"><v-icon dark>add</v-icon></v-btn></i>
     </div>
 
 </template>
@@ -56,7 +56,8 @@ export default {
   },
   computed:{
       SortedTodos:function(){
-          return this.list.sort(function(a,b){return a.sort-b.sort});
+          let data = this.list;
+          return data.sort(function(a,b){return a.sort-b.sort});
       },
       currentSort:function(){
           return this.list.length
@@ -70,10 +71,10 @@ export default {
     float: left;
 }
 .block__60{
-    width: 50vw;
+    width: 60%;
 }
 .block__40{
-    width: 30vw;
+    width: 40%;
 }
 .block:after{
     clear:both;
