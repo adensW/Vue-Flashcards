@@ -1,7 +1,9 @@
 <template>
     <div>
         <div class='ui--small '>
-            <div class='circle'></div>
+            <div class='circle__outer'>
+                <div class="circle__inner"></div>
+            </div>
         </div>
     </div>
 </template>
@@ -14,19 +16,32 @@ export default {
 
 <style scoped>
 .ui--small{
-    display:inline-block;
+    display:block;
     width:50px;
     height:50px;
     vertical-align: middle;
     text-align: center;
     vertical-align: middle;
 }
-.circle{
+.circle__outer{
+    position: absolute;
+    left:50%;
+    top:50%;
     width:26px;
     height:26px;
     border-radius:50%;
-    border: 12.5px solid rgb(255, 100, 0);
+    border: 13px solid rgb(255, 100, 0);
 
+}
+.circle__inner{
+    width:10px;
+    height:10px;
+    
+    border-radius: 50%;
+    background-color: #fff;
+    position: relative;
+    top: -5px;
+    left: -5px;
 }
 @keyframes circle2torus {
     0%{
