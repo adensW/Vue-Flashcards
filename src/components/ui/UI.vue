@@ -2,8 +2,10 @@
     <div>
         <div class='ui--small '>
             <div class='circle__outer'>
-                <div class="circle__inner"></div>
+
             </div>
+            <div class="circle__inner"></div>
+
         </div>
     </div>
 </template>
@@ -24,25 +26,33 @@ export default {
     vertical-align: middle;
 }
 .circle__outer{
-    position: absolute;
-    left:50%;
-    top:50%;
-    width:26px;
-    height:26px;
+   /* float: left; */
+    width:24px;
+    height:24px;
     border-radius:50%;
-    border: 13px solid rgb(255, 100, 0);
+    border: 8px solid rgb(255, 100, 0);
+    /* background-color: aliceblue; */
+    z-index: 10;
+}
+.circle__outer:hover{
+
+    border: 8px solid rgb(255, 100, 0);
 
 }
+
 .circle__inner{
-    width:10px;
-    height:10px;
-    
+    width:12px;
+    height:12px;
     border-radius: 50%;
-    background-color: #fff;
+    background-color: rgb(255, 100, 0);
+   
     position: relative;
-    top: -5px;
-    left: -5px;
+    top: -16px;
+    left: 6px;
 }
+/* .circle__inner:hover{
+    background-color: #fff;
+} */
 @keyframes circle2torus {
     0%{
         width:25px;
@@ -66,7 +76,7 @@ export default {
 .circle:hover{
     animation: circle2torus 0.5s;
     animation-fill-mode: forwards;
-    
+
 }
 .torus{
     border: 10px solid rgb(255, 100, 0);
