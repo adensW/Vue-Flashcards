@@ -1,5 +1,6 @@
 <template>
     <div>
+        
         <div class='block block__60'>
             <to-do-content></to-do-content>
         </div>
@@ -7,6 +8,7 @@
             <to-do v-bind:todos="SortedTodos"></to-do>
         </div>
         <i><v-btn float fab color='#1f7cda' v-on:click="add"><v-icon dark>add</v-icon></v-btn></i>
+       
     </div>
 
 </template>
@@ -14,6 +16,7 @@
 <script>
 import ToDo from "./ToDo";
 import ToDoContent from "./ToDoContent";
+import { dbcontext } from "@/service/context/dbcontext-class.js";
 export default {
   name: "ToDoContainer",
   components: {
@@ -23,35 +26,40 @@ export default {
   data() {
     return {
       list: [
-        {
-          id: 1,
-          title:'test1',
-          checked: false,
-          deeps:0,
-          treeId: 0,
-          sort:1
-        },
-         {
-          id: 2,
-          title:'test2',
-          checked: false,
-          deeps:0,
-          treeId: 0,
-          sort:0
-        }
       ]
     };
   },
+  created(){
+      this.init();
+  },
   mounted() {},
   methods: {
+      update:function(val){
+          console.log(val)
+            let context= new dbcontext('DB_Vue_FlashCard');
+            // carddbcontext.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
+            context.open("DB_Vue_FlashCard").set("ToDos").put(val)
+      },
       add:function(){
-          this.list.push({
-              id:this.currentSort+1,
+          let toDoItem = {
+              id:this.$uuid.v1(),
               checked:false,
               title:"",
               deeps:0,
               treeId:0,
-              sort:this.currentSort})
+              sort:this.currentSort}
+          this.list.push(toDoItem);
+            let context= new dbcontext('DB_Vue_FlashCard');
+            // carddbcontext.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
+            context.open("DB_Vue_FlashCard").set("ToDos").add(toDoItem)
+      },
+      init:function(){
+          let self = this;
+          let context= new dbcontext('DB_Vue_FlashCard');
+            // carddbcontext.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
+            context.open("DB_Vue_FlashCard").set("ToDos").getAll().then(function(data){
+                self.list = data;
+            })
       }
   },
   computed:{
@@ -61,7 +69,8 @@ export default {
       },
       currentSort:function(){
           return this.list.length
-      }
+      },
+      
   }
 };
 </script>

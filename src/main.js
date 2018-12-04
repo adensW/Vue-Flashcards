@@ -9,7 +9,9 @@ import store from './service/store/store'
 import Router from './service/router/router'
 import AlloyFinger from 'alloyfinger'
 import AlloyFingerPlugin from './plugins/alloyfinger.vue'
+import UUID from 'vue-uuid';
 Vue.use(VueResource)
+Vue.use(UUID);
 Vue.use(AlloyFingerPlugin,{
   AlloyFinger
 })

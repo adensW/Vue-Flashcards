@@ -297,7 +297,7 @@ class context {
                     if (head < length) {
                         let process = objectStore.add(dataArr[head])
                         process.onsuccess = addNext;
-                        process.error = reject;
+                        process.onerror = reject;
                         ++head;
                     } else {   // complete
                         resolve();
