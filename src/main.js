@@ -10,6 +10,8 @@ import Router from './service/router/router'
 import AlloyFinger from 'alloyfinger'
 import AlloyFingerPlugin from './plugins/alloyfinger.vue'
 import UUID from 'vue-uuid';
+import VueAidb from './plugins/aidb/aidb.vue.js';
+Vue.use(VueAidb)
 Vue.use(VueResource)
 Vue.use(UUID);
 Vue.use(AlloyFingerPlugin,{

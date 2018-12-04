@@ -1,4 +1,9 @@
-
+//aidb 指向 aidb
+//this 指向 aidb.init
+//外界访问 aidb 指向 this 即 aidb.init
+//1私有函数 申明为 aidb
+//2公有函数 申明为 this 或在aidb.fn = aidb.prototype里声明
+// aidb.fn.init=function() 里申明 不为aidb.或者this.都无法访问
     var getProto = Object.getPrototypeOf;
     var class2type = {};
     var toString = class2type.toString;
@@ -21,11 +26,37 @@
         return new aidb.fn.init();
     }
     aidb.fn = aidb.prototype = {
+        //外部可以直接访问
         constructor: aidb,
-        animate: function () {
-            // eslint-disable-next-line
+        dbVersion:1,
+        dbName:"",
+
+        open:function(dbname,ver){
+            this.dbName = dbname||this.dbName;
+            this.dbVersion=ver||this.dbVersion||1;
+            return this;
+        },
+        // open: function (dbname) {
+        //     // eslint-disable-next-line
+        //     console.log(dbname)
+        //     this._open(dbname);
+        //     aidb._open(dbname)
+        //     this.get(dbname);
+        //     return this;
+        // },
+        createTable:function(name,prop){
+            return this;
+        },
+        get:function(data){
+            return this;
+        },
+        add:function(data){
+            return this;
+        },
+        put:function(data){
             return this;
         }
+
     }
     aidb.extend = aidb.fn.extend = function () {
         var src, copyIsArray, copy, name, options, clone,
@@ -92,9 +123,13 @@
         return target;
     };
     aidb.fn.init=function(){
-        
-        return this;
+        //必须申明this或aidb 
+        //无法访问
+        // __open=function(data){
+        //     console.log("init function __open "+data)
+        // }
     }
+    aidb.fn.init.prototype = aidb.fn;
     aidb.isFunction = isFunction;
     aidb.isArray = Array.isArray;
     
@@ -121,17 +156,24 @@
         }
     });
    
-    aidb.fn.init.prototype = aidb.fn;
-    // window.aidb = aidb;
-    // function aidb(){
-    //     return aidb();
-    // }
+   
     aidb.fn.extend({
+        //外部 aidb 可以访问 公共方法
+        //内部可以通过this访问
         istest:"test",
         isExtended: function () {
             
             return true;
-        }
+        },
+        // _open:function(data){
+        //     console.log("aidb fn extend"+data)
+        // }
     });
+    aidb.extend({
+        //外界aidb 无法访问
+        //设置私有方法 内部使用 aidb.方法使用
+        _open:function(data){
+        }
+    })
     export {aidb};
 

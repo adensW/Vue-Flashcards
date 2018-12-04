@@ -7,7 +7,7 @@
         <div class='block block__40'>
             <to-do v-bind:todos="SortedTodos"></to-do>
         </div>
-        <i><v-btn float fab color='#1f7cda' v-on:click="add"><v-icon dark>add</v-icon></v-btn></i>
+        
        
     </div>
 
@@ -17,7 +17,7 @@
 import ToDo from "./ToDo";
 import ToDoContent from "./ToDoContent";
 import { dbcontext } from "@/service/context/dbcontext-class.js";
-import {aidb} from "@/service/context/context-0.1.1.js"
+// import {aidb} from "@/service/context/context-0.1.1.js"
 export default {
   name: "ToDoContainer",
   components: {
@@ -49,16 +49,18 @@ export default {
               deeps:0,
               treeId:0,
               sort:this.currentSort}
-          this.list.push(toDoItem);
+            this.list.push(toDoItem);
             let context= new dbcontext('DB_Vue_FlashCard');
             // carddbcontext.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
             context.open("DB_Vue_FlashCard").set("ToDos").add(toDoItem)
       },
       init:function(){
-          console.log(aidb().istest)
+          this.$aidb.open('test',2);
+          console.log(this.$aidb.dbVersion)
+
           let self = this;
           let context= new dbcontext('DB_Vue_FlashCard');
-            // carddbcontext.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
+            // context.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
             context.open("DB_Vue_FlashCard").set("ToDos").getAll().then(function(data){
                 self.list = data;
             })
