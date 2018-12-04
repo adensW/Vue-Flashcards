@@ -1,29 +1,4 @@
-(function (global, factory) {
-    "use strict";
-    // eslint-disable-next-line
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        // eslint-disable-next-line
-        define([], factory);
-      } else if (typeof module === 'object' && module.exports) {
-        // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like environments that support module.exports,
-        // like Node.
-        module.exports = global.document ?
-        factory( global, true ) :
-        function( w ) {
-            if ( !w.document ) {
-                throw new Error( "aTween requires a window with a document" );
-            }
-            return factory( w );
-        };
-      } else {
-        // Browser globals (root is window)
-        factory( global );
-      }
-    // Pass this if window is not defined yet
-    // eslint-disable-next-line
-})(typeof window !== "undefined" ? window : this, function( window, noGlobal ) {
+
     var getProto = Object.getPrototypeOf;
     var class2type = {};
     var toString = class2type.toString;
@@ -42,17 +17,17 @@
         return typeof obj === "function" && typeof obj.nodeType !== "number";
     };
    
-    var aTween = function () {
-        return new aTween.fn.init();
+    var aidb = function () {
+        return new aidb.fn.init();
     }
-    aTween.fn = aTween.prototype = {
-        constructor: aTween,
+    aidb.fn = aidb.prototype = {
+        constructor: aidb,
         animate: function () {
             // eslint-disable-next-line
             return this;
         }
     }
-    aTween.extend = aTween.fn.extend = function () {
+    aidb.extend = aidb.fn.extend = function () {
         var src, copyIsArray, copy, name, options, clone,
             target = arguments[0] || {},
             i = 1,
@@ -92,17 +67,17 @@
                     }
 
                     // Recurse if we're merging plain objects or arrays
-                    if (deep && copy && (aTween.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
+                    if (deep && copy && (aidb.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
                         if (copyIsArray) {
                             copyIsArray = false;
                             clone = src && Array.isArray(src) ? src : [];
 
                         } else {
-                            clone = src && aTween.isPlainObject(src) ? src : {};
+                            clone = src && aidb.isPlainObject(src) ? src : {};
                         }
 
                         // Never move original objects, clone them
-                        target[name] = aTween.extend(deep, clone, copy);
+                        target[name] = aidb.extend(deep, clone, copy);
 
                         // Don't bring in undefined values
                     } else if (copy !== undefined) {
@@ -116,14 +91,14 @@
         
         return target;
     };
-    aTween.fn.init=function(){
+    aidb.fn.init=function(){
         
         return this;
     }
-    aTween.isFunction = isFunction;
-    aTween.isArray = Array.isArray;
+    aidb.isFunction = isFunction;
+    aidb.isArray = Array.isArray;
     
-    aTween.extend({
+    aidb.extend({
         isPlainObject: function (obj) {
             var proto, Ctor;
 
@@ -146,17 +121,17 @@
         }
     });
    
-    aTween.fn.init.prototype = aTween.fn;
-    window.aTween = aTween;
-    // function atween(){
-    //     return aTween();
+    aidb.fn.init.prototype = aidb.fn;
+    // window.aidb = aidb;
+    // function aidb(){
+    //     return aidb();
     // }
-    aTween.fn.extend({
+    aidb.fn.extend({
         istest:"test",
         isExtended: function () {
             
             return true;
         }
     });
-    return aTween;
-})
+    export {aidb};
+

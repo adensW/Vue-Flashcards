@@ -17,6 +17,7 @@
 import ToDo from "./ToDo";
 import ToDoContent from "./ToDoContent";
 import { dbcontext } from "@/service/context/dbcontext-class.js";
+import {aidb} from "@/service/context/context-0.1.1.js"
 export default {
   name: "ToDoContainer",
   components: {
@@ -54,7 +55,7 @@ export default {
             context.open("DB_Vue_FlashCard").set("ToDos").add(toDoItem)
       },
       init:function(){
-          
+          console.log(aidb().istest)
           let self = this;
           let context= new dbcontext('DB_Vue_FlashCard');
             // carddbcontext.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
