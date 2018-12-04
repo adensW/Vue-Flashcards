@@ -49,7 +49,7 @@
 
 import CardList from './components/cards/CardList'
 import AdenBtnNew from './components/button/AdenBtnNew'
-// import {dbcontext} from './service/context/dbcontext-class.js'
+import {dbcontext} from './service/context/dbcontext-class.js'
 
 export default {
   name: 'App',
@@ -98,10 +98,27 @@ export default {
   created(){
     this.init()
     // 
-   
   },
   methods:{
     init:function(){
+       let context= new dbcontext('DB_Vue_FlashCard');
+            // carddbcontext.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
+            // context.open("DB_Vue_FlashCard",1).createTable("ToDos",{keyPath:'id'}).then(function(data){
+            //     console.log(context);
+            // }).catch(function(data){
+            //     console.log(data);
+            // });
+            
+            //  context.open("DB_Vue_FlashCard",2).createTable("Sets",{keyPath:'id'}).then(function(data){
+            //     console.log(data);
+            // }).catch(function(data){
+            //     console.log(data);
+            // });
+            //  context.open("DB_Vue_FlashCard",3).createTable("Cards",{keyPath:'id'}).then(function(data){
+            //     console.log(data);
+            // }).catch(function(data){
+            //     console.log(data);
+            // });
       //init Sets
       // let carddbcontext= new dbcontext('DB_Vue_FlashCard');
       // carddbcontext.open("DB_Vue_FlashCard").set("Cards").getQuery([2,3],1).then(function(data){

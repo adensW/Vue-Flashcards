@@ -54,12 +54,15 @@ export default {
             context.open("DB_Vue_FlashCard").set("ToDos").add(toDoItem)
       },
       init:function(){
+          
           let self = this;
           let context= new dbcontext('DB_Vue_FlashCard');
             // carddbcontext.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
             context.open("DB_Vue_FlashCard").set("ToDos").getAll().then(function(data){
                 self.list = data;
             })
+            // let result =  context.open("DB_Vue_FlashCard").hasTable("ToDos");
+            // console.log(result)
       }
   },
   computed:{
