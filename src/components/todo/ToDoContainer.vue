@@ -55,15 +55,23 @@ export default {
             context.open("DB_Vue_FlashCard").set("ToDos").add(toDoItem)
       },
       init:function(){
-          this.$aidb.open('test',2);
-          console.log(this.$aidb.dbVersion)
+            // let result = this.$aidb.open('test',1).createTable('tablename1',{keyPath:'id'});
+            // let result2 = this.$aidb.open('test',2).createTable('tablename2',{keyPath:'id'});
+            // let result3 = this.$aidb.open('test',3).createTable('tablename3',{keyPath:'id'});
+            // // console.log(result2)
+            this.$aidb.open('test',4).set("tablename4").add({id:1,value:"test"});
+            // this.$aidb.open('_config',1).createTable('_params',{keyPath:'id'})
+            console.log(this.$aidb.getOptions())
+        //   let result2 = this.$aidb.open('test').createTable('tablename2',{keyPath:'id'});
+        //   console.log(result2)
+        //   console.log(this.$aidb)
 
-          let self = this;
-          let context= new dbcontext('DB_Vue_FlashCard');
-            // context.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
-            context.open("DB_Vue_FlashCard").set("ToDos").getAll().then(function(data){
-                self.list = data;
-            })
+        //   let self = this;
+        //   let context= new dbcontext('DB_Vue_FlashCard');
+        //     // context.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
+        //     context.open("DB_Vue_FlashCard").set("ToDos").getAll().then(function(data){
+        //         self.list = data;
+        //     })
             // let result =  context.open("DB_Vue_FlashCard").hasTable("ToDos");
             // console.log(result)
       }
