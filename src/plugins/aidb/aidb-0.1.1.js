@@ -548,12 +548,8 @@ let aidb = (function () {
                 //2.query==['1',2,,3]
                 query = { id: query }
             }
-
-            if (params.table === "") {
-                return null;
-            }
             let data;
-
+            console.log('here',_config.database)
             let transaction = _config.database.transaction(params.table, 'readonly');
             let objectStore = transaction.objectStore(params.table);
             let request = objectStore.get(query);
@@ -564,7 +560,7 @@ let aidb = (function () {
                     exception: event,
                     data: null
                 }
-                
+                console.log("error",event.target.result)
                 
             };
 
@@ -577,9 +573,9 @@ let aidb = (function () {
                     //     data: event.target.result
 
                     // }
-                   _config.data = ""+request;
-                   data=request.result;
-                   return data
+                    console.log("success",event.target.result)
+                   _config.data = event.target.result;
+                   data=event.target.result;
                 } else {
                     _config.result = {
                         code: Code.ExecutionFailed,
@@ -588,6 +584,7 @@ let aidb = (function () {
                         data: null
 
                     }
+                    console.log("success else",event.target.result)
                 }
             };
 
