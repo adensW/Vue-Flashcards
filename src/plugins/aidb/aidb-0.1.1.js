@@ -7,10 +7,16 @@
 const _default = {
     database: '_config',
     table: "_params",
+    version: 1,
     keys: {
         all: 1,
         databaseinfo: 2,//{[{name:"",version:1},{name:"",version:2,tables:["","",""]},{}]}
     }
+}
+const _config = {
+    database: null,
+    result: {},
+    data:{}
 }
 function paramsInstance() {
 
@@ -20,7 +26,7 @@ function paramsInstance() {
     }
 
     // 其它内容
-    this.version = 1;
+    this.version = 1
     this.database = "";
     this.table = "";
     // 缓存
@@ -40,13 +46,15 @@ let aidb = (function () {
     var ObjectFunctionString = fnToString.call(Object);
 
     var isFunction = function isFunction(obj) {
-
         // Support: Chrome <=57, Firefox <=52
         // In some browsers, typeof returns "function" for HTML <object> elements
         // (i.e., `typeof document.createElement( "object" ) === "function"`).
         // We don't want to classify *any* DOM node as a function.
         return typeof obj === "function" && typeof obj.nodeType !== "number";
     };
+    let isNullOrWhitespace = function isNullOrWhitespace(obj) {
+        return obj === '' || typeof obj === 'undefined' || Object.keys(obj).length === 0
+    }
     const Code = {
         Init: 0,
         InitFailed: -997,
@@ -66,9 +74,24 @@ let aidb = (function () {
         constructor: aidb,
         version: "0.1.1",
         result: {},
-        open: function (dbname, ver) {
-            params.database = dbname || params.database;
-            params.version = ver || params.version || 1;
+        database: null,
+
+        initialize: async function () {
+            console.log('a')
+            await aidb._open(_default.database, _default.version)
+            console.log(aidb.database)
+        },
+        openAsync: function (dbname, ver) {
+
+        },
+        open: async function (dbname, ver) {
+            if (isNullOrWhitespace(ver)) {
+                params.version =await aidb._getTableVersion(dbname);
+                console.log(params)
+            }
+            // await aidb._openAsync(dbname,ver);
+            params.database = dbname;
+            params.version = ver || params.version;
             return this;
         },
         getOptions: function () {
@@ -147,85 +170,85 @@ let aidb = (function () {
             params.table = table;
             return this;
         },
-        get: function (query,limit=200,offset=0) {
+        get: function (query, limit = 200, offset = 0) {
             //1.query== 1||"1"
             //2.query==['1',2,,3]
             //3.query=={id:1,props:"prop"}
             if (typeof query != "object") {
-            //1.query== 1||"1"
+                //1.query== 1||"1"
 
-                let id=query;
-                query={id:id}
+                let id = query;
+                query = { id: id }
             }
-            
+
             if (Array.isArray(query)) {
                 //2.query==['1',2,,3]
                 query = { id: query }
             }
-            
+
             if (params.table === "") {
                 return null;
             }
             let offsetCount = offset;
             let limitCount = 0;
             var promise = new Promise(function (resolve, reject) {
-            aidb._open(params.database,params.version).then(function (database) {
-                let transaction = database.transaction(params.table, 'readonly');
-                let objectStore = transaction.objectStore(params.table);
-                let data = [];
+                aidb._open(params.database, params.version).then(function (database) {
+                    let transaction = database.transaction(params.table, 'readonly');
+                    let objectStore = transaction.objectStore(params.table);
+                    let data = [];
 
-                let cursorObject = objectStore.openCursor();
+                    let cursorObject = objectStore.openCursor();
 
-                cursorObject.onerror = function (event) {
-                    aidb._error(event, reject)
-                }
-                cursorObject.onsuccess = function (event) {
-                    let cursor = event.target.result;
-                    if (cursor) {
-                        if (isInCondition(cursor.value)) {
-                            if (offsetCount <= 0 && limitCount < limit) {
-                                data.push(cursor.value)
-                                limitCount++;
-                            } else {
-                                offsetCount--;
-                            }
-                        } else {
-                            //
-                        }
-                        cursor.continue();
-                    } else {
-                        //complete
-                        resolve(data);
+                    cursorObject.onerror = function (event) {
+                        aidb._error(event, reject)
                     }
-                }
-                function isInCondition(item) {
-                    let checked = true;
-                    let itemKeys = Object.keys(item);
-                    let queryKeys = Object.keys(query);
-                    for (let i = 0; i < queryKeys.length; i++) {
-                        if (itemKeys.includes(queryKeys[i])) {
-                            if (Array.isArray(query[queryKeys[i]])) {
-                                //handle {id:[1,2,3,4]}
-                                if (!query[queryKeys[i]].includes(item[queryKeys[i]])) {
+                    cursorObject.onsuccess = function (event) {
+                        let cursor = event.target.result;
+                        if (cursor) {
+                            if (isInCondition(cursor.value)) {
+                                if (offsetCount <= 0 && limitCount < limit) {
+                                    data.push(cursor.value)
+                                    limitCount++;
+                                } else {
+                                    offsetCount--;
+                                }
+                            } else {
+                                //
+                            }
+                            cursor.continue();
+                        } else {
+                            //complete
+                            resolve(data);
+                        }
+                    }
+                    function isInCondition(item) {
+                        let checked = true;
+                        let itemKeys = Object.keys(item);
+                        let queryKeys = Object.keys(query);
+                        for (let i = 0; i < queryKeys.length; i++) {
+                            if (itemKeys.includes(queryKeys[i])) {
+                                if (Array.isArray(query[queryKeys[i]])) {
+                                    //handle {id:[1,2,3,4]}
+                                    if (!query[queryKeys[i]].includes(item[queryKeys[i]])) {
+                                        checked = false;
+                                    }
+                                }
+                                else if (item[queryKeys[i]] != query[queryKeys[i]]) {
+                                    //handle {id:1}
                                     checked = false;
                                 }
-                            }
-                            else if (item[queryKeys[i]] != query[queryKeys[i]]) {
-                                //handle {id:1}
+                            } else {
                                 checked = false;
                             }
-                        } else {
-                            checked = false;
+
+
                         }
-
-
+                        return checked;
                     }
-                    return checked;
-                }
 
-                // 
+                    // 
+                })
             })
-        })
             return promise;
         },
         add: function (data) {
@@ -252,7 +275,7 @@ let aidb = (function () {
                         process.onsuccess = addNext;
                         ++head;
                     } else {   // complete
-                        
+
                     }
                 }
 
@@ -261,7 +284,38 @@ let aidb = (function () {
             return this;
         },
         put: function (data) {
-            return this;
+            let dataArr = []
+            if (!Array.isArray(data)) {
+                dataArr.push(data);
+            } else {
+                dataArr = data;
+            }
+            let head = 0;
+            let length = dataArr.length;
+
+            const promise = new Promise(function (resolve, reject) {
+                aidb._open(params.database, params.version).then(function (database) {
+                    var objectStore = database.transaction([params.table], 'readwrite')
+                        .objectStore(params.table);
+                    putNext();
+                    function putNext() {
+                        // console.log(dataArr[head]);
+                        if (head < length) {
+                            let procee = objectStore.put(dataArr[head]);
+                            procee.onsuccess = putNext;
+                            process.onerror = reject;
+                            ++head;
+                        } else {   // complete
+                            // console.log('update complete');
+                            resolve();
+                        }
+                    }
+
+
+                })
+            })
+
+            return promise;
         }
 
     }
@@ -330,6 +384,7 @@ let aidb = (function () {
         return target;
     };
     aidb.fn.init = function () {
+
         //必须申明this或aidb 
         //无法访问
         // __open=function(data){
@@ -380,6 +435,7 @@ let aidb = (function () {
         //外界aidb 无法访问
         //设置私有方法 内部使用 aidb.方法使用
         _open: function (db, ver) {
+            let self = this;
             let promise = new Promise(function (resolve, reject) {
                 const request = window.indexedDB.open(db, ver);
                 request.onsuccess = function (event) {
@@ -389,6 +445,7 @@ let aidb = (function () {
                         message: 'open database success',
                         data: event.target.result
                     }
+                    self.database = event.target.result;
                     resolve(event.target.result, result);
                 };
                 request.onerror = function (event) {
@@ -425,7 +482,120 @@ let aidb = (function () {
             })
             return promise;
         },
-        _error:function(data,callback){
+        _openAsync: function (db, ver) {
+            const request = window.indexedDB.open(db, ver);
+            request.onsuccess = function (event) {
+                let result = {
+                    result: true,
+                    code: Code.OpenSuccess,
+                    message: 'open database success',
+                    data: event.target.result
+                }
+                _config.database = event.target.result;
+                _config.result = result;
+            };
+            request.onerror = function (event) {
+                let result = {
+                    result: false,
+                    code: Code.OpenFailed,
+                    message: 'open database failed',
+                    Exception: event,
+                    data: event
+                }
+                _config.result = result;
+            }
+            request.onupgradeneeded = function (event) {
+                let database = event.target.result;
+                let result = {
+                    result: false,
+                    code: Code.OpenSuccess,
+                    message: 'upgrade database and open success',
+                    data: event.target.result
+                }
+                _config.database = database;
+                _config.result = result;
+            }
+            request.onblocked = function (event) {
+                let result = {
+                    result: false,
+                    code: Code.Blocked,
+                    message: 'last database openning',
+                    Exception: event,
+                    data: event
+                }
+                _config.result = result;
+            }
+        },
+        _getTableVersion: async function () {
+            let version = 2;
+            await aidb._openAsync(_default.database, _default.version);
+            await aidb._get(_default.keys.databaseinfo);
+            console.log("_getTableVersion",_config);
+            return version;
+        },
+        _get: async function (query) {
+            //1.query== 1||"1"
+            //2.query==['1',2,,3]
+            //3.query=={id:1,props:"prop"}
+            if (typeof query != "object") {
+                //1.query== 1||"1"
+
+                let id = query;
+                query = { id: id }
+            }
+
+            if (Array.isArray(query)) {
+                //2.query==['1',2,,3]
+                query = { id: query }
+            }
+
+            if (params.table === "") {
+                return null;
+            }
+            let data;
+
+            let transaction = _config.database.transaction(params.table, 'readonly');
+            let objectStore = transaction.objectStore(params.table);
+            let request = objectStore.get(query);
+            request.onerror = function (event) {
+                _config.result = {
+                    code: Code.ExecutionFailed,
+                    message: "Get Data Failed with key " + query,
+                    exception: event,
+                    data: null
+                }
+                
+                
+            };
+
+            request.onsuccess = function (event) {
+                if (request.result) {
+                    // _config.result = {
+                    //     code: Code.ExecutionSuccess,
+                    //     message: "Get Data Success",
+                    //     exception: null,
+                    //     data: event.target.result
+
+                    // }
+                   _config.data = ""+request;
+                   data=request.result;
+                   return data
+                } else {
+                    _config.result = {
+                        code: Code.ExecutionFailed,
+                        message: "Get Data failed",
+                        exception: event,
+                        data: null
+
+                    }
+                }
+            };
+
+            // 
+            return data
+
+        },
+        _error: function (data, callback) {
             callback(data);
         }
     })
