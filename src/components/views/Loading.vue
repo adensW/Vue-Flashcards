@@ -26,7 +26,6 @@ export default {
             this.$store.commit("initSets",data)
             this.$router.push({ path: '/index' })
             }).catch(function(data){
-                console.log(data);
                 this.$router.push({ path: '/error' })
             });
             

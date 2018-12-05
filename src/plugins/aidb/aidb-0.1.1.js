@@ -143,68 +143,41 @@ let aidb = (function () {
             }
             return this;
         },
-        createTableOld: function (name, props) {
-            let self = this;
-            self._version += 1;//update database version before create table
-            aidb._open(self._dbname, self._version).then(function (database) {
-                console.log(database)
-                database.oncomplete = function (result) {
-                    console.log('cr compelete', result)
-                }
-                database.onclose = function (result) {
-                    console.log('cr onsuccess', result)
-                }
-                if (!database.objectStoreNames.contains(name)) {
-                    let cr = database.createObjectStore(name, props);
-
-                    console.log('create', cr)
-                    self.tables.push(name.toString());
-                    self._version = database.version;
-                    self.result = {
-                        result: true,
-                        code: Code.ExecutionSuccess,
-                        message: 'create table success',
-                        data: ""
-                    };
-                }
-            }).catch(function (result) {
-                self.result = {
-                    code: Code.ExecutionFailed,
-                    message: 'Create Table Failed',
-                    result: false,
-                    innerException: result
-                }
-            })
-            return this;
-        },
         set(table) {
             params.table = table;
             return this;
         },
-        get: function (query) {
-            let self = this;
+        get: function (query,limit=200,offset=0) {
+            //1.query== 1||"1"
+            //2.query==['1',2,,3]
+            //3.query=={id:1,props:"prop"}
             if (typeof query != "object") {
-                return null;
+            //1.query== 1||"1"
+
+                let id=query;
+                query={id:id}
             }
+            
             if (Array.isArray(query)) {
+                //2.query==['1',2,,3]
                 query = { id: query }
             }
-
-            if (self.table === "") {
+            
+            if (params.table === "") {
                 return null;
             }
             let offsetCount = offset;
             let limitCount = 0;
-
+            var promise = new Promise(function (resolve, reject) {
             aidb._open(params.database,params.version).then(function (database) {
-                let transaction = database.transaction(self.table, 'readonly');
-                let objectStore = transaction.objectStore(self.table);
+                let transaction = database.transaction(params.table, 'readonly');
+                let objectStore = transaction.objectStore(params.table);
                 let data = [];
 
                 let cursorObject = objectStore.openCursor();
 
                 cursorObject.onerror = function (event) {
-                    self._error(event, reject)
+                    aidb._error(event, reject)
                 }
                 cursorObject.onsuccess = function (event) {
                     let cursor = event.target.result;
@@ -252,14 +225,18 @@ let aidb = (function () {
 
                 // 
             })
-
+        })
             return promise;
         },
         add: function (data) {
+            //1.{id:1,val:""}
+            //2,[{},{},{}]
             let dataArr = []
             if (!Array.isArray(data)) {
+                //1.{id:1,val:""}
                 dataArr.push(data);
             } else {
+                //2,[{},{},{}]
                 dataArr = data;
             }
             let head = 0;
@@ -275,7 +252,7 @@ let aidb = (function () {
                         process.onsuccess = addNext;
                         ++head;
                     } else {   // complete
-
+                        
                     }
                 }
 
@@ -447,6 +424,9 @@ let aidb = (function () {
 
             })
             return promise;
+        },
+        _error:function(data,callback){
+            callback(data);
         }
     })
     return aidb;

@@ -59,9 +59,12 @@ export default {
             // let result2 = this.$aidb.open('test',2).createTable('tablename2',{keyPath:'id'});
             // let result3 = this.$aidb.open('test',3).createTable('tablename3',{keyPath:'id'});
             // // console.log(result2)
-            this.$aidb.open('test',4).set("tablename4").add({id:1,value:"test"});
+            // this.$aidb.open('test',4).set("tablename4").add({id:1,value:"test"});
             // this.$aidb.open('_config',1).createTable('_params',{keyPath:'id'})
-            console.log(this.$aidb.getOptions())
+            this.$aidb.open('test',4).set('tablename4').get({val:"test"},2).then(function(data){
+                console.log(data)
+            })
+            // this.$aidb.set("tablename4").add([{id:2,value:"test"},{id:3,value:"test"},{id:4,value:"test"},{id:5,value:"test"}])
         //   let result2 = this.$aidb.open('test').createTable('tablename2',{keyPath:'id'});
         //   console.log(result2)
         //   console.log(this.$aidb)
