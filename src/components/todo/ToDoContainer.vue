@@ -57,11 +57,25 @@ export default {
         .add(toDoItem);
     },
     init: function() {
+     
+      let r3 = window.indexedDB.open('test',5)
+     
+      r3.onupgradeneeded=function(event){
+         console.log("r3 onupgradeneeded",event)
+         let db = event.target.result
+         let a= db.createObjectStore('person')
+      }
+      r3.onsuccess=function(){
+        console.log("r3 onsuccess",event)
+      }
       // let result = this.$aidb.open('test',1).createTable('tablename1',{keyPath:'id'});
       // let result2 = this.$aidb.open('test',2).createTable('tablename2',{keyPath:'id'});
       // let result3 = this.$aidb.open('test',3).createTable('tablename3',{keyPath:'id'});
       // let result4 = this.$aidb.open('test',4).createTable('tablename4',{keyPath:'id'});
-this.$aidb.open('test')
+      // this.$aidb.open('test',1).set('tablename4').get(2).then(function(data){
+      //   console.log(data)
+      // })
+      this.$aidb.open('test').createTable('tablename5',{keyPath:'id'});
       // // console.log(result2)
       // this.$aidb.open('test',4).set("tablename4").add({id:1,value:"test"});
       // this.$aidb.open('_config',1).createTable('_params',{keyPath:'id'})
@@ -85,8 +99,8 @@ this.$aidb.open('test')
       // console.log(result)
     },
     seedData:function(){
-        this.$aidb
-        .open("_config", 1).createTable('_params');
+        // this.$aidb
+        // .open("_config", 1).createTable('_params');
         this.$aidb
         .open("_config", 1)
         .set("_params")
