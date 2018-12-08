@@ -125,7 +125,7 @@ export default {
     },
     init: function() {
       let setId = this.$route.params.id;
-      let context = new dbcontext("DB_Vue_FlashCard", 2);
+      let context = new dbcontext("DB_Vue_FlashCard");
       context
         .open("DB_Vue_FlashCard")
         .set("Cards")

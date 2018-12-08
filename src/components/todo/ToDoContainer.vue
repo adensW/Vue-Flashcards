@@ -27,6 +27,7 @@ export default {
   },
   created() {
     this.init();
+    this.init2();
   },
   mounted() {},
   methods: {
@@ -57,46 +58,13 @@ export default {
         .add(toDoItem);
     },
     init: function() {
-     
-      let r3 = window.indexedDB.open('test',5)
-     
-      r3.onupgradeneeded=function(event){
-         console.log("r3 onupgradeneeded",event)
-         let db = event.target.result
-         let a= db.createObjectStore('person')
-      }
-      r3.onsuccess=function(){
-        console.log("r3 onsuccess",event)
-      }
-      // let result = this.$aidb.open('test',1).createTable('tablename1',{keyPath:'id'});
-      // let result2 = this.$aidb.open('test',2).createTable('tablename2',{keyPath:'id'});
-      // let result3 = this.$aidb.open('test',3).createTable('tablename3',{keyPath:'id'});
-      // let result4 = this.$aidb.open('test',4).createTable('tablename4',{keyPath:'id'});
-      // this.$aidb.open('test',1).set('tablename4').get(2).then(function(data){
-      //   console.log(data)
-      // })
-      this.$aidb.open('test').createTable('tablename5',{keyPath:'id'});
-      // // console.log(result2)
-      // this.$aidb.open('test',4).set("tablename4").add({id:1,value:"test"});
-      // this.$aidb.open('_config',1).createTable('_params',{keyPath:'id'})
-      
-      // this.$aidb.open('test',4).set("tablename4").add([{id:2,value:"test"},{id:3,value:"test"},{id:4,value:"test"},{id:5,value:"test"}])
-      //  this.$aidb.open('test',4).set('tablename4').get({value:"test"},2).then(function(data){
-      //     console.log(data)
-      // })
-
-      //   let result2 = this.$aidb.open('test').createTable('tablename2',{keyPath:'id'});
-      //   console.log(result2)
-      //   console.log(this.$aidb)
-
-      //   let self = this;
-      //   let context= new dbcontext('DB_Vue_FlashCard');
-      //     // context.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
-      //     context.open("DB_Vue_FlashCard").set("ToDos").getAll().then(function(data){
-      //         self.list = data;
-      //     })
-      // let result =  context.open("DB_Vue_FlashCard").hasTable("ToDos");
-      // console.log(result)
+      // this.$aidb.initialize()
+      console.log(this.$aidb.open('test1',1))
+      console.log(this.$aidb.open('test2',2))
+      console.log(this.$aidb.open('test3',3))
+    },
+    init2:function(){
+       console.log(this.$aidb.open('test4',3))
     },
     seedData:function(){
         // this.$aidb

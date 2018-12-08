@@ -1,4 +1,4 @@
-import {aidb} from './aidb-0.1.1.js'
+import {aidb} from './aidb-0.1.2.js'
 
 var VueAidb={};
 

@@ -27,7 +27,7 @@ const State = {
 const _default = {
     database: '_config',
     table: "_params",
-    version: 1,
+    version: 0,
     keys: {
         all: 1,
         databaseinfo: 2,//{[{name:"",version:1},{name:"",version:2,tables:["","",""]},{}]}
@@ -130,10 +130,13 @@ let aidb = (function () {
         version: "0.1.2",
         result: {},
         database: null,
-
-        initialize: async function () {
-            await aidb._open(_default.database, _default.version)
-            console.log(aidb.database)
+        args:dbset,
+        initialize: function () {
+            // await aidb._open(_default.database, _default.version)
+            aidb._execude(_initDefault).then(function (result) { }).catch(function (result) {
+                console.log(result)
+            })
+            // console.log(aidb.database)
         },
         openAsync: async function (dbname, ver) {
             if (isNullOrWhiteSpace(ver)) {
@@ -143,8 +146,8 @@ let aidb = (function () {
             // await aidb._openAsync(dbname,ver);
         },
         open: function (dbname, ver) {
-            params.database = dbname;
-            params.version = ver || params.version;
+            dbset.database=dbname;
+            dbset.version = ver||null;
             return this;
         },
         getOptions: function () {
@@ -220,8 +223,8 @@ let aidb = (function () {
             return this;
         },
         set(table) {
-            params.table = table;
-            return this;
+           dbset.tables.push(table.toString())
+           return this;
         },
         get: function (query, limit = 200, offset = 0) {
             //1.query== 1||"1"
@@ -495,7 +498,7 @@ let aidb = (function () {
             let promise = new Promise(function (resolve, reject) {
                 let set = args || dbset;
                 //first check database open or create
-                if (aidb.isNullOrWhiteSpace(set.database)) {
+                if (isNullOrWhiteSpace(set.database)) {
                     let result = {
                         code: Code.OpenFailed,
                         exception: "you are openning database without name!!!",
@@ -504,7 +507,7 @@ let aidb = (function () {
                     return reject(result);
 
                 }
-                if (aidb.isNullOrWhiteSpace(set.tables)) {
+                if (isNullOrWhiteSpace(set.tables)) {
                     let result = {
                         code: Code.SetFailed,
                         exception: "you are openning table without name!!!",
@@ -518,6 +521,7 @@ let aidb = (function () {
                 let tablesDel = [];
                 let tablesClr = [];
                 let tablesPut = [];
+                let tableList = [];
                 for (let index = 0; index < tables.length; index++) {
                     const element = tables[index];
                     if (element.state) {
@@ -537,43 +541,69 @@ let aidb = (function () {
                             default:
                                 break;
                         }
+                        tableList.push(element.name.toString())
                     }
                 }
                 //table open
-                let request = window.indexedDB.open(set.database, set.version + 1);
+                let request;
+                if (!isNullOrWhiteSpace(tablesAdd)) {
+                    request = window.indexedDB.open(set.database, set.version - 1 + 2);
+                } else {
+                    request = window.indexedDB.open(set.database)
+                }
+                let _transaction;
                 request.onupgradeneeded = function (event) {
                     //tableadd
                     let database = event.target.result;
+
                     for (let index = 0; index < tablesAdd.length; index++) {
                         const table = tablesAdd[index];
                         if (!database.objectStoreNames.contains(table.name)) {
-                            let objectStore= database.createObjectStore(table.name, element.prop);
-                            if(!isNullOrWhiteSpace(table.index)){
+                            let objectStore = database.createObjectStore(table.name, table.prop);
+                            if (!isNullOrWhiteSpace(table.index)) {
                                 for (let i = 0; i < table.index.length; i++) {
                                     const ele = table.index[i];
-                                    objectStore.createIndex(ele.key,ele.key,{unique:ele.unique})
+                                    objectStore.createIndex(ele.key, ele.key, { unique: ele.unique })
                                 }
-                                
                             }
-                            if(!isNullOrWhiteSpace(table.sets)){
+                            if (!isNullOrWhiteSpace(table.sets)) {
                                 //
-                                let transaction = database.transaction([table.name],'readwrite');
-                                for (let i = 0; i < table.sets.length; i++) {
-                                    const set = table.sets[i];
-                                    switch (set.state) {
-                                        case State.add:
-                                            transaction.add(set.value);
-                                            break;
-                                        case State.delete:
-                                            transaction.delete(set.value);
-                                            break;
-                                        case State.update:
-                                            transaction.put(set.value);
-                                            break;
-                                        default:
-                                            break;
+                                // _transaction=_transaction||database.transaction(tableList,'readwrite');
+                                // let transaction=_transaction|| database.transaction(tableList,'readwrite');
+                                // let objectStore= transaction.ObjectStore(table.name);
+                                let head = 0;
+                                let length = table.sets.length;
+                                addNext();
+                                function addNext() {
+                                    // console.log(dataArr[head]);
+                                    if (head < length) {
+                                        const set = table.sets[head];
+                                        let process;
+
+                                        switch (set.state) {
+                                            case State.add:
+                                                process = objectStore.add(set.value)
+                                                process.onsuccess = addNext;
+                                                break;
+                                            case State.delete:
+                                                process = objectStore.delete(set.value)
+                                                process.onsuccess = addNext;
+
+                                                break;
+                                            case State.update:
+                                                process = objectStore.put(set.value)
+                                                process.onsuccess = addNext;
+
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        ++head;
+                                    } else {   // complete
+
                                     }
                                 }
+
                             }
                         }
                     }
@@ -587,13 +617,61 @@ let aidb = (function () {
                 }
                 request.onsuccess = function (event) {
                     //tableput
+                    let database = event.target.result;
+                    _transaction = _transaction || database.transaction(tableList, 'readwrite');
+                    let transaction = _transaction || database.transaction(tableList, 'readwrite');
+                    for (let index = 0; index < tablesPut.length; index++) {
+                        const element = tablesPut[index];
+
+                        let objectStore = transaction.objectStore(element.name)
+                    
+                        if (element.sets) {
+                            let head = 0;
+                            let length = element.sets.length;
+                            putNext();
+                            function putNext() {
+                                // console.log(dataArr[head]);
+                                if (head < length) {
+                                    const set = element.sets[head];
+                                    let process;
+    
+                                    switch (set.state) {
+                                        case State.add:
+                                            process = objectStore.add(set.value)
+                                            process.onsuccess = addNext;
+                                            break;
+                                        case State.delete:
+                                            process = objectStore.delete(set.value)
+                                            process.onsuccess = addNext;
+    
+                                            break;
+                                        case State.update:
+                                            process = objectStore.put(set.value)
+                                            process.onsuccess = addNext;
+    
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    ++head;
+                                } else {   // complete
+    
+                                }
+                            }
+                        }
+                    }
+                    for (let index = 0; index < tablesClr.length; index++) {
+                        const element = tablesClr[index];
+                        let objectStore = transaction.objectStore(element.name)
+                        objectStore.clear();
+                    }
                     return resolve();
                 }
                 request.onerror = function (event) {
-                    return reject();
+                    return reject(event);
                 }
                 request.onblocked = function (event) {
-                    return reject();
+                    return reject(event);
                 }
             })
             return promise;

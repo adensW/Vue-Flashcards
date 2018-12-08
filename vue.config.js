@@ -3,4 +3,7 @@ module.exports = {
     outputDir: 'dist', //输出文件夹，我这里设为www,主要是和Cordova配合生成安卓应用的。
     productionSourceMap:false, //不生成map
     runtimeCompiler: true, // 包含运行时编译器的 Vue 构建版本
+      configureWebpack: {
+        devtool: 'source-map'
+      }
   };
