@@ -25,9 +25,9 @@ const State = {
     update: "2",
 }
 const _default = {
-    database: '_config',
-    table: "_params",
-    version: 0,
+    database: 'aidb_default',
+    table: "aidb_params",
+    version: 1,
     keys: {
         all: 1,
         databaseinfo: 2,//{[{name:"",version:1},{name:"",version:2,tables:["","",""]},{}]}
@@ -45,7 +45,7 @@ const _initDefault = {
         prop: { keyPath: 'id' },
         state: State.add,
         sets: [{
-            value: { id: 0, database: 'aidb_default', version: 1, tables: ['aidb_params'] },
+            value: { id: 0, database: 'aidb_default', version: 1 },
             state: State.add
         }]
     }],
@@ -89,12 +89,12 @@ let dbset = {
     version: 1,
     state: State.open
 }
-let tableset = {
-    name: '',
-    index: [],
-    prop: { autoIncrement: true },
-    state: State.put,
-    sets: []
+let tableset =function(){
+    let name= '';
+    let index= [];
+    let prop={ autoIncrement: true };
+    let state= State.put;
+    let sets= [];
 }
 //cache end
 let aidb = (function () {
@@ -153,74 +153,26 @@ let aidb = (function () {
         getOptions: function () {
             return params;
         },
-        createTable: function (name, props) {
-            let self = this;
-            const request = window.indexedDB.open(params.database);
-            request.onsuccess = function (event) {
-                let result = {
-                    result: true,
-                    code: Code.ExecutionSuccess,
-                    message: 'Create table Success',
-                    innerException: event,
-                    data: event
+        createTable: function (name, props,index) {
+            aidb._versionIncrease();
+            let table  = new tableset();
+            table.name =name;
+            table.state = State.add;
+            table.prop=props||{ autoIncrement: true }
+            if(!isNullOrWhiteSpace(index)){
+                table.index=[];
+                if(Array.isArray(index)){
+                    table.index=index;
+                }else{
+                    table.index.push(index);
                 }
-                self.result = self.result || result;
-
-                // let a = event.target.result.objectStoreNames;
-                // console.log(a);
-                // for(item in a){
-                //     self.tables.push(a[item])
-                // }
-
-
-            };
-            request.onerror = function (event) {
-                let result = {
-                    result: false,
-                    code: Code.OpenFailed,
-                    message: 'open database failed',
-                    innerException: event,
-                    data: event
-                }
-                self.result = result;
-
             }
-            request.onupgradeneeded = function (event) {
-                let database = event.target.result;
-                if (!database.objectStoreNames.contains(name)) {
-                    database.createObjectStore(name, props);
-                    params.version = database.version;
-                    let result = {
-                        result: true,
-                        code: Code.ExecutionSuccess,
-                        message: 'create table success',
-                        Exception: "",
-                        data: event
-                    }
-                    self.result = result;
-                } else {
-                    let result = {
-                        result: false,
-                        code: Code.ExecutionFailed,
-                        message: 'table allready exist',
-                        Exception: "",
-                        data: event
-                    }
-                    self.result = result;
-                }
-
-            }
-            request.onblocked = function (event) {
-                let result = {
-                    result: false,
-                    code: Code.Blocked,
-                    message: 'last database openning',
-                    innerException: event,
-                    data: ""
-                }
-                self.result = result;
-            }
+            dbset.tables.push(table)
+            console.log("create",dbset.version);
             return this;
+        },
+        execude:function(){
+            return aidb._execude();
         },
         set(table) {
            dbset.tables.push(table.toString())
@@ -494,6 +446,16 @@ let aidb = (function () {
     aidb.extend({
         //外界aidb 无法访问
         //设置私有方法 内部使用 aidb.方法使用
+        _versionIncrease:function(){
+            aidb._get(_default.database,_default.version,_default.table,0).then(function(result){
+                console.log(result);
+                dbset.version = result.version-1+2;
+            }).catch(function(result){
+                dbset.version=1
+                console.error(result);
+                
+            })
+        },
         _execude: function (args) {
             let promise = new Promise(function (resolve, reject) {
                 let set = args || dbset;
@@ -547,7 +509,8 @@ let aidb = (function () {
                 //table open
                 let request;
                 if (!isNullOrWhiteSpace(tablesAdd)) {
-                    request = window.indexedDB.open(set.database, set.version - 1 + 2);
+                    request = window.indexedDB.open(set.database, set.version);
+                    aidb._updateParmas(set);
                 } else {
                     request = window.indexedDB.open(set.database)
                 }
@@ -677,6 +640,18 @@ let aidb = (function () {
             return promise;
 
         },
+        _updateParmas:function(set){
+            aidb._get(_default.database,_default.version,_default.table,set.database).then(function(result){
+                console.log(result);
+                //put
+            }).catch(function(result){
+                if(isNullOrWhiteSpace(result)){
+                //add
+                }else{
+                    //error
+                }
+            })
+        },
         _createTable: function (db, ver, table) {
             let promise = new Promise(function (resolve, reject) {
                 const request = window.indexedDB.open(db, ver);
@@ -805,57 +780,139 @@ let aidb = (function () {
         _setAsync: async function (table) {
             _config.table = table;
         },
-        _getAsync: async function (db, ver, table, query) {
-            //1.query== 1||"1"
-            //2.query==['1',2,,3]
-            //3.query=={id:1,props:"prop"}
-            if (typeof query != "object") {
-                //1.query== 1||"1"
-
-                let id = query;
-                query = { id: id }
-            }
-
-            if (Array.isArray(query)) {
-                //2.query==['1',2,,3]
-                query = { id: query }
-            }
-            let data = {};
-            const request = window.indexedDB.open(db, ver);
-            request.onsuccess = async function (event) {
-
-                let database = event.target.result
-                let transaction = database.transaction(table, 'readonly');
-                let objectStore = transaction.objectStore(table);
-                var req = objectStore.get(2);
-                req.onsuccess = await function (event) {
-                    if (req.result) {
-                        data = aidb.extend(true, {}, event.target.result);
-
-                        callback(data)
-                        console.log('req', event.target.result)
-                    } else {
-                        console.log('req else', event.target.result)
+        _getIndex:function(db,ver,table,index,value){
+            let promise = new Promise(function(resolve,reject){
+                const request = window.indexedDB.open(db, ver);
+                request.onsuccess =  function (event) {
+    
+                    let database = event.target.result
+                    let transaction = database.transaction(table, 'readonly');
+                    let objectStore = transaction.objectStore(table);
+                    if(objectStore.indexNames.contains(index)){
+                        let indexReq = objectStore.index(index)
+                        var req = indexReq.get(value);
+                        req.onsuccess =  function (event) {
+                            if (req.result) {
+                               resolve(req.result)
+                            } else {
+                                reject(req.result)
+                            }
+        
+                        }
                     }
-
+                  
+                };
+                request.onerror = function (event) {
+    
                 }
-                console.log('request data', data)
-            };
-            request.onerror = function (event) {
+                request.onupgradeneeded = function (event) {
+    
+                }
+                request.onblocked = function (event) {
+    
+                }
+            });
+            return promise;
+        },
+        _getQuery:function(db,ver,table,query){
+            let promise = new Promise(function(resolve,reject){
+                const request = window.indexedDB.open(db, ver);
+                request.onsuccess =  function (event) {
+    
+                    let database = event.target.result
+                    let transaction = database.transaction(table, 'readonly');
+                    let objectStore = transaction.objectStore(table);
+                    if(isNullOrWhiteSpace(query)){
+                        //getAll()
+                    }else{
+                        let queryKeys =Object.keys(query);
+                        if(queryKeys.length>1){
+                            for (let i = 0; i < queryKeys.length; i++) {
+                                const element = queryKeys[i];
+                               
+                                console.log(query[element])
+                              }
+                        }else{
+                            if(Array.isArray(query[queryKeys[0]])){
+                                //handle {key:[1,2,3,4]}
+    
+                            }else{
+                                //handle {key:1}
+                            }
+                        }
+                    }
+                   
+                    
+                    if(objectStore.indexNames.contains(index)){
+                        let indexReq = objectStore.index(index)
+                        var req = indexReq.get(value);
+                        req.onsuccess =  function (event) {
+                            if (req.result) {
+                               resolve(req.result)
+                            } else {
+                                reject(req.result)
+                            }
+        
+                        }
+                    }
+                  
+                };
+                request.onerror = function (event) {
+    
+                }
+                request.onupgradeneeded = function (event) {
+    
+                }
+                request.onblocked = function (event) {
+    
+                }
+            });
+            return promise;
+        },
+        _get:  function (db, ver, table, query) {
+            // 1.query== 1||"1"
+            // 2.query==['1',2,,3]
+            // 3.query=={id:1,props:"prop"}
+            // if (typeof query != "object") {
+            //     //1.query== 1||"1"
 
-            }
-            request.onupgradeneeded = function (event) {
+            //     let id = query;
+            //     query = { id: id }
+            // }
 
-            }
-            request.onblocked = function (event) {
-
-            }
-            function callback(data) {
-                console.log('callback', data)
-            }
-            ///
-            // 
-            return data
+            // if (Array.isArray(query)) {
+            //     //2.query==['1',2,,3]
+            //     query = { id: query }
+            // }
+            let promise = new Promise(function(resolve,reject){
+                const request = window.indexedDB.open(db, ver);
+                request.onsuccess =  function (event) {
+    
+                    let database = event.target.result
+                    let transaction = database.transaction(table, 'readonly');
+                    let objectStore = transaction.objectStore(table);
+                    // let indexReq = objectStore.index('id')
+                    var req = objectStore.get(query);
+                    req.onsuccess =  function (event) {
+                        if (req.result) {
+                           resolve(req.result)
+                        } else {
+                            reject(req.result)
+                        }
+    
+                    }
+                };
+                request.onerror = function (event) {
+    
+                }
+                request.onupgradeneeded = function (event) {
+    
+                }
+                request.onblocked = function (event) {
+    
+                }
+            });
+            return promise;
 
         },
         _error: function (data, callback) {
