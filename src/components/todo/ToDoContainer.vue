@@ -13,7 +13,7 @@
 import ToDo from "./ToDo";
 import ToDoContent from "./ToDoContent";
 import { dbcontext } from "@/service/context/dbcontext-class.js";
-// import {aidb} from "@/service/context/context-0.1.1.js"
+// import {aidb} from "@/plugins/aidb/aidb-0.1.2.js"
 export default {
   name: "ToDoContainer",
   components: {
@@ -59,6 +59,7 @@ export default {
     },
     init: function() {
       let self = this;
+
       // let query={id:'1234345346',database:"test"}
       // let queryKeys = Object.keys(query);
       // for (let i = 0; i < queryKeys.length; i++) {
@@ -70,25 +71,25 @@ export default {
       // console.log(this.$aidb.open('test1',1).createTable('1'))
       // console.log(this.$aidb.open('test2',2).createTable('2'))
       // console.log(this.$aidb.open('test3',3).createTable('3'))
-      let request =  window.indexedDB.open('DB_Vue_FlashCard',3)
-      request.onsuccess=function(event){
-          let database = event.target.result
-          // console.log(database.transaction(['table.name'], 'readwrite')
-          //   .objectStore('table.name'))
-         var request = database.transaction(['Cards','ToDos'], 'readwrite')
-            .objectStore('Cards')
-            // .add({ id: self.$uuid.v1(), name: '张三', age: 24, email: 'zhangsan@example.com' });
-            // .get('1fe28e40-fb8a-11e8-b55f-d5700dffec0a');
-            .getAll([0,1,3])
+      // let request =  window.indexedDB.open('DB_Vue_FlashCard',3)
+      // request.onsuccess=function(event){
+      //     let database = event.target.result
+      //     // console.log(database.transaction(['table.name'], 'readwrite')
+      //     //   .objectStore('table.name'))
+      //    var request = database.transaction(['Cards','ToDos'], 'readwrite')
+      //       .objectStore('Cards')
+      //       // .add({ id: self.$uuid.v1(), name: '张三', age: 24, email: 'zhangsan@example.com' });
+      //       // .get('1fe28e40-fb8a-11e8-b55f-d5700dffec0a');
+      //       .getAll([0,1,3])
 
-          request.onsuccess = function (event) {
-            console.log(request.result);
-          };
+      //     request.onsuccess = function (event) {
+      //       console.log(request.result);
+      //     };
 
-          request.onerror = function (event) {
-            console.log('数据写入失败');
-          }
-      }
+      //     request.onerror = function (event) {
+      //       console.log('数据写入失败');
+      //     }
+      // }
       // request.onupgradeneeded=function(event){
       //   let database = event.target.result;
       //     if (!database.objectStoreNames.contains('table.name')) 
