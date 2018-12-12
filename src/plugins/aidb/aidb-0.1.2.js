@@ -168,7 +168,7 @@ let aidb = (function () {
                 }
             }
             dbset.tables.push(table)
-            // console.log("create",dbset.version);
+            console.log("create",dbset.version);
             return this;
         },
         execude:function(){
@@ -536,9 +536,8 @@ let aidb = (function () {
                                 // let objectStore= transaction.ObjectStore(table.name);
                                 let head = 0;
                                 let length = table.sets.length;
-                                next();
-                                // eslint-disable-next-line
-                                const next = function addNext() {
+                                addNext();
+                                function addNext() {
                                     // console.log(dataArr[head]);
                                     if (head < length) {
                                         const set = table.sets[head];
@@ -592,9 +591,8 @@ let aidb = (function () {
                         if (element.sets) {
                             let head = 0;
                             let length = element.sets.length;
-                            next();
-                            // // eslint-disable-next-line
-                            const next = function putNext() {
+                            putNext();
+                            function putNext() {
                                 // console.log(dataArr[head]);
                                 if (head < length) {
                                     const set = element.sets[head];
