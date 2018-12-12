@@ -174,10 +174,6 @@ let aidb = (function () {
                 }
             }
             dbset.tables.push(table)
-<<<<<<< HEAD
-            console.log("create",dbset.version);
-=======
->>>>>>> e45a0e164d87e1826ed1d5bade2dc3c79753b809
             return this;
 
 
