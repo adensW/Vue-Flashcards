@@ -154,20 +154,10 @@ let aidb = (function () {
             })
             // console.log(aidb.database)
         },
-        openAsync: async function (dbname, ver) {
-            if (isNullOrWhiteSpace(ver)) {
-                await aidb._getTableVersion(dbname);
-            }
-            console.log(params.version)
-            // await aidb._openAsync(dbname,ver);
-        },
         open: function (dbname, ver) {
             dbset.database = dbname;
             dbset.version = ver || null;
             return this;
-        },
-        getOptions: function () {
-            return params;
         },
         createTable: function (name, props, index) {
 
@@ -184,7 +174,6 @@ let aidb = (function () {
                 }
             }
             dbset.tables.push(table)
-            console.log('createtable', dbset)
             return this;
 
 
