@@ -35,7 +35,7 @@ const _default = {
 }
 const _initDefault = {
     database: 'aidb_default',
-    version: 0,
+    version: 1,
     tables: [{
         name: 'aidb_params',
         index: [{
@@ -89,12 +89,26 @@ let dbset = {
     version: 1,
     state: State.open
 }
-let tableset =function(){
-    let name= '';
-    let index= [];
-    let prop={ autoIncrement: true };
-    let state= State.put;
-    let sets= [];
+let dbsetreset = {
+    //-->open(test,ver)
+    //database:'test',
+    //version:1||_default获取最新
+    //-->set()
+    //tables:[{name:'tablename1',state:'add',sets:[{value:{},state:'add'},{}]}]
+    //
+    //
+    database: '',
+    tables: [],
+    version: 1,
+    state: State.open
+}
+let isInit = false;
+let tableset = function () {
+    let name = '';
+    let index = [];
+    let prop = { autoIncrement: true };
+    let state = State.put;
+    let sets = [];
 }
 //cache end
 let aidb = (function () {
@@ -130,10 +144,12 @@ let aidb = (function () {
         version: "0.1.2",
         result: {},
         database: null,
-        args:dbset,
+        args: dbset,
         initialize: function () {
             // await aidb._open(_default.database, _default.version)
-            aidb._execude(_initDefault).then(function (result) { }).catch(function (result) {
+            aidb._execude(_initDefault).then(function (result) {
+                isInit = true;
+            }).catch(function (result) {
                 console.log(result)
             })
             // console.log(aidb.database)
@@ -146,37 +162,43 @@ let aidb = (function () {
             // await aidb._openAsync(dbname,ver);
         },
         open: function (dbname, ver) {
-            dbset.database=dbname;
-            dbset.version = ver||null;
+            dbset.database = dbname;
+            dbset.version = ver || null;
             return this;
         },
         getOptions: function () {
             return params;
         },
-        createTable: function (name, props,index) {
-            aidb._versionIncrease();
-            let table  = new tableset();
-            table.name =name;
+        createTable: function (name, props, index) {
+
+            let table = new tableset();
+            table.name = name;
             table.state = State.add;
-            table.prop=props||{ autoIncrement: true }
-            if(!isNullOrWhiteSpace(index)){
-                table.index=[];
-                if(Array.isArray(index)){
-                    table.index=index;
-                }else{
+            table.prop = props || { autoIncrement: true }
+            if (!isNullOrWhiteSpace(index)) {
+                table.index = [];
+                if (Array.isArray(index)) {
+                    table.index = index;
+                } else {
                     table.index.push(index);
                 }
             }
             dbset.tables.push(table)
-            // console.log("create",dbset.version);
+            console.log('createtable', dbset)
             return this;
+
+
+            // console.log("create",dbset.version);
+
         },
-        execude:function(){
-            return aidb._execude();
+        execude: function () {
+            return aidb._execude().then(function(){
+                dbset = dbsetreset;
+            });
         },
         set(table) {
-           dbset.tables.push(table.toString())
-           return this;
+            dbset.tables.push(table.toString())
+            return this;
         },
         get: function (query, limit = 200, offset = 0) {
             //1.query== 1||"1"
@@ -398,6 +420,12 @@ let aidb = (function () {
         // __open=function(data){
         //     console.log("init function __open "+data)
         // }
+        // console.log(this.isInit);
+        if (!isInit) {
+            console.log(isInit)
+            // this.initialize()
+        }
+
     }
     aidb.fn.init.prototype = aidb.fn;
     aidb.isFunction = isFunction;
@@ -446,19 +474,24 @@ let aidb = (function () {
     aidb.extend({
         //外界aidb 无法访问
         //设置私有方法 内部使用 aidb.方法使用
-        _versionIncrease:function(){
-            aidb._get(_default.database,_default.version,_default.table,0).then(function(result){
-                console.log(result);
-                dbset.version = result.version-1+2;
-            }).catch(function(result){
-                dbset.version=1
-                console.error(result);
-                
+        _versionIncrease: function (name) {
+            let promise =new Promise(function(resolve,reject){
+                aidb._getIndex(_default.database, _default.version, _default.table, 'database', name).then(function (result) {
+                    dbset.version = result.version - 1 + 2;
+                    console.log('versionIncrease', dbset);
+                    resolve()
+                }).catch(function (result) {
+                    dbset.version = 1
+                    console.log('versionIncreaseError', result);
+                    resolve()
+                })
             })
+            return promise;
         },
         _execude: function (args) {
             let promise = new Promise(function (resolve, reject) {
                 let set = args || dbset;
+                
                 //first check database open or create
                 if (isNullOrWhiteSpace(set.database)) {
                     let result = {
@@ -503,61 +536,243 @@ let aidb = (function () {
                             default:
                                 break;
                         }
-                        tableList.push(element.name.toString())
+                        tableList.push(element.name)
                     }
                 }
                 //table open
-                let request;
-                if (!isNullOrWhiteSpace(tablesAdd)) {
-                    request = window.indexedDB.open(set.database, set.version);
-                    aidb._updateParmas(set);
-                } else {
-                    request = window.indexedDB.open(set.database)
-                }
-                let _transaction;
-                request.onupgradeneeded = function (event) {
-                    //tableadd
-                    let database = event.target.result;
-
-                    for (let index = 0; index < tablesAdd.length; index++) {
-                        const table = tablesAdd[index];
-                        if (!database.objectStoreNames.contains(table.name)) {
-                            let objectStore = database.createObjectStore(table.name, table.prop);
-                            if (!isNullOrWhiteSpace(table.index)) {
-                                for (let i = 0; i < table.index.length; i++) {
-                                    const ele = table.index[i];
-                                    objectStore.createIndex(ele.key, ele.key, { unique: ele.unique })
+                if (tablesAdd.length > 0) {
+                    aidb._versionIncrease(dbset.database).then(function () {
+                        console.log('execude', set)
+                        aidb._updateParmas(set).then(function(){
+                            
+                            let request = window.indexedDB.open(set.database, set.version);
+                       
+                            request.onupgradeneeded = function (event) {
+                                //tableadd
+                                let database = event.target.result;
+    
+                                for (let index = 0; index < tablesAdd.length; index++) {
+                                    const table = tablesAdd[index];
+                                    if (!database.objectStoreNames.contains(table.name)) {
+                                        let objectStore = database.createObjectStore(table.name, table.prop);
+                                        if (!isNullOrWhiteSpace(table.index)) {
+                                            for (let i = 0; i < table.index.length; i++) {
+                                                const ele = table.index[i];
+                                                objectStore.createIndex(ele.key, ele.key, { unique: ele.unique })
+                                            }
+                                        }
+                                        if (!isNullOrWhiteSpace(table.sets)) {
+                                            let addNext = function Next() {
+                                                // console.log(dataArr[head]);
+                                                if (head < length) {
+                                                    const set = table.sets[head];
+                                                    let process;
+    
+                                                    switch (set.state) {
+                                                        case State.add:
+                                                            process = objectStore.add(set.value)
+                                                            process.onsuccess = addNext;
+                                                            break;
+                                                        case State.delete:
+                                                            process = objectStore.delete(set.value)
+                                                            process.onsuccess = addNext;
+    
+                                                            break;
+                                                        case State.update:
+                                                            process = objectStore.put(set.value)
+                                                            process.onsuccess = addNext;
+    
+                                                            break;
+                                                        default:
+                                                            break;
+                                                    }
+                                                    ++head;
+                                                } else {   // complete
+    
+                                                }
+                                            }
+                                            //
+                                            // _transaction=_transaction||database.transaction(tableList,'readwrite');
+                                            // let transaction=_transaction|| database.transaction(tableList,'readwrite');
+                                            // let objectStore= transaction.ObjectStore(table.name);
+                                            let head = 0;
+                                            let length = table.sets.length;
+                                            addNext();
+    
+    
+                                        }
+                                    }
+                                }
+                                for (let index = 0; index < tablesDel.length; index++) {
+                                    const element = tablesDel[index];
+                                    database.deleteObjectStore(element.name);
+                                }
+                                if (isNullOrWhiteSpace(tablesPut)) {
+                                    return resolve();
                                 }
                             }
-                            if (!isNullOrWhiteSpace(table.sets)) {
-                                //
-                                // _transaction=_transaction||database.transaction(tableList,'readwrite');
-                                // let transaction=_transaction|| database.transaction(tableList,'readwrite');
-                                // let objectStore= transaction.ObjectStore(table.name);
-                                let head = 0;
-                                let length = table.sets.length;
-                                next();
-                                // eslint-disable-next-line
-                                const next = function addNext() {
+                            request.onsuccess = function (event) {
+                                //tableput
+                                console.log('debug',set)
+                                let database = event.target.result;
+                            
+                                let transaction = database.transaction(tableList, 'readwrite');
+                                for (let index = 0; index < tablesPut.length; index++) {
+                                    const element = tablesPut[index];
+    
+                                    let objectStore = transaction.objectStore(element.name)
+    
+                                    if (element.sets) {
+                                        let putNext = function Next() {
+                                            // console.log(dataArr[head]);
+                                            if (head < length) {
+                                                const set = element.sets[head];
+                                                let process;
+    
+                                                switch (set.state) {
+                                                    case State.add:
+                                                        process = objectStore.add(set.value)
+                                                        process.onsuccess = putNext;
+                                                        break;
+                                                    case State.delete:
+                                                        process = objectStore.delete(set.value)
+                                                        process.onsuccess = putNext;
+    
+                                                        break;
+                                                    case State.update:
+                                                        process = objectStore.put(set.value)
+                                                        process.onsuccess = putNext;
+    
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+                                                ++head;
+                                            } else {   // complete
+    
+                                            }
+                                        }
+                                        let head = 0;
+                                        let length = element.sets.length;
+                                        putNext();
+                                    }
+                                }
+                                for (let index = 0; index < tablesClr.length; index++) {
+                                    const element = tablesClr[index];
+                                    let objectStore = transaction.objectStore(element.name)
+                                    objectStore.clear();
+                                }
+                                return resolve();
+                            }
+                            request.onerror = function (event) {
+                                return reject(event);
+                            }
+                            request.onblocked = function (event) {
+                                return reject(event);
+                            }
+                        });
+                        
+                    });
+                } else {
+                    let request = window.indexedDB.open(set.database);
+                    request.onupgradeneeded = function (event) {
+                        //tableadd
+                        let database = event.target.result;
+
+                        for (let index = 0; index < tablesAdd.length; index++) {
+                            const table = tablesAdd[index];
+                            if (!database.objectStoreNames.contains(table.name)) {
+                                let objectStore = database.createObjectStore(table.name, table.prop);
+                                if (!isNullOrWhiteSpace(table.index)) {
+                                    for (let i = 0; i < table.index.length; i++) {
+                                        const ele = table.index[i];
+                                        objectStore.createIndex(ele.key, ele.key, { unique: ele.unique })
+                                    }
+                                }
+                                if (!isNullOrWhiteSpace(table.sets)) {
+                                    let addNext = function Next() {
+                                        // console.log(dataArr[head]);
+                                        if (head < length) {
+                                            const set = table.sets[head];
+                                            let process;
+
+                                            switch (set.state) {
+                                                case State.add:
+                                                    process = objectStore.add(set.value)
+                                                    process.onsuccess = addNext;
+                                                    break;
+                                                case State.delete:
+                                                    process = objectStore.delete(set.value)
+                                                    process.onsuccess = addNext;
+
+                                                    break;
+                                                case State.update:
+                                                    process = objectStore.put(set.value)
+                                                    process.onsuccess = addNext;
+
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                            ++head;
+                                        } else {   // complete
+
+                                        }
+                                    }
+                                    //
+                                    // _transaction=_transaction||database.transaction(tableList,'readwrite');
+                                    // let transaction=_transaction|| database.transaction(tableList,'readwrite');
+                                    // let objectStore= transaction.ObjectStore(table.name);
+                                    let head = 0;
+                                    let length = table.sets.length;
+                                    addNext();
+
+
+                                }
+                            }
+                        }
+                        for (let index = 0; index < tablesDel.length; index++) {
+                            const element = tablesDel[index];
+                            database.deleteObjectStore(element.name);
+                        }
+                        if (isNullOrWhiteSpace(tablesPut)) {
+                            return resolve();
+                        }
+                    }
+                    request.onsuccess = function (event) {
+                        //tableput
+                        let database = event.target.result;
+                        
+                        let transaction = database.transaction(tableList, 'readwrite');
+                        for (let index = 0; index < tablesPut.length; index++) {
+                            const element = tablesPut[index];
+                            
+                            let objectStore = transaction.objectStore(element.name)
+                            let head = 0;
+                            let length = element.sets.length;
+                            if (element.sets) {
+                                let putNext = function Next() {
+                                    let process = objectStore;
                                     // console.log(dataArr[head]);
                                     if (head < length) {
-                                        const set = table.sets[head];
-                                        let process;
-
+                                        const set = element.sets[head];
+                                        
+                                        
                                         switch (set.state) {
                                             case State.add:
-                                                process = objectStore.add(set.value)
-                                                process.onsuccess = addNext;
+                                                
+                                                process.add(set.value)
+                                                process.onsuccess = putNext;
                                                 break;
                                             case State.delete:
-                                                process = objectStore.delete(set.value)
-                                                process.onsuccess = addNext;
+                                                process.delete(set.value)
+                                                process.onsuccess = putNext;
 
                                                 break;
                                             case State.update:
-                                                process = objectStore.put(set.value)
-                                                process.onsuccess = addNext;
-
+                                            
+                                                process.put(set.value)
+                                                process.onsuccess = putNext;
                                                 break;
                                             default:
                                                 break;
@@ -567,92 +782,83 @@ let aidb = (function () {
 
                                     }
                                 }
-
+                               
+                                putNext();
                             }
                         }
-                    }
-                    for (let index = 0; index < tablesDel.length; index++) {
-                        const element = tablesDel[index];
-                        database.deleteObjectStore(element.name);
-                    }
-                    if (isNullOrWhiteSpace(tablesPut)) {
+                        for (let index = 0; index < tablesClr.length; index++) {
+                            const element = tablesClr[index];
+                            let objectStore = transaction.objectStore(element.name)
+                            objectStore.clear();
+                        }
                         return resolve();
                     }
-                }
-                request.onsuccess = function (event) {
-                    //tableput
-                    let database = event.target.result;
-                    _transaction = _transaction || database.transaction(tableList, 'readwrite');
-                    let transaction = _transaction || database.transaction(tableList, 'readwrite');
-                    for (let index = 0; index < tablesPut.length; index++) {
-                        const element = tablesPut[index];
+                    request.onerror = function (event) {
+                        return reject(event);
+                    }
+                    request.onblocked = function (event) {
+                        return reject(event);
+                    }
 
-                        let objectStore = transaction.objectStore(element.name)
-                    
-                        if (element.sets) {
-                            let head = 0;
-                            let length = element.sets.length;
-                            next();
-                            // // eslint-disable-next-line
-                            const next = function putNext() {
-                                // console.log(dataArr[head]);
-                                if (head < length) {
-                                    const set = element.sets[head];
-                                    let process;
-    
-                                    switch (set.state) {
-                                        case State.add:
-                                            process = objectStore.add(set.value)
-                                            process.onsuccess = addNext;
-                                            break;
-                                        case State.delete:
-                                            process = objectStore.delete(set.value)
-                                            process.onsuccess = addNext;
-    
-                                            break;
-                                        case State.update:
-                                            process = objectStore.put(set.value)
-                                            process.onsuccess = addNext;
-    
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                    ++head;
-                                } else {   // complete
-    
-                                }
-                            }
-                        }
-                    }
-                    for (let index = 0; index < tablesClr.length; index++) {
-                        const element = tablesClr[index];
-                        let objectStore = transaction.objectStore(element.name)
-                        objectStore.clear();
-                    }
-                    return resolve();
                 }
-                request.onerror = function (event) {
-                    return reject(event);
-                }
-                request.onblocked = function (event) {
-                    return reject(event);
-                }
+
+
             })
             return promise;
 
         },
-        _updateParmas:function(set){
-            aidb._get(_default.database,_default.version,_default.table,set.database).then(function(result){
-                console.log(result);
+        _updateParmas: function (set) {
+           return  aidb._getIndex(_default.database, _default.version, _default.table,'database' ,set.database).then(function (result) {
+                console.log('update', result);
+                result.version = set.version;
+                aidb._execude({
+                    database: 'aidb_default',
+                    version: 1,
+                    tables: [{
+                        name: 'aidb_params',
+                        index: [{
+                            key: 'database',
+                            unique: true,
+                        }],
+                        prop: { keyPath: 'id' },
+                        state: State.update,
+                        sets: [{
+                            value: result,
+                            state: State.update
+                        }]
+                    }],
+                    state: State.open
+                })
+                
                 //put
-            }).catch(function(result){
-                if(isNullOrWhiteSpace(result)){
-                //add
-                }else{
+            }).catch(function (result) {
+                if (isNullOrWhiteSpace(result)) {
+                    //add
+                    aidb._execude({
+                        database: 'aidb_default',
+                        version: 1,
+                        tables: [{
+                            name: 'aidb_params',
+                            index: [{
+                                key: 'database',
+                                unique: true,
+                            }],
+                            prop: { keyPath: 'id' },
+                            state: State.update,
+                            sets: [{
+                                value: { id: Date.now(), database: set.database, version: set.version },
+                                state: State.add
+                            }]
+                        }],
+                        state: State.open
+                    })
+                    
+                } else {
                     //error
+                   
                 }
             })
+          
         },
         _createTable: function (db, ver, table) {
             let promise = new Promise(function (resolve, reject) {
@@ -782,96 +988,96 @@ let aidb = (function () {
         _setAsync: async function (table) {
             _config.table = table;
         },
-        _getIndex:function(db,ver,table,index,value){
-            let promise = new Promise(function(resolve,reject){
+        _getIndex: function (db, ver, table, index, value) {
+            let promise = new Promise(function (resolve, reject) {
                 const request = window.indexedDB.open(db, ver);
-                request.onsuccess =  function (event) {
-    
+                request.onsuccess = function (event) {
+
                     let database = event.target.result
                     let transaction = database.transaction(table, 'readonly');
                     let objectStore = transaction.objectStore(table);
-                    if(objectStore.indexNames.contains(index)){
+                    if (objectStore.indexNames.contains(index)) {
                         let indexReq = objectStore.index(index)
                         var req = indexReq.get(value);
-                        req.onsuccess =  function (event) {
+                        req.onsuccess = function (event) {
                             if (req.result) {
-                               resolve(req.result)
+                                resolve(req.result)
                             } else {
                                 reject(req.result)
                             }
-        
+
                         }
                     }
-                  
+
                 };
                 request.onerror = function (event) {
-    
+
                 }
                 request.onupgradeneeded = function (event) {
-    
+
                 }
                 request.onblocked = function (event) {
-    
+
                 }
             });
             return promise;
         },
-        _getQuery:function(db,ver,table,query){
-            let promise = new Promise(function(resolve,reject){
+        _getQuery: function (db, ver, table, query) {
+            let promise = new Promise(function (resolve, reject) {
                 const request = window.indexedDB.open(db, ver);
-                request.onsuccess =  function (event) {
-    
+                request.onsuccess = function (event) {
+
                     let database = event.target.result
                     let transaction = database.transaction(table, 'readonly');
                     let objectStore = transaction.objectStore(table);
-                    if(isNullOrWhiteSpace(query)){
+                    if (isNullOrWhiteSpace(query)) {
                         //getAll()
-                    }else{
-                        let queryKeys =Object.keys(query);
-                        if(queryKeys.length>1){
+                    } else {
+                        let queryKeys = Object.keys(query);
+                        if (queryKeys.length > 1) {
                             for (let i = 0; i < queryKeys.length; i++) {
                                 const element = queryKeys[i];
-                               
+
                                 console.log(query[element])
-                              }
-                        }else{
-                            if(Array.isArray(query[queryKeys[0]])){
+                            }
+                        } else {
+                            if (Array.isArray(query[queryKeys[0]])) {
                                 //handle {key:[1,2,3,4]}
-    
-                            }else{
+
+                            } else {
                                 //handle {key:1}
                             }
                         }
                     }
-                   
-                    
-                    if(objectStore.indexNames.contains(index)){
+
+
+                    if (objectStore.indexNames.contains(index)) {
                         let indexReq = objectStore.index(index)
                         var req = indexReq.get(value);
-                        req.onsuccess =  function (event) {
+                        req.onsuccess = function (event) {
                             if (req.result) {
-                               resolve(req.result)
+                                resolve(req.result)
                             } else {
                                 reject(req.result)
                             }
-        
+
                         }
                     }
-                  
+
                 };
                 request.onerror = function (event) {
-    
+
                 }
                 request.onupgradeneeded = function (event) {
-    
+
                 }
                 request.onblocked = function (event) {
-    
+
                 }
             });
             return promise;
         },
-        _get:  function (db, ver, table, query) {
+        _get: function (db, ver, table, query) {
             // 1.query== 1||"1"
             // 2.query==['1',2,,3]
             // 3.query=={id:1,props:"prop"}
@@ -886,36 +1092,67 @@ let aidb = (function () {
             //     //2.query==['1',2,,3]
             //     query = { id: query }
             // }
-            let promise = new Promise(function(resolve,reject){
+            let promise = new Promise(function (resolve, reject) {
                 const request = window.indexedDB.open(db, ver);
-                request.onsuccess =  function (event) {
-    
+                request.onsuccess = function (event) {
+
                     let database = event.target.result
                     let transaction = database.transaction(table, 'readonly');
                     let objectStore = transaction.objectStore(table);
                     // let indexReq = objectStore.index('id')
                     var req = objectStore.get(query);
-                    req.onsuccess =  function (event) {
+                    req.onsuccess = function (event) {
                         if (req.result) {
-                           resolve(req.result)
+                            resolve(req.result)
                         } else {
                             reject(req.result)
                         }
-    
+
                     }
                 };
                 request.onerror = function (event) {
-    
+
                 }
                 request.onupgradeneeded = function (event) {
-    
+
                 }
                 request.onblocked = function (event) {
-    
+
                 }
             });
             return promise;
 
+        },
+        _put: function (db, ver, table, query) {
+            let promise = new Promise(function (resolve, reject) {
+                const request = window.indexedDB.open(db, ver);
+                request.onsuccess = function (event) {
+
+                    let database = event.target.result
+                    let transaction = database.transaction(table, 'readonly');
+                    let objectStore = transaction.objectStore(table);
+                    // let indexReq = objectStore.index('id')
+                    var req = objectStore.put(query);
+                    req.onsuccess = function (event) {
+                        if (req.result) {
+                            resolve(req.result)
+                        } else {
+                            reject(req.result)
+                        }
+
+                    }
+                };
+                request.onerror = function (event) {
+
+                }
+                request.onupgradeneeded = function (event) {
+
+                }
+                request.onblocked = function (event) {
+
+                }
+            });
+            return promise;
         },
         _error: function (data, callback) {
             callback(data);

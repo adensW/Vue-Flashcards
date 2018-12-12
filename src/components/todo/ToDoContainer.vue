@@ -59,7 +59,11 @@ export default {
     },
     init: function() {
       let self = this;
-
+      // this.$aidb
+      let a =this.$aidb.open('test4')
+      // // a.createTable('testtable')
+      // console.log(a)
+      a.createTable('testtable2').execude()
       // let query={id:'1234345346',database:"test"}
       // let queryKeys = Object.keys(query);
       // for (let i = 0; i < queryKeys.length; i++) {
