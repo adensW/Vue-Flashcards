@@ -33,7 +33,6 @@
     </div>
 </template>
 <script>
-import {dbcontext} from '@/service/context/dbcontext-class.js'
 
 export default {
     name:'Dashboad',
@@ -42,7 +41,6 @@ export default {
             error:false,
             loading:true,
             sets:[
-               
             ]
             
         }
@@ -56,8 +54,8 @@ export default {
    
     methods:{
         init:function(){
-            let context = new dbcontext("DB_Vue_FlashCard",2);
-            context.open('DB_Vue_FlashCard').set("Sets").getAll().then((data)=>{
+            
+            this.$aidb.open('DB_Vue_FlashCard').getAll("Sets").then((data)=>{
                 this.$store.commit("initSets",data)
                 this.sets =this.$store.getters.AllSets
                 this.loading = false;

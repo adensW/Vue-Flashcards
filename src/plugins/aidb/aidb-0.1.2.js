@@ -153,6 +153,9 @@ let aidb = (function () {
         getAll:function(storename){
             return aidb._getAll(dbset.database,storename);
         },
+        getQuery:function(storename,query){
+            return aidb._getQuery(dbset.database,storename,query);
+        },
         get: function (storename,query) {
             //1.query== 1||"1"
             //2.query==['1',2,,3]

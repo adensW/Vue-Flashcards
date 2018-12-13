@@ -31,18 +31,6 @@ export default {
     update: function(val) {
       this.$aidb.open("DB_Vue_FlashCard").put("ToDos",val).execude()
     },
-    add: function() {
-      let toDoItem = {
-        id: this.$uuid.v1(),
-        checked: false,
-        title: "",
-        deeps: 0,
-        treeId: 0,
-        sort: this.currentSort
-      };
-      this.list.push(toDoItem);
-      this.$aidb.open("DB_Vue_FlashCard").add("ToDos",toDoItem);
-    },
     init: function() {
       this.$aidb.open("DB_Vue_FlashCard").getAll("ToDos").then((result)=> {
         this.list = result

@@ -6,7 +6,6 @@
 </template>
 
 <script>
-import { dbcontext } from "@/service/context/dbcontext-class.js";
 import ToDoItem from "./ToDoItem";
 export default {
   name: "ToDo",
@@ -29,9 +28,7 @@ export default {
               treeId:0,
               sort:this.todos.length}
             this.todos.push(toDoItem);
-            let context= new dbcontext('DB_Vue_FlashCard');
-            // carddbcontext.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
-            context.open("DB_Vue_FlashCard").set("ToDos").add(toDoItem)
+            this.$aidb.open("DB_Vue_FlashCard").add("ToDos",toDoItem)
     }
   }
 };
