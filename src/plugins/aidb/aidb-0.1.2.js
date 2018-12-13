@@ -333,7 +333,9 @@ let aidb = (function () {
 
         //必须申明this或aidb 
         //无法访问
-
+        // console.log('a')
+        //init
+        aidb._initialize()
     }
     aidb.fn.init.prototype = aidb.fn;
     aidb.isFunction = isFunction;
@@ -387,6 +389,8 @@ let aidb = (function () {
         },
         _initialize:function(){
             let request = window.indexedDB.open(_initDefault.database);
+            //if upgrade init
+            //if success allready init  do nothing
             request.onupgradeneeded=function(event){
                 let database = event.target.result;
                 for (let index = 0; index < _initDefault.tables.length; index++) {
@@ -437,6 +441,7 @@ let aidb = (function () {
             }
 
             }
+            
         },
         _execude: function (args) {
             let promise = new Promise(function (resolve, reject) {

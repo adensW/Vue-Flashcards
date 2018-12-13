@@ -12,8 +12,6 @@
 <script>
 import ToDo from "./ToDo";
 import ToDoContent from "./ToDoContent";
-import { dbcontext } from "@/service/context/dbcontext-class.js";
-// import {aidb} from "@/plugins/aidb/aidb-0.1.2.js"
 export default {
   name: "ToDoContainer",
   components: {
@@ -27,17 +25,11 @@ export default {
   },
   created() {
     this.init();
-    this.init2();
   },
   mounted() {},
   methods: {
     update: function(val) {
-      let context = new dbcontext("DB_Vue_FlashCard");
-      // carddbcontext.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
-      context
-        .open("DB_Vue_FlashCard")
-        .set("ToDos")
-        .put(val);
+      this.$aidb.open("DB_Vue_FlashCard").put("ToDos",val).execude()
     },
     add: function() {
       let toDoItem = {
@@ -49,23 +41,14 @@ export default {
         sort: this.currentSort
       };
       this.list.push(toDoItem);
-      let context = new dbcontext("DB_Vue_FlashCard");
-      // carddbcontext.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
-      context
-        .open("DB_Vue_FlashCard")
-        .set("ToDos")
-        .add(toDoItem);
+      this.$aidb.open("DB_Vue_FlashCard").add("ToDos",toDoItem);
     },
     init: function() {
-     
-      // this.seedData();
-    },
-    init2:function(){
-      //  console.log(this.$aidb.open('test4',3))
+      this.$aidb.open("DB_Vue_FlashCard").getAll("ToDos").then((result)=> {
+        this.list = result
+      });
     },
     seedData:function(){
-        // this.$aidb
-        // .open("_config", 1).createTable('_params');
         this.$aidb.initialize();
         this.$aidb.open("DB_Vue_FlashCard").createTable("Cards",{keyPath: 'id'})
         this.$aidb.open("DB_Vue_FlashCard").createTable("ToDos",{keyPath: 'id'})
