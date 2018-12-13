@@ -71,10 +71,15 @@ let dbsetreset = {
     state: STATE.OPEN
 }
 let tableset = function () {
+    // eslint-disable-next-line
     let name = '';
+    // eslint-disable-next-line
     let index = [];
+    // eslint-disable-next-line
     let prop = { autoIncrement: true };
+    // eslint-disable-next-line
     let state = STATE.UPDATE;
+    // eslint-disable-next-line
     let sets = [];
 }
 //cache end
@@ -109,9 +114,7 @@ let aidb = (function () {
         database: null,
         args: dbset,
         initialize: function () {
-            aidb._execude(_initDefault).then(function () {
-            }).catch(function () {
-            })
+            aidb._initialize();
         },
         reset: function () {
             dbset = dbsetreset;
@@ -370,7 +373,7 @@ let aidb = (function () {
             let promise = new Promise(function (resolve) {
                 aidb._getIndex(_default.database, _default.table, 'database', name).then(function (result) {
                     dbset.version = result.version - 1 + 2;
-                    // console.log('versionIncrease', dbset);
+                    console.log('versionIncrease', result.version);
                     return resolve()
                 }).catch(function () {
                     //not created ,set version 1 
@@ -380,6 +383,59 @@ let aidb = (function () {
                 })
             })
             return promise;
+        },
+        _initialize:function(){
+            let request = window.indexedDB.open(_initDefault.database);
+            request.onupgradeneeded=function(event){
+                let database = event.target.result;
+                for (let index = 0; index < _initDefault.tables.length; index++) {
+                    const table = _initDefault.tables[index];
+                if(!database.objectStoreNames.contains(table.name)){
+                    let objectStore = database.createObjectStore(table.name, table.prop);
+                    if (!isNullOrWhiteSpace(table.index)) {
+                        for (let i = 0; i < table.index.length; i++) {
+                            const ele = table.index[i];
+                            objectStore.createIndex(ele.key, ele.key, { unique: ele.unique })
+                        }
+                    }
+                    if (!isNullOrWhiteSpace(table.sets)) {
+                        let head = 0;
+                        let length = table.sets.length;
+                        let addNext = function Next() {
+                            // console.log(dataArr[head]);
+                            if (head < length) {
+                                const set = table.sets[head];
+                                let process;
+                                switch (set.state) {
+                                    case STATE.ADD:
+                                        process = objectStore.add(set.value)
+                                        process.onsuccess = addNext;
+                                        break;
+                                    case STATE.DELETE:
+                                        process = objectStore.delete(set.value)
+                                        process.onsuccess = addNext;
+                                        break;
+                                    case STATE.UPDATE:
+                                        process = objectStore.put(set.value)
+                                        process.onsuccess = addNext;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                ++head;
+                            } else {   // complete
+                            }
+                        }
+                        // _transaction=_transaction||database.transaction(tableList,'readwrite');
+                        // let transaction=_transaction|| database.transaction(tableList,'readwrite');
+                        // let objectStore= transaction.ObjectStore(table.name);
+                       
+                        addNext();
+                    }
+                }
+            }
+
+            }
         },
         _execude: function (args) {
             let promise = new Promise(function (resolve, reject) {
@@ -450,6 +506,8 @@ let aidb = (function () {
                                             }
                                         }
                                         if (!isNullOrWhiteSpace(table.sets)) {
+                                            let head = 0;
+                                            let length = table.sets.length;
                                             let addNext = function Next() {
                                                 // console.log(dataArr[head]);
                                                 if (head < length) {
@@ -478,8 +536,7 @@ let aidb = (function () {
                                             // _transaction=_transaction||database.transaction(tableList,'readwrite');
                                             // let transaction=_transaction|| database.transaction(tableList,'readwrite');
                                             // let objectStore= transaction.ObjectStore(table.name);
-                                            let head = 0;
-                                            let length = table.sets.length;
+                                           
                                             addNext();
                                         }
                                     }

@@ -57,15 +57,8 @@ export default {
         .add(toDoItem);
     },
     init: function() {
-      // let self = this;
-      // this.$aidb.reset()
-      // this.$aidb.open('test').put('testtable',{id:this.$uuid.v1(),value:"test666"},"0f30d1c0-fe95-11e8-96ac-2d1a4062fcb3")
-      // this.$aidb.open('test').put('testtable',{id:2,value:"test册谔谔谔"})
-      //  let a =this.$aidb.execude().then(function(){
-      // })
-      this.$aidb.open('aidb_default').getAll('aidb_params').then(function(result){
-        console.log(result);
-      })
+     
+      // this.seedData();
     },
     init2:function(){
       //  console.log(this.$aidb.open('test4',3))
@@ -73,30 +66,11 @@ export default {
     seedData:function(){
         // this.$aidb
         // .open("_config", 1).createTable('_params');
-        this.$aidb
-        .open("_config", 1)
-        .set("_params")
-        .add([
-          {
-            id: 1,
-            data: { database: "_config", tables: ["_params"], version: 1 }
-          },
-          {
-            id: 2,
-            data: [
-              {
-                database: "test",
-                tables: [
-                  "tablename1",
-                  "tablename2",
-                  "tablename3",
-                  "tablename4"
-                ],
-                version: 4
-              }
-            ]
-          }
-        ]);
+        this.$aidb.initialize();
+        this.$aidb.open("DB_Vue_FlashCard").createTable("Cards",{keyPath: 'id'})
+        this.$aidb.open("DB_Vue_FlashCard").createTable("ToDos",{keyPath: 'id'})
+        this.$aidb.open("DB_Vue_FlashCard").createTable("Sets",{keyPath: 'id'})
+        this.$aidb.execude()
     }
   },
   computed: {
