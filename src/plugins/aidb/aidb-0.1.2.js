@@ -4,34 +4,30 @@
 //1私有函数 申明为 aidb
 //2公有函数 申明为 this 或在aidb.fn = aidb.prototype里声明
 // aidb.fn.init=function() 里申明 不为aidb.或者this.都无法访问
-const Code = {
-    Init: 0,
-    InitFailed: -997,
-    OpenSuccess: 1,
-    OpenFailed: -1,
-    SetFailed: -2,
-    SetSuccess: 2,
-    ExecutionSuccess: 10,
-    ExecutionFailed: -10,
-    Fatel: -999,
-    Blocked: -998,
-
+const ERRORCODE = {
+    INIT: 0,
+    INITFAILED: -997,
+    OPENSUCCESS: 1,
+    OPENFAILED: -1,
+    SETFAILED: -2,
+    SETSUCCESS: 2,
+    EXECUTIONSUCCESS: 10,
+    EXECUTIONFAILED: -10,
+    FATEL: -999,
+    BLOCKED: -998,
+    ABORT: -997,
 }
-const State = {
-    delete: "-1",
-    clear: '-10',
-    open: "0",
-    add: "1",
-    update: "2",
+const STATE = {
+    DELETE: "-1",
+    CLEAR: '-10',
+    OPEN: "0",
+    ADD: "1",
+    UPDATE: "2",
 }
 const _default = {
     database: 'aidb_default',
     table: "aidb_params",
     version: 1,
-    keys: {
-        all: 1,
-        databaseinfo: 2,//{[{name:"",version:1},{name:"",version:2,tables:["","",""]},{}]}
-    }
 }
 const _initDefault = {
     database: 'aidb_default',
@@ -43,51 +39,25 @@ const _initDefault = {
             unique: true,
         }],
         prop: { keyPath: 'id' },
-        state: State.add,
+        state: STATE.ADD,
         sets: [{
             value: { id: 0, database: 'aidb_default', version: 1 },
-            state: State.add
+            state: STATE.ADD
         }]
     }],
-    state: State.add
+    state: STATE.ADD
 }
 //cache
-const _config = {
-    database: null,
-    table: "",
-    result: {},
-    data: {}
-}
-function paramsInstance() {
-
-    // 判断是否存在实例
-    if (typeof paramsInstance.instance === 'object') {
-        return paramsInstance.instance;
-    }
-
-    // 其它内容
-    this.version = 1
-    this.database = "";
-    this.table = "";
-    // 缓存
-    paramsInstance.instance = this;
-
-    // 隐式返回this
-}
-let params = new paramsInstance();
-
 let dbset = {
     //-->open(test,ver)
     //database:'test',
     //version:1||_default获取最新
     //-->set()
     //tables:[{name:'tablename1',state:'add',sets:[{value:{},state:'add'},{}]}]
-    //
-    //
     database: '',
     tables: [],
     version: 1,
-    state: State.open
+    state: STATE.OPEN
 }
 let dbsetreset = {
     //-->open(test,ver)
@@ -95,19 +65,16 @@ let dbsetreset = {
     //version:1||_default获取最新
     //-->set()
     //tables:[{name:'tablename1',state:'add',sets:[{value:{},state:'add'},{}]}]
-    //
-    //
     database: '',
     tables: [],
     version: 1,
-    state: State.open
+    state: STATE.OPEN
 }
-let isInit = false;
 let tableset = function () {
     let name = '';
     let index = [];
     let prop = { autoIncrement: true };
-    let state = State.put;
+    let state = STATE.UPDATE;
     let sets = [];
 }
 //cache end
@@ -116,11 +83,8 @@ let aidb = (function () {
     var class2type = {};
     var toString = class2type.toString;
     var hasOwn = class2type.hasOwnProperty;
-
     var fnToString = hasOwn.toString;
-
     var ObjectFunctionString = fnToString.call(Object);
-
     var isFunction = function isFunction(obj) {
         // Support: Chrome <=57, Firefox <=52
         // In some browsers, typeof returns "function" for HTML <object> elements
@@ -134,7 +98,6 @@ let aidb = (function () {
         }
         return obj === '' || typeof obj === 'undefined' || Object.keys(obj).length === 0
     }
-
     var aidb = function () {
         return new aidb.fn.init();
     }
@@ -146,13 +109,12 @@ let aidb = (function () {
         database: null,
         args: dbset,
         initialize: function () {
-            // await aidb._open(_default.database, _default.version)
-            aidb._execude(_initDefault).then(function (result) {
-                isInit = true;
-            }).catch(function (result) {
-                console.log(result)
+            aidb._execude(_initDefault).then(function () {
+            }).catch(function () {
             })
-            // console.log(aidb.database)
+        },
+        reset: function () {
+            dbset = dbsetreset;
         },
         open: function (dbname, ver) {
             dbset.database = dbname;
@@ -160,10 +122,9 @@ let aidb = (function () {
             return this;
         },
         createTable: function (name, props, index) {
-
             let table = new tableset();
             table.name = name;
-            table.state = State.add;
+            table.state = STATE.ADD;
             table.prop = props || { autoIncrement: true }
             if (!isNullOrWhiteSpace(index)) {
                 table.index = [];
@@ -175,13 +136,9 @@ let aidb = (function () {
             }
             dbset.tables.push(table)
             return this;
-
-
-            // console.log("create",dbset.version);
-
         },
         execude: function () {
-            return aidb._execude().then(function(){
+            return aidb._execude().then(function () {
                 dbset = dbsetreset;
             });
         },
@@ -189,154 +146,117 @@ let aidb = (function () {
             dbset.tables.push(table.toString())
             return this;
         },
-        get: function (query, limit = 200, offset = 0) {
+        get: function (objectStore,query) {
             //1.query== 1||"1"
             //2.query==['1',2,,3]
             //3.query=={id:1,props:"prop"}
-            if (typeof query != "object") {
-                //1.query== 1||"1"
-
-                let id = query;
-                query = { id: id }
-            }
-
-            if (Array.isArray(query)) {
-                //2.query==['1',2,,3]
-                query = { id: query }
-            }
-
-            if (params.table === "") {
-                return null;
-            }
-            let offsetCount = offset;
-            let limitCount = 0;
-            var promise = new Promise(function (resolve, reject) {
-                aidb._open(params.database, params.version).then(function (database) {
-                    let transaction = database.transaction(params.table, 'readonly');
-                    let objectStore = transaction.objectStore(params.table);
-                    let data = [];
-
-                    let cursorObject = objectStore.openCursor();
-
-                    cursorObject.onerror = function (event) {
-                        aidb._error(event, reject)
-                    }
-                    cursorObject.onsuccess = function (event) {
-                        let cursor = event.target.result;
-                        if (cursor) {
-                            if (isInCondition(cursor.value)) {
-                                if (offsetCount <= 0 && limitCount < limit) {
-                                    data.push(cursor.value)
-                                    limitCount++;
-                                } else {
-                                    offsetCount--;
-                                }
-                            } else {
-                                //
-                            }
-                            cursor.continue();
-                        } else {
-                            //complete
-                            resolve(data);
+            if(Array.isArray(query)){
+                //[1,2,3]
+            }else{
+                if (typeof query != "object") {
+                    //1.query== 1||"1"
+                    
+                    return aidb._get(dbset.database,objectStore,query);
+                }else if(typeof query ==='object'){
+                    if(Object.keys(query).length==1){
+                         //{index:[]}
+                            //{index:''}
+                            let index = Object.keys(query)[0];
+                            let value = query[index];
+                        if (Array.isArray(value)) {
+                            //2.query==['1',2,,3]
+                            query = { id: query }
+                        }else{
+                            console.log(index)
+                            console.log(value)
+                            return aidb._getIndex(dbset.database,objectStore,index,value);
                         }
+                    }else{
+                        //{index:'',condition:''}
                     }
-                    function isInCondition(item) {
-                        let checked = true;
-                        let itemKeys = Object.keys(item);
-                        let queryKeys = Object.keys(query);
-                        for (let i = 0; i < queryKeys.length; i++) {
-                            if (itemKeys.includes(queryKeys[i])) {
-                                if (Array.isArray(query[queryKeys[i]])) {
-                                    //handle {id:[1,2,3,4]}
-                                    if (!query[queryKeys[i]].includes(item[queryKeys[i]])) {
-                                        checked = false;
-                                    }
-                                }
-                                else if (item[queryKeys[i]] != query[queryKeys[i]]) {
-                                    //handle {id:1}
-                                    checked = false;
-                                }
-                            } else {
-                                checked = false;
-                            }
-
-
-                        }
-                        return checked;
-                    }
-
-                    // 
-                })
-            })
-            return promise;
+                    console.log(Object.keys(query))
+                }
+            }
         },
-        add: function (data) {
-            //1.{id:1,val:""}
-            //2,[{},{},{}]
-            let dataArr = []
-            if (!Array.isArray(data)) {
-                //1.{id:1,val:""}
-                dataArr.push(data);
-            } else {
-                //2,[{},{},{}]
-                dataArr = data;
-            }
-            let head = 0;
-            let length = dataArr.length;
-            aidb._open(params.database, params.version).then(function (database) {
-                var objectStore = database.transaction([params.table], 'readwrite')
-                    .objectStore(params.table);
-                addNext();
-                function addNext() {
-                    // console.log(dataArr[head]);
-                    if (head < length) {
-                        let process = objectStore.add(dataArr[head])
-                        process.onsuccess = addNext;
-                        ++head;
-                    } else {   // complete
+        add: function (storename, data) {
 
+            let i = dbset.tables.findIndex(function (obj) { return obj.name == storename })
+            if (i >= 0) {
+
+                dbset.tables[i].state = dbset.tables[i].state || STATE.UPDATE;
+                let dataArr = []
+                if (!Array.isArray(data)) {
+                    //1.{id:1,val:""}
+                    dataArr.push({ value: data, state: STATE.ADD });
+                } else {
+                    //2,[{},{},{}]
+                    dataArr = data;
+                    for (let i = 0; i < data.length; i++) {
+                        const element = data[i];
+                        dataArr.push({ value: element, state: STATE.ADD })
                     }
                 }
-
-
-            })
+                dbset.tables[i].sets = dbset.tables[i].sets.concat(dataArr);
+            } else {
+                let table = new tableset();
+                table.name = storename;
+                table.state = STATE.UPDATE;
+                let dataArr = []
+                if (!Array.isArray(data)) {
+                    //1.{id:1,val:""}
+                    dataArr.push({ value: data, state: STATE.ADD });
+                } else {
+                    //2,[{},{},{}]
+                    dataArr = data;
+                    for (let i = 0; i < data.length; i++) {
+                        const element = data[i];
+                        dataArr.push({ value: element, state: STATE.ADD })
+                    }
+                }
+                table.sets = dataArr;
+                dbset.tables.push(table)
+            }
             return this;
         },
-        put: function (data) {
-            let dataArr = []
-            if (!Array.isArray(data)) {
-                dataArr.push(data);
-            } else {
-                dataArr = data;
-            }
-            let head = 0;
-            let length = dataArr.length;
+        put: function (storename,data,id) {
+            let i = dbset.tables.findIndex(function (obj) { return obj.name == storename })
+            if (i >= 0) {
 
-            const promise = new Promise(function (resolve, reject) {
-                aidb._open(params.database, params.version).then(function (database) {
-                    var objectStore = database.transaction([params.table], 'readwrite')
-                        .objectStore(params.table);
-                    putNext();
-                    function putNext() {
-                        // console.log(dataArr[head]);
-                        if (head < length) {
-                            let procee = objectStore.put(dataArr[head]);
-                            procee.onsuccess = putNext;
-                            process.onerror = reject;
-                            ++head;
-                        } else {   // complete
-                            // console.log('update complete');
-                            resolve();
-                        }
+                dbset.tables[i].state = dbset.tables[i].state || STATE.UPDATE;
+                let dataArr = []
+                if (!Array.isArray(data)) {
+                    //1.{id:1,val:""}
+                    dataArr.push({ value: data, state: STATE.UPDATE,id:id||data.id });
+                } else {
+                    //2,[{},{},{}]
+                    dataArr = data;
+                    for (let i = 0; i < data.length; i++) {
+                        const element = data[i];
+                        dataArr.push({ value: element, state: STATE.UPDATE,id:id||data.id })
                     }
-
-
-                })
-            })
-
-            return promise;
+                }
+                dbset.tables[i].sets = dbset.tables[i].sets.concat(dataArr);
+            } else {
+                let table = new tableset();
+                table.name = storename;
+                table.state = STATE.UPDATE;
+                let dataArr = []
+                if (!Array.isArray(data)) {
+                    //1.{id:1,val:""}
+                    dataArr.push({ value: data, state: STATE.UPDATE,id:id||data.id });
+                } else {
+                    //2,[{},{},{}]
+                    dataArr = data;
+                    for (let i = 0; i < data.length; i++) {
+                        const element = data[i];
+                        dataArr.push({ value: element, state: STATE.UPDATE,id:id||data.id })
+                    }
+                }
+                table.sets = dataArr;
+                dbset.tables.push(table)
+            }
+            return this;
         }
-
     }
     aidb.extend = aidb.fn.extend = function () {
         var src, copyIsArray, copy, name, options, clone,
@@ -406,20 +326,11 @@ let aidb = (function () {
 
         //必须申明this或aidb 
         //无法访问
-        // __open=function(data){
-        //     console.log("init function __open "+data)
-        // }
-        // console.log(this.isInit);
-        if (!isInit) {
-            console.log(isInit)
-            // this.initialize()
-        }
 
     }
     aidb.fn.init.prototype = aidb.fn;
     aidb.isFunction = isFunction;
     aidb.isArray = Array.isArray;
-
     aidb.extend({
         isPlainObject: function (obj) {
             var proto, Ctor;
@@ -442,21 +353,10 @@ let aidb = (function () {
             return typeof Ctor === "function" && fnToString.call(Ctor) === ObjectFunctionString;
         }
     });
-
-
     aidb.fn.extend({
         //外部 aidb 可以访问 公共方法
         //内部可以通过this访问
-        istest: "test",
-        isExtended: function () {
-
-            return true;
-        },
-        // _open:function(data){
-        //     console.log("aidb fn extend"+data)
-        // }
     });
-
     aidb.extend({
         //tools
     })
@@ -464,15 +364,16 @@ let aidb = (function () {
         //外界aidb 无法访问
         //设置私有方法 内部使用 aidb.方法使用
         _versionIncrease: function (name) {
-            let promise =new Promise(function(resolve,reject){
-                aidb._getIndex(_default.database, _default.version, _default.table, 'database', name).then(function (result) {
+            let promise = new Promise(function (resolve) {
+                aidb._getIndex(_default.database, _default.table, 'database', name).then(function (result) {
                     dbset.version = result.version - 1 + 2;
-                    console.log('versionIncrease', dbset);
-                    resolve()
-                }).catch(function (result) {
+                    // console.log('versionIncrease', dbset);
+                    return resolve()
+                }).catch(function () {
+                    //not created ,set version 1 
                     dbset.version = 1
-                    console.log('versionIncreaseError', result);
-                    resolve()
+                    // console.log('versionIncreaseError', result);
+                    return resolve()
                 })
             })
             return promise;
@@ -480,20 +381,18 @@ let aidb = (function () {
         _execude: function (args) {
             let promise = new Promise(function (resolve, reject) {
                 let set = args || dbset;
-                
                 //first check database open or create
                 if (isNullOrWhiteSpace(set.database)) {
                     let result = {
-                        code: Code.OpenFailed,
+                        code: ERRORCODE.OpenFailed,
                         exception: "you are openning database without name!!!",
                         message: "you are openning database without name!!!",
                     }
                     return reject(result);
-
                 }
                 if (isNullOrWhiteSpace(set.tables)) {
                     let result = {
-                        code: Code.SetFailed,
+                        code: ERRORCODE.SetFailed,
                         exception: "you are openning table without name!!!",
                         message: "you are openning table without name!!!",
                     }
@@ -510,16 +409,16 @@ let aidb = (function () {
                     const element = tables[index];
                     if (element.state) {
                         switch (element.state) {
-                            case State.add:
+                            case STATE.ADD:
                                 tablesAdd.push(element);
                                 break;
-                            case State.delete:
+                            case STATE.DELETE:
                                 tablesDel.push(element);
                                 break;
-                            case State.clear:
+                            case STATE.CLEAR:
                                 tablesClr.push(element);
                                 break;
-                            case State.update:
+                            case STATE.UPDATE:
                                 tablesPut.push(element);
                                 break;
                             default:
@@ -531,15 +430,12 @@ let aidb = (function () {
                 //table open
                 if (tablesAdd.length > 0) {
                     aidb._versionIncrease(dbset.database).then(function () {
-                        console.log('execude', set)
-                        aidb._updateParmas(set).then(function(){
-                            
+                        // console.log('execude', set)
+                        aidb._updateParmas(set).then(function () {
                             let request = window.indexedDB.open(set.database, set.version);
-                       
                             request.onupgradeneeded = function (event) {
                                 //tableadd
                                 let database = event.target.result;
-    
                                 for (let index = 0; index < tablesAdd.length; index++) {
                                     const table = tablesAdd[index];
                                     if (!database.objectStoreNames.contains(table.name)) {
@@ -556,39 +452,32 @@ let aidb = (function () {
                                                 if (head < length) {
                                                     const set = table.sets[head];
                                                     let process;
-    
                                                     switch (set.state) {
-                                                        case State.add:
+                                                        case STATE.ADD:
                                                             process = objectStore.add(set.value)
                                                             process.onsuccess = addNext;
                                                             break;
-                                                        case State.delete:
+                                                        case STATE.DELETE:
                                                             process = objectStore.delete(set.value)
                                                             process.onsuccess = addNext;
-    
                                                             break;
-                                                        case State.update:
+                                                        case STATE.UPDATE:
                                                             process = objectStore.put(set.value)
                                                             process.onsuccess = addNext;
-    
                                                             break;
                                                         default:
                                                             break;
                                                     }
                                                     ++head;
                                                 } else {   // complete
-    
                                                 }
                                             }
-                                            //
                                             // _transaction=_transaction||database.transaction(tableList,'readwrite');
                                             // let transaction=_transaction|| database.transaction(tableList,'readwrite');
                                             // let objectStore= transaction.ObjectStore(table.name);
                                             let head = 0;
                                             let length = table.sets.length;
                                             addNext();
-    
-    
                                         }
                                     }
                                 }
@@ -602,47 +491,40 @@ let aidb = (function () {
                             }
                             request.onsuccess = function (event) {
                                 //tableput
-                                console.log('debug',set)
+                                // console.log('debug',set)
                                 let database = event.target.result;
-                            
                                 let transaction = database.transaction(tableList, 'readwrite');
                                 for (let index = 0; index < tablesPut.length; index++) {
                                     const element = tablesPut[index];
-    
                                     let objectStore = transaction.objectStore(element.name)
-    
+                                    let head = 0;
+                                    let length = element.sets.length;
                                     if (element.sets) {
                                         let putNext = function Next() {
                                             // console.log(dataArr[head]);
                                             if (head < length) {
                                                 const set = element.sets[head];
                                                 let process;
-    
                                                 switch (set.state) {
-                                                    case State.add:
+                                                    case STATE.ADD:
                                                         process = objectStore.add(set.value)
                                                         process.onsuccess = putNext;
                                                         break;
-                                                    case State.delete:
+                                                    case STATE.DELETE:
                                                         process = objectStore.delete(set.value)
                                                         process.onsuccess = putNext;
-    
                                                         break;
-                                                    case State.update:
+                                                    case STATE.UPDATE:
                                                         process = objectStore.put(set.value)
                                                         process.onsuccess = putNext;
-    
                                                         break;
                                                     default:
                                                         break;
                                                 }
                                                 ++head;
                                             } else {   // complete
-    
                                             }
                                         }
-                                        let head = 0;
-                                        let length = element.sets.length;
                                         putNext();
                                     }
                                 }
@@ -660,14 +542,14 @@ let aidb = (function () {
                                 return reject(event);
                             }
                         });
-                        
                     });
                 } else {
                     let request = window.indexedDB.open(set.database);
+
                     request.onupgradeneeded = function (event) {
                         //tableadd
-                        let database = event.target.result;
 
+                        let database = event.target.result;
                         for (let index = 0; index < tablesAdd.length; index++) {
                             const table = tablesAdd[index];
                             if (!database.objectStoreNames.contains(table.name)) {
@@ -684,39 +566,32 @@ let aidb = (function () {
                                         if (head < length) {
                                             const set = table.sets[head];
                                             let process;
-
                                             switch (set.state) {
-                                                case State.add:
+                                                case STATE.Add:
                                                     process = objectStore.add(set.value)
                                                     process.onsuccess = addNext;
                                                     break;
-                                                case State.delete:
+                                                case STATE.DELETE:
                                                     process = objectStore.delete(set.value)
                                                     process.onsuccess = addNext;
-
                                                     break;
-                                                case State.update:
+                                                case STATE.UPDATE:
                                                     process = objectStore.put(set.value)
                                                     process.onsuccess = addNext;
-
                                                     break;
                                                 default:
                                                     break;
                                             }
                                             ++head;
                                         } else {   // complete
-
                                         }
                                     }
-                                    //
                                     // _transaction=_transaction||database.transaction(tableList,'readwrite');
                                     // let transaction=_transaction|| database.transaction(tableList,'readwrite');
                                     // let objectStore= transaction.ObjectStore(table.name);
                                     let head = 0;
                                     let length = table.sets.length;
                                     addNext();
-
-
                                 }
                             }
                         }
@@ -731,49 +606,41 @@ let aidb = (function () {
                     request.onsuccess = function (event) {
                         //tableput
                         let database = event.target.result;
-                        
+
                         let transaction = database.transaction(tableList, 'readwrite');
+
                         for (let index = 0; index < tablesPut.length; index++) {
+
                             const element = tablesPut[index];
-                            
                             let objectStore = transaction.objectStore(element.name)
                             let head = 0;
                             let length = element.sets.length;
-                            if (element.sets) {
-                                let putNext = function Next() {
-                                    let process = objectStore;
-                                    // console.log(dataArr[head]);
-                                    if (head < length) {
-                                        const set = element.sets[head];
-                                        
-                                        
-                                        switch (set.state) {
-                                            case State.add:
-                                                
-                                                process.add(set.value)
-                                                process.onsuccess = putNext;
-                                                break;
-                                            case State.delete:
-                                                process.delete(set.value)
-                                                process.onsuccess = putNext;
-
-                                                break;
-                                            case State.update:
-                                            
-                                                process.put(set.value)
-                                                process.onsuccess = putNext;
-                                                break;
-                                            default:
-                                                break;
-                                        }
-                                        ++head;
-                                    } else {   // complete
-
+                            let putNext = function Next() {
+                                if (head < length) {
+                                    const set = element.sets[head];
+                                    let process;
+                                    switch (set.state) {
+                                        case STATE.ADD:
+                                            process = objectStore.add(set.value)
+                                            process.onsuccess = putNext;
+                                            break;
+                                        case STATE.DELETE:
+                                            process = objectStore.delete(set.value)
+                                            process.onsuccess = putNext;
+                                            break;
+                                        case STATE.UPDATE:
+                                            process = objectStore.put(set.value,set.id)
+                                            process.onsuccess = putNext;
+                                            break;
+                                        default:
+                                            break;
                                     }
+                                    ++head;
+                                } else {   // complete
                                 }
-                               
-                                putNext();
+
                             }
+                            putNext();
                         }
                         for (let index = 0; index < tablesClr.length; index++) {
                             const element = tablesClr[index];
@@ -788,16 +655,12 @@ let aidb = (function () {
                     request.onblocked = function (event) {
                         return reject(event);
                     }
-
                 }
-
-
             })
             return promise;
-
         },
         _updateParmas: function (set) {
-           return  aidb._getIndex(_default.database, _default.version, _default.table,'database' ,set.database).then(function (result) {
+            return aidb._getIndex(_default.database, _default.table, 'database', set.database).then(function (result) {
                 console.log('update', result);
                 result.version = set.version;
                 aidb._execude({
@@ -810,15 +673,15 @@ let aidb = (function () {
                             unique: true,
                         }],
                         prop: { keyPath: 'id' },
-                        state: State.update,
+                        state: STATE.UPDATE,
                         sets: [{
                             value: result,
-                            state: State.update
+                            state: STATE.UPDATE
                         }]
                     }],
-                    state: State.open
+                    state: STATE.OPEN
                 })
-                
+
                 //put
             }).catch(function (result) {
                 if (isNullOrWhiteSpace(result)) {
@@ -833,155 +696,26 @@ let aidb = (function () {
                                 unique: true,
                             }],
                             prop: { keyPath: 'id' },
-                            state: State.update,
+                            state: STATE.UPDATE,
                             sets: [{
                                 value: { id: Date.now(), database: set.database, version: set.version },
-                                state: State.add
+                                state: STATE.ADD
                             }]
                         }],
-                        state: State.open
+                        state: STATE.OPEN
                     })
-                    
+
                 } else {
                     //error
-                   
-                }
-            })
-          
-        },
-        _createTable: function (db, ver, table) {
-            let promise = new Promise(function (resolve, reject) {
-                const request = window.indexedDB.open(db, ver);
-                request.onupgradeneeded = function (event) {
 
                 }
             })
-            return promise;
+
         },
-        _open: function (db, ver) {
-            let self = this;
+        _getIndex: function (db, table, index, value) {
             let promise = new Promise(function (resolve, reject) {
-                const request = window.indexedDB.open(db, ver);
+                const request = window.indexedDB.open(db);
                 request.onsuccess = function (event) {
-                    let result = {
-                        result: true,
-                        code: Code.OpenSuccess,
-                        message: 'open database success',
-                        data: event.target.result
-                    }
-                    self.database = event.target.result;
-                    resolve(event.target.result, result);
-                };
-                request.onerror = function (event) {
-                    let result = {
-                        result: false,
-                        code: Code.OpenFailed,
-                        message: 'open database failed',
-                        Exception: event,
-                        data: event
-                    }
-                    reject(result)
-                }
-                request.onupgradeneeded = function (event) {
-                    let database = event.target.result;
-                    let result = {
-                        result: false,
-                        code: Code.OpenSuccess,
-                        message: 'upgrade database and open success',
-                        data: event.target.result
-                    }
-                    resolve(database, result)
-                }
-                request.onblocked = function (event) {
-                    let result = {
-                        result: false,
-                        code: Code.Blocked,
-                        message: 'last database openning',
-                        Exception: event,
-                        data: event
-                    }
-                    reject(result);
-                }
-
-            })
-            return promise;
-        },
-        _openAsync: async function (db, ver) {
-            const request = window.indexedDB.open(db, ver);
-            request.onsuccess = await function (event) {
-                let result = {
-                    result: true,
-                    code: Code.OpenSuccess,
-                    message: 'open database success',
-                    data: event.target.result
-                }
-                _config.database = event.target.result;
-                _config.result = result;
-            };
-            request.onerror = await function (event) {
-                let result = {
-                    result: false,
-                    code: Code.OpenFailed,
-                    message: 'open database failed',
-                    Exception: event,
-                    data: event
-                }
-                _config.result = result;
-            }
-            request.onupgradeneeded = await function (event) {
-                let database = event.target.result;
-                let result = {
-                    result: false,
-                    code: Code.OpenSuccess,
-                    message: 'upgrade database and open success',
-                    data: event.target.result
-                }
-                _config.database = database;
-                _config.result = result;
-            }
-            request.onblocked = await function (event) {
-                let result = {
-                    result: false,
-                    code: Code.Blocked,
-                    message: 'last database openning',
-                    Exception: event,
-                    data: event
-                }
-                _config.result = result;
-            }
-        },
-        _getTableVersion: async function () {
-            let version = 2;
-            await aidb._open(_default.database, _default.version).then(async function (database) {
-
-                let transaction = database.transaction(_default.table, 'readonly');
-                let objectStore = transaction.objectStore(_default.table);
-                var req = objectStore.get(2);
-                req.onsuccess = await function (event) {
-                    let data = {}
-                    if (req.result) {
-                        data = aidb.extend(true, {}, event.target.result);
-                        params.version = data.data[0].version
-                        console.log('step1:', data.data[0].version)
-                    }
-                    console.log("step 2", data.data[0].version)
-                }
-
-            });
-
-
-            await aidb._setAsync(_default.table);
-            const a = await aidb._getAsync(_default.database, _default.version, _default.table, _default.keys.databaseinfo);
-            return version;
-        },
-        _setAsync: async function (table) {
-            _config.table = table;
-        },
-        _getIndex: function (db, ver, table, index, value) {
-            let promise = new Promise(function (resolve, reject) {
-                const request = window.indexedDB.open(db, ver);
-                request.onsuccess = function (event) {
-
                     let database = event.target.result
                     let transaction = database.transaction(table, 'readonly');
                     let objectStore = transaction.objectStore(table);
@@ -989,31 +723,35 @@ let aidb = (function () {
                         let indexReq = objectStore.index(index)
                         var req = indexReq.get(value);
                         req.onsuccess = function (event) {
-                            if (req.result) {
-                                resolve(req.result)
-                            } else {
-                                reject(req.result)
+                            if(event.target.result){
+                                return resolve(event.target.result)
+                            }else{
+                                return resolve(null)
                             }
-
                         }
+                        req.onerror=function(event){
+                            return reject(event)
+                        }
+                    }else{
+                       return reject({error:'index not created'})
                     }
 
                 };
                 request.onerror = function (event) {
-
+                    return reject(event);
                 }
                 request.onupgradeneeded = function (event) {
-
+                    return resolve(event)
                 }
                 request.onblocked = function (event) {
-
+                    return reject(event)
                 }
             });
             return promise;
         },
-        _getQuery: function (db, ver, table, query) {
+        _getQuery: function (db, table, query) {
             let promise = new Promise(function (resolve, reject) {
-                const request = window.indexedDB.open(db, ver);
+                const request = window.indexedDB.open(db);
                 request.onsuccess = function (event) {
 
                     let database = event.target.result
@@ -1038,51 +776,33 @@ let aidb = (function () {
                             }
                         }
                     }
-
-
                     if (objectStore.indexNames.contains(index)) {
                         let indexReq = objectStore.index(index)
                         var req = indexReq.get(value);
                         req.onsuccess = function (event) {
-                            if (req.result) {
-                                resolve(req.result)
+                            if (event.target.result) {
+                                return resolve(event.target.result)
                             } else {
-                                reject(req.result)
+                                return resolve(null)
                             }
-
                         }
                     }
-
                 };
                 request.onerror = function (event) {
-
+                    return reject(event);
                 }
                 request.onupgradeneeded = function (event) {
-
+                    return resolve(event);
                 }
                 request.onblocked = function (event) {
-
+                    return reject(event);
                 }
             });
             return promise;
         },
-        _get: function (db, ver, table, query) {
-            // 1.query== 1||"1"
-            // 2.query==['1',2,,3]
-            // 3.query=={id:1,props:"prop"}
-            // if (typeof query != "object") {
-            //     //1.query== 1||"1"
-
-            //     let id = query;
-            //     query = { id: id }
-            // }
-
-            // if (Array.isArray(query)) {
-            //     //2.query==['1',2,,3]
-            //     query = { id: query }
-            // }
+        _get: function (db,  table, query) {
             let promise = new Promise(function (resolve, reject) {
-                const request = window.indexedDB.open(db, ver);
+                const request = window.indexedDB.open(db);
                 request.onsuccess = function (event) {
 
                     let database = event.target.result
@@ -1091,61 +811,26 @@ let aidb = (function () {
                     // let indexReq = objectStore.index('id')
                     var req = objectStore.get(query);
                     req.onsuccess = function (event) {
-                        if (req.result) {
-                            resolve(req.result)
+                        if (event.target.result) {
+                            return resolve(event.target.result)
                         } else {
-                            reject(req.result)
+                            return resolve(null)
                         }
 
                     }
                 };
                 request.onerror = function (event) {
-
+                    return reject(event);
                 }
                 request.onupgradeneeded = function (event) {
-
+                    return resolve(event);
                 }
                 request.onblocked = function (event) {
-
-                }
-            });
-            return promise;
-
-        },
-        _put: function (db, ver, table, query) {
-            let promise = new Promise(function (resolve, reject) {
-                const request = window.indexedDB.open(db, ver);
-                request.onsuccess = function (event) {
-
-                    let database = event.target.result
-                    let transaction = database.transaction(table, 'readonly');
-                    let objectStore = transaction.objectStore(table);
-                    // let indexReq = objectStore.index('id')
-                    var req = objectStore.put(query);
-                    req.onsuccess = function (event) {
-                        if (req.result) {
-                            resolve(req.result)
-                        } else {
-                            reject(req.result)
-                        }
-
-                    }
-                };
-                request.onerror = function (event) {
-
-                }
-                request.onupgradeneeded = function (event) {
-
-                }
-                request.onblocked = function (event) {
-
+                    return reject(event);
                 }
             });
             return promise;
         },
-        _error: function (data, callback) {
-            callback(data);
-        }
     })
     return aidb;
 })();

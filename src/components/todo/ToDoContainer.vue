@@ -32,7 +32,6 @@ export default {
   mounted() {},
   methods: {
     update: function(val) {
-      console.log(val);
       let context = new dbcontext("DB_Vue_FlashCard");
       // carddbcontext.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
       context
@@ -58,7 +57,15 @@ export default {
         .add(toDoItem);
     },
     init: function() {
-      let self = this;
+      // let self = this;
+      // this.$aidb.reset()
+      // this.$aidb.open('test').put('testtable',{id:this.$uuid.v1(),value:"test666"},"0f30d1c0-fe95-11e8-96ac-2d1a4062fcb3")
+      // this.$aidb.open('test').put('testtable',{id:2,value:"test册谔谔谔"})
+      //  let a =this.$aidb.execude().then(function(){
+      // })
+      this.$aidb.open('aidb_default').get('aidb_params',{'database':'aidb_defaul'}).then(function(result){
+        console.log(result);
+      })
       
     },
     init2:function(){
