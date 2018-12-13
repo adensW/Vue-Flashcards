@@ -125,11 +125,10 @@ export default {
     },
     init: function() {
       let setId = this.$route.params.id;
-      let context = new dbcontext("DB_Vue_FlashCard", 2);
-      context
+    
+      this.$aidb
         .open("DB_Vue_FlashCard")
-        .set("Cards")
-        .getQuery({ setId: setId })
+        .getQuery("Cards",{ setId: setId })
         .then(data => {
           // console.log(data)
           this.$store.commit("initCards", data);

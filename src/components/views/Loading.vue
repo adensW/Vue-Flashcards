@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import {dbcontext} from '@/service/context/dbcontext-class.js'
 export default {
     name:'loading',
     data(){
@@ -21,12 +20,10 @@ export default {
     },
     methods:{
         redirect:function(){
-            let context = new dbcontext("DB_Vue_FlashCard",3);
-            context.open('DB_Vue_FlashCard').set("Sets").getAll().then((data)=>{
+            this.$aidb.open('DB_Vue_FlashCard').getAll("Sets").then((data)=>{
             this.$store.commit("initSets",data)
             this.$router.push({ path: '/index' })
             }).catch(function(data){
-                console.log(data);
                 this.$router.push({ path: '/error' })
             });
             
