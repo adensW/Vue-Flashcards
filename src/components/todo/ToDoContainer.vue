@@ -63,10 +63,9 @@ export default {
       // this.$aidb.open('test').put('testtable',{id:2,value:"test册谔谔谔"})
       //  let a =this.$aidb.execude().then(function(){
       // })
-      this.$aidb.open('aidb_default').get('aidb_params',{'database':'aidb_defaul'}).then(function(result){
+      this.$aidb.open('aidb_default').getAll('aidb_params').then(function(result){
         console.log(result);
       })
-      
     },
     init2:function(){
       //  console.log(this.$aidb.open('test4',3))
