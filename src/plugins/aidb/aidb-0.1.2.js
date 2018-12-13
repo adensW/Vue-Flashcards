@@ -115,6 +115,7 @@ let aidb = (function () {
         args: dbset,
         initialize: function () {
             aidb._initialize();
+            return this;
         },
         reset: function () {
             dbset = dbsetreset;
@@ -373,7 +374,7 @@ let aidb = (function () {
             let promise = new Promise(function (resolve) {
                 aidb._getIndex(_default.database, _default.table, 'database', name).then(function (result) {
                     dbset.version = result.version - 1 + 2;
-                    console.log('versionIncrease', result.version);
+                    // console.log('versionIncrease', result.version);
                     return resolve()
                 }).catch(function () {
                     //not created ,set version 1 
