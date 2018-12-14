@@ -1,10 +1,9 @@
 <template>
     <div class='column'>
-        
         <div class="borderline">
           <span v-for="i in todo.deeps" :key="i">&nbsp;</span>
           <button v-on:click="deepsDown">L</button><button v-on:click="deepsUp">R</button>
-          <input v-model="title"  placeholder="input something">
+          <input v-model="title" v-on:click="$emit('selectToDO',id)"  placeholder="input something">
           </div>
     </div>
 </template>
@@ -21,6 +20,11 @@ export default {
     };
   },
   computed:{
+    id:{
+      get:function(){
+        return this.todo.id;
+      }
+    },
     title:{
        // getter
       get: function () {

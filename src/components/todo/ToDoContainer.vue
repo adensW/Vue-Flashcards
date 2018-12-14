@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="block block__60">
-      <to-do-content></to-do-content>
+      <to-do-content v-bind:content="content"></to-do-content>
     </div>
     <div class="block block__40">
-      <to-do v-bind:todos="SortedTodos"></to-do>
+      <to-do v-bind:todos="SortedTodos" v-on:selectToDO="selectToDO"></to-do>
     </div>
   </div>
 </template>
@@ -20,7 +20,8 @@ export default {
   },
   data() {
     return {
-      list: []
+      list: [],
+      content:{}
     };
   },
   created() {
@@ -28,13 +29,34 @@ export default {
   },
   mounted() {},
   methods: {
+    selectToDO:function(id){
+      
+      this.aidb.open("DB_Vue_FlashCard").get("ToDoContent",{"toDoId":id})
+        .then(function(result){
+              console.log(result)
+        })
+    },
     update: function(val) {
       this.$aidb.open("DB_Vue_FlashCard").put("ToDos",val).execude()
     },
     init: function() {
-      this.$aidb.open("DB_Vue_FlashCard").getAll("ToDos").then((result)=> {
-        this.list = result
-      });
+      // this.$aidb.open("DB_Vue_FlashCard").getAll("ToDos").then((result)=> {
+      //   this.list = result
+      // });
+      let a = this.$aidb.open("DB_Vue_FlashCard").createIndex("ToDoContent",{key:"test4",unique:false})
+      a.execude()
+      // let request = window.indexedDB.open("DB_Vue_FlashCard",8)
+      // request.onupgradeneeded = function (event) {
+      //   let database= event.target;
+      //   let transaction = database.transaction;
+      //   let objectStore = transaction.objectStore("ToDoContent");
+      //   let req=objectStore.createIndex("lastModifyTime", "lastModifyTime", { unique: false })
+      //   console.log(req)
+      // }
+      // request.onsuccess=function(event){
+       
+      // }
+
     },
     seedData:function(){
         this.$aidb.initialize();

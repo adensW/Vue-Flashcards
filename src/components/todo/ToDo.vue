@@ -1,6 +1,10 @@
 <template>
     <div>
-        <to-do-item v-for="todo in todos" :key="todo.id" v-bind:item="todo"></to-do-item>
+        <to-do-item 
+          v-for="todo in todos" 
+          :key="todo.id" 
+          v-bind:item="todo"
+          v-on:selectToDO="$emit('selectToDO',$event)"></to-do-item>
         <i><v-btn float fab color='#1f7cda' v-on:click="add"><v-icon dark>add</v-icon></v-btn></i>
     </div>
 </template>

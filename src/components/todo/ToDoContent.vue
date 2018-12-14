@@ -1,14 +1,17 @@
 <template>
     <div>
-        ToDoContent
+        {{toDoContent}}
     </div>
 </template>
 
 <script>
 export default {
   name: "ToDoContent",
+  props:['content'],
   data() {
-    return {};
+    return {
+      toDoContent:this.content,
+    };
   },
   mounted() {},
   methods: {}

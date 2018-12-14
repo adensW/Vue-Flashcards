@@ -141,6 +141,21 @@ let aidb = (function () {
             dbset.tables.push(table)
             return this;
         },
+        createIndex: function (objectStore, index) {
+            let table = new tableset();
+            table.name = objectStore;
+            table.state = STATE.ADD;
+            if (!isNullOrWhiteSpace(index)) {
+                table.index = [];
+                if (Array.isArray(index)) {
+                    table.index = index;
+                } else {
+                    table.index.push(index);
+                }
+            }
+            dbset.tables.push(table)
+            return this;
+        },
         execude: function () {
             return aidb._execude().then(function () {
                 dbset = dbsetreset;
@@ -150,40 +165,40 @@ let aidb = (function () {
             dbset.tables.push(table.toString())
             return this;
         },
-        getAll:function(storename){
-            return aidb._getAll(dbset.database,storename);
+        getAll: function (storename) {
+            return aidb._getAll(dbset.database, storename);
         },
-        getQuery:function(storename,query){
-            return aidb._getQuery(dbset.database,storename,query);
+        getQuery: function (storename, query) {
+            return aidb._getQuery(dbset.database, storename, query);
         },
-        get: function (storename,query) {
+        get: function (storename, query) {
             //1.query== 1||"1"
             //2.query==['1',2,,3]
             //3.query=={id:1,props:"prop"}
-            if(Array.isArray(query)){
+            if (Array.isArray(query)) {
                 //[1,2,3]
-                return aidb._getQuery(dbset.database,storename,query)
-            }else{
+                return aidb._getQuery(dbset.database, storename, query)
+            } else {
                 if (typeof query != "object") {
                     //1.query== 1||"1"
-                    return aidb._get(dbset.database,storename,query);
-                }else if(typeof query ==='object'){
-                    if(Object.keys(query).length==1){
-                            //{index:[]}
-                            //{index:''}
-                            let index = Object.keys(query)[0];
-                            let value = query[index];
+                    return aidb._get(dbset.database, storename, query);
+                } else if (typeof query === 'object') {
+                    if (Object.keys(query).length == 1) {
+                        //{index:[]}
+                        //{index:''}
+                        let index = Object.keys(query)[0];
+                        let value = query[index];
                         if (Array.isArray(value)) {
                             //{index:[]}
-                            return aidb._getQuery(dbset.database,storename,query)
-                        }else{
-                           //{index:''}
-                            return aidb._getIndex(dbset.database,storename,index,value);
+                            return aidb._getQuery(dbset.database, storename, query)
+                        } else {
+                            //{index:''}
+                            return aidb._getIndex(dbset.database, storename, index, value);
                         }
-                    }else{
+                    } else {
                         //{index:'',condition:''}
-                        return aidb._getQuery(dbset.database,storename,query)
-                        
+                        return aidb._getQuery(dbset.database, storename, query)
+
                     }
                 }
             }
@@ -228,7 +243,7 @@ let aidb = (function () {
             }
             return this;
         },
-        put: function (storename,data,id) {
+        put: function (storename, data, id) {
             let i = dbset.tables.findIndex(function (obj) { return obj.name == storename })
             if (i >= 0) {
 
@@ -236,13 +251,13 @@ let aidb = (function () {
                 let dataArr = []
                 if (!Array.isArray(data)) {
                     //1.{id:1,val:""}
-                    dataArr.push({ value: data, state: STATE.UPDATE,id:id||data.id });
+                    dataArr.push({ value: data, state: STATE.UPDATE, id: id || data.id });
                 } else {
                     //2,[{},{},{}]
                     dataArr = data;
                     for (let i = 0; i < data.length; i++) {
                         const element = data[i];
-                        dataArr.push({ value: element, state: STATE.UPDATE,id:id||data.id })
+                        dataArr.push({ value: element, state: STATE.UPDATE, id: id || data.id })
                     }
                 }
                 dbset.tables[i].sets = dbset.tables[i].sets.concat(dataArr);
@@ -253,13 +268,13 @@ let aidb = (function () {
                 let dataArr = []
                 if (!Array.isArray(data)) {
                     //1.{id:1,val:""}
-                    dataArr.push({ value: data, state: STATE.UPDATE,id:id||data.id });
+                    dataArr.push({ value: data, state: STATE.UPDATE, id: id || data.id });
                 } else {
                     //2,[{},{},{}]
                     dataArr = data;
                     for (let i = 0; i < data.length; i++) {
                         const element = data[i];
-                        dataArr.push({ value: element, state: STATE.UPDATE,id:id||data.id })
+                        dataArr.push({ value: element, state: STATE.UPDATE, id: id || data.id })
                     }
                 }
                 table.sets = dataArr;
@@ -390,61 +405,61 @@ let aidb = (function () {
             })
             return promise;
         },
-        _initialize:function(){
+        _initialize: function () {
             let request = window.indexedDB.open(_initDefault.database);
             //if upgrade init
             //if success allready init  do nothing
-            request.onupgradeneeded=function(event){
+            request.onupgradeneeded = function (event) {
                 let database = event.target.result;
                 for (let index = 0; index < _initDefault.tables.length; index++) {
                     const table = _initDefault.tables[index];
-                if(!database.objectStoreNames.contains(table.name)){
-                    let objectStore = database.createObjectStore(table.name, table.prop);
-                    if (!isNullOrWhiteSpace(table.index)) {
-                        for (let i = 0; i < table.index.length; i++) {
-                            const ele = table.index[i];
-                            objectStore.createIndex(ele.key, ele.key, { unique: ele.unique })
-                        }
-                    }
-                    if (!isNullOrWhiteSpace(table.sets)) {
-                        let head = 0;
-                        let length = table.sets.length;
-                        let addNext = function Next() {
-                            // console.log(dataArr[head]);
-                            if (head < length) {
-                                const set = table.sets[head];
-                                let process;
-                                switch (set.state) {
-                                    case STATE.ADD:
-                                        process = objectStore.add(set.value)
-                                        process.onsuccess = addNext;
-                                        break;
-                                    case STATE.DELETE:
-                                        process = objectStore.delete(set.value)
-                                        process.onsuccess = addNext;
-                                        break;
-                                    case STATE.UPDATE:
-                                        process = objectStore.put(set.value)
-                                        process.onsuccess = addNext;
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                ++head;
-                            } else {   // complete
+                    if (!database.objectStoreNames.contains(table.name)) {
+                        let objectStore = database.createObjectStore(table.name, table.prop);
+                        if (!isNullOrWhiteSpace(table.index)) {
+                            for (let i = 0; i < table.index.length; i++) {
+                                const ele = table.index[i];
+                                objectStore.createIndex(ele.key, ele.key, { unique: ele.unique })
                             }
                         }
-                        // _transaction=_transaction||database.transaction(tableList,'readwrite');
-                        // let transaction=_transaction|| database.transaction(tableList,'readwrite');
-                        // let objectStore= transaction.ObjectStore(table.name);
-                       
-                        addNext();
+                        if (!isNullOrWhiteSpace(table.sets)) {
+                            let head = 0;
+                            let length = table.sets.length;
+                            let addNext = function Next() {
+                                // console.log(dataArr[head]);
+                                if (head < length) {
+                                    const set = table.sets[head];
+                                    let process;
+                                    switch (set.state) {
+                                        case STATE.ADD:
+                                            process = objectStore.add(set.value)
+                                            process.onsuccess = addNext;
+                                            break;
+                                        case STATE.DELETE:
+                                            process = objectStore.delete(set.value)
+                                            process.onsuccess = addNext;
+                                            break;
+                                        case STATE.UPDATE:
+                                            process = objectStore.put(set.value)
+                                            process.onsuccess = addNext;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    ++head;
+                                } else {   // complete
+                                }
+                            }
+                            // _transaction=_transaction||database.transaction(tableList,'readwrite');
+                            // let transaction=_transaction|| database.transaction(tableList,'readwrite');
+                            // let objectStore= transaction.ObjectStore(table.name);
+
+                            addNext();
+                        }
                     }
                 }
-            }
 
             }
-            
+
         },
         _execude: function (args) {
             let promise = new Promise(function (resolve, reject) {
@@ -507,6 +522,7 @@ let aidb = (function () {
                                 for (let index = 0; index < tablesAdd.length; index++) {
                                     const table = tablesAdd[index];
                                     if (!database.objectStoreNames.contains(table.name)) {
+                                        console.log("create table")
                                         let objectStore = database.createObjectStore(table.name, table.prop);
                                         if (!isNullOrWhiteSpace(table.index)) {
                                             for (let i = 0; i < table.index.length; i++) {
@@ -545,8 +561,19 @@ let aidb = (function () {
                                             // _transaction=_transaction||database.transaction(tableList,'readwrite');
                                             // let transaction=_transaction|| database.transaction(tableList,'readwrite');
                                             // let objectStore= transaction.ObjectStore(table.name);
-                                           
+
                                             addNext();
+                                        }
+                                    }else{
+                                        console.log("create index",table)
+                                        //handle create index
+                                        let transaction = event.target.transaction;
+                                        let objectStore = transaction.objectStore(table.name);
+                                        if (!isNullOrWhiteSpace(table.index)) {
+                                            for (let i = 0; i < table.index.length; i++) {
+                                                const ele = table.index[i];
+                                                objectStore.createIndex(ele.key, ele.key, { unique: ele.unique })
+                                            }
                                         }
                                     }
                                 }
@@ -791,17 +818,17 @@ let aidb = (function () {
                         let indexReq = objectStore.index(index)
                         var req = indexReq.get(value);
                         req.onsuccess = function (event) {
-                            if(event.target.result){
+                            if (event.target.result) {
                                 return resolve(event.target.result)
-                            }else{
+                            } else {
                                 return resolve(null)
                             }
                         }
-                        req.onerror=function(event){
+                        req.onerror = function (event) {
                             return reject(event)
                         }
-                    }else{
-                       return reject({error:'index not created'})
+                    } else {
+                        return reject({ error: 'index not created' })
                     }
 
                 };
@@ -817,7 +844,7 @@ let aidb = (function () {
             });
             return promise;
         },
-        _getQuery: function (db, table, query,limit = 200, offset = 0) {
+        _getQuery: function (db, table, query, limit = 200, offset = 0) {
             //1.query== 1||"1"
             //2.query==['1',2,,3]
             //3.query=={id:1,props:"prop"}
@@ -850,9 +877,9 @@ let aidb = (function () {
                         let itemKeys = Object.keys(item);
                         let queryKeys = Object.keys(query);
                         for (let i = 0; i < queryKeys.length; i++) {
-                            
+
                             if (itemKeys.includes(queryKeys[i])) {
-                                
+
                                 if (Array.isArray(query[queryKeys[i]])) {
                                     //handle {id:[1,2,3,4]}
                                     if (!query[queryKeys[i]].includes(item[queryKeys[i]])) {
@@ -872,9 +899,9 @@ let aidb = (function () {
                     cursorObject.onsuccess = function (event) {
                         let cursor = event.target.result;
                         if (cursor) {
-                            
+
                             if (isInCondition(cursor.value)) {
-                                
+
                                 if (offsetCount <= 0 && limitCount < limit) {
                                     data.push(cursor.value)
                                     limitCount++;
@@ -892,7 +919,7 @@ let aidb = (function () {
             })
             return promise;
         },
-        _get: function (db,  table, query) {
+        _get: function (db, table, query) {
             let promise = new Promise(function (resolve, reject) {
                 const request = window.indexedDB.open(db);
                 request.onsuccess = function (event) {
@@ -923,7 +950,7 @@ let aidb = (function () {
             });
             return promise;
         },
-        _getAll:function(db,table){
+        _getAll: function (db, table) {
             let promise = new Promise(function (resolve, reject) {
                 const request = window.indexedDB.open(db);
                 request.onsuccess = function (event) {
