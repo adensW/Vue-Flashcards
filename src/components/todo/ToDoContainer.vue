@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="block block__60">
-      <to-do-content v-bind:content="content"></to-do-content>
+      <to-do-detail v-bind:item="detail"></to-do-detail>
     </div>
     <div class="block block__40">
       <to-do v-bind:todos="SortedTodos" v-on:selectToDO="selectToDO"></to-do>
@@ -11,52 +11,53 @@
 
 <script>
 import ToDo from "./ToDo";
-import ToDoContent from "./ToDoContent";
+import ToDoDetail from "./ToDoDetail";
 export default {
   name: "ToDoContainer",
   components: {
     ToDo,
-    ToDoContent
+    ToDoDetail
   },
   data() {
     return {
       list: [],
-      content:{}
+      detail:{}
     };
   },
   created() {
     this.init();
   },
-  mounted() {},
+  mounted() {
+
+  },
   methods: {
     selectToDO:function(id){
-      
-      this.aidb.open("DB_Vue_FlashCard").get("ToDoContent",{"toDoId":id})
-        .then(function(result){
-              console.log(result)
+      this.$aidb.open("DB_Vue_FlashCard").get("ToDoContent",{"setId":id})
+        .then((result)=>{
+              if(result){
+                this.detail = result;
+                this.$store.dispatch("setDetail",result)
+              }else{
+                this.detail = {
+                  id:this.$uuid.v1(),
+                  content:"",
+                  setId:id,
+                  title:""
+                }
+                this.$store.dispatch("setDetail",this.detail)
+              }
         })
     },
     update: function(val) {
       this.$aidb.open("DB_Vue_FlashCard").put("ToDos",val).execude()
     },
     init: function() {
-      // this.$aidb.open("DB_Vue_FlashCard").getAll("ToDos").then((result)=> {
-      //   this.list = result
-      // });
-      let a = this.$aidb.open("DB_Vue_FlashCard").createIndex("ToDoContent",{key:"test4",unique:false})
-      a.execude()
-      // let request = window.indexedDB.open("DB_Vue_FlashCard",8)
-      // request.onupgradeneeded = function (event) {
-      //   let database= event.target;
-      //   let transaction = database.transaction;
-      //   let objectStore = transaction.objectStore("ToDoContent");
-      //   let req=objectStore.createIndex("lastModifyTime", "lastModifyTime", { unique: false })
-      //   console.log(req)
-      // }
-      // request.onsuccess=function(event){
-       
-      // }
-
+      this.$aidb.open("DB_Vue_FlashCard").getAll("ToDos").then((result)=> {
+          this.$store.commit('initToDos',result)
+          this.list=this.$store.getters.AllToDos;
+          this.detail=this.$store.getters.CurrentDetail
+      });
+      
     },
     seedData:function(){
         this.$aidb.initialize();
@@ -67,6 +68,9 @@ export default {
     }
   },
   computed: {
+    CurrentDetail:function(){
+      return this.detail;
+    },
     SortedTodos: function() {
       let data = this.list;
       return data.sort(function(a, b) {

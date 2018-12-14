@@ -9,8 +9,6 @@
 </template>
 
 <script>
-import { dbcontext } from "@/service/context/dbcontext-class.js";
-
 export default {
   name: "ToDoItem",
   props:['item'],

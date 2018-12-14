@@ -33,7 +33,6 @@
 import CardListItem from "./CardListItem";
 import {} from "@/plugins/atween.js";
 import { VueAnime } from "vue-anime";
-import { dbcontext } from "@/service/context/dbcontext-class.js";
 
 export default {
   name: "CardList",
@@ -64,7 +63,7 @@ export default {
   },
   methods: {
     rotate: function(evt) {
-      console.log(evt);
+      // console.log(evt);
     },
     pressMove: function(evt) {
       if (Math.abs(this.offset) < this.threshold) {
@@ -75,7 +74,7 @@ export default {
           (this.offset / Math.abs(this.offset)) * 21 * this.index;
         let cssstyle = elem.item(0).style;
         cssstyle.transform = "translateX(" + moveoffset + "rem)";
-        console.log(moveoffset);
+        // console.log(moveoffset);
       } else {
         this.isSlider = !this.isSlider;
         if (this.offset > 0) {
@@ -118,10 +117,6 @@ export default {
         case "Down":
           break;
       }
-    },
-    
-    getInput: function(card, event) {
-     
     },
     init: function() {
       let setId = this.$route.params.id;

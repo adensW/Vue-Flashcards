@@ -522,7 +522,6 @@ let aidb = (function () {
                                 for (let index = 0; index < tablesAdd.length; index++) {
                                     const table = tablesAdd[index];
                                     if (!database.objectStoreNames.contains(table.name)) {
-                                        console.log("create table")
                                         let objectStore = database.createObjectStore(table.name, table.prop);
                                         if (!isNullOrWhiteSpace(table.index)) {
                                             for (let i = 0; i < table.index.length; i++) {
@@ -565,7 +564,6 @@ let aidb = (function () {
                                             addNext();
                                         }
                                     }else{
-                                        console.log("create index",table)
                                         //handle create index
                                         let transaction = event.target.transaction;
                                         let objectStore = transaction.objectStore(table.name);

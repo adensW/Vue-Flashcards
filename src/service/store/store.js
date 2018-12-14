@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import CardListModule from './modules/CardListModule'
-import DashboardModule from './modules/DashboardModule';
+import DashboardModule from './modules/DashboardModule'
+import ToDoModule from './modules/ToDoModule'
 Vue.use(Vuex)
 export default new Vuex.Store({
     state:{
@@ -12,6 +13,7 @@ export default new Vuex.Store({
     },
     modules:{
         CardList:CardListModule,
-        SetList:DashboardModule
+        SetList:DashboardModule,
+        ToDoList:ToDoModule,
     }
 })
