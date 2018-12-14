@@ -1,12 +1,11 @@
 <template>
     <div class='column'>
-        <div class=" borderline">
-           <v-icon>arrow_back</v-icon>
-       
-          <v-icon>arrow_forward</v-icon>
+        
+        <div class="borderline">
+          <span v-for="i in todo.deeps" :key="i">&nbsp;</span>
+          <button v-on:click="deepsDown">L</button><button v-on:click="deepsUp">R</button>
           <input v-model="title"  placeholder="input something">
           </div>
-          
     </div>
 </template>
 
@@ -36,10 +35,16 @@ export default {
   },
   mounted() {},
   methods: {
+    deepsDown:function(){
+      this.todo.deeps = this.todo.deeps-1<0?0:this.todo.deeps-1
+      this.update()
+    },
+     deepsUp:function(){
+      this.todo.deeps = this.todo.deeps+1
+      this.update()
+    },
     update:function(){
-        let context= new dbcontext('DB_Vue_FlashCard');
-            // carddbcontext.open("DB_Vue_FlashCard",3).createTable("ToDos",{keyPath:'id'});
-        context.open("DB_Vue_FlashCard").set("ToDos").put(this.todo)
+        this.$aidb.open("DB_Vue_FlashCard").put("ToDos",this.todo).execude()
     }
   }
 };

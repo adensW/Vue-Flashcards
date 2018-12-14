@@ -698,7 +698,7 @@ let aidb = (function () {
                                             process.onsuccess = putNext;
                                             break;
                                         case STATE.UPDATE:
-                                            process = objectStore.put(set.value,set.id)
+                                            process = objectStore.put(set.value)
                                             process.onsuccess = putNext;
                                             break;
                                         default:
