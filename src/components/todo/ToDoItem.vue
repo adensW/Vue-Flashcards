@@ -2,7 +2,7 @@
     <div class='column'>
         <div class="borderline">
           <span v-for="i in todo.deeps" :key="i">&nbsp;</span>
-          <button v-on:click="deepsDown">L</button><button v-on:click="deepsUp">R</button>
+          <button v-on:click="deepsDown"><-</button><button v-on:click="deepsUp">-></button>
           <input v-model="title" v-on:click="$emit('selectToDO',id)"  placeholder="input something">
           </div>
     </div>

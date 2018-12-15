@@ -49,7 +49,6 @@
 
 import CardList from './components/cards/CardList'
 import AdenBtnNew from './components/button/AdenBtnNew'
-import {dbcontext} from './service/context/dbcontext-class.js'
 
 export default {
   name: 'App',
@@ -101,7 +100,16 @@ export default {
   },
   methods:{
     init:function(){
-      }
+        // this.seedData();
+      },
+       seedData:function(){
+        // this.$aidb.initialize();
+        this.$aidb.open("DB_Vue_FlashCard").createTable("Cards",{keyPath: 'id'},{key:"SetId",unique:false})
+        this.$aidb.open("DB_Vue_FlashCard").createTable("ToDos",{keyPath: 'id'})
+        this.$aidb.open("DB_Vue_FlashCard").createTable("ToDoContent",{keyPath: 'id'},{key:"ToDoId",unique:true})
+        this.$aidb.open("DB_Vue_FlashCard").createTable("Sets",{keyPath: 'id'})
+        this.$aidb.execude()
+    }
   }
 }
 </script>

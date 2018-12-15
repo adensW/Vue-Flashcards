@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     selectToDO:function(id){
-      this.$aidb.open("DB_Vue_FlashCard").get("ToDoContent",{"setId":id})
+      this.$aidb.open("DB_Vue_FlashCard").get("ToDoContent",{"ToDoId":id})
         .then((result)=>{
               if(result){
                 this.detail = result;
@@ -57,12 +57,12 @@ export default {
           this.list=this.$store.getters.AllToDos;
           this.detail=this.$store.getters.CurrentDetail
       });
-      
     },
     seedData:function(){
-        this.$aidb.initialize();
-        this.$aidb.open("DB_Vue_FlashCard").createTable("Cards",{keyPath: 'id'})
+        // this.$aidb.initialize();
+        this.$aidb.open("DB_Vue_FlashCard").createTable("Cards",{keyPath: 'id'},{key:"SetId",unique:false})
         this.$aidb.open("DB_Vue_FlashCard").createTable("ToDos",{keyPath: 'id'})
+        this.$aidb.open("DB_Vue_FlashCard").createTable("ToDoContent",{keyPath: 'id'},{key:"ToDoId",unique:true})
         this.$aidb.open("DB_Vue_FlashCard").createTable("Sets",{keyPath: 'id'})
         this.$aidb.execude()
     }
