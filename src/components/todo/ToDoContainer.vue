@@ -56,6 +56,7 @@ export default {
           this.$store.commit('initToDos',result)
           this.list=this.$store.getters.AllToDos;
           this.detail=this.$store.getters.CurrentDetail
+          
       });
     },
     seedData:function(){
