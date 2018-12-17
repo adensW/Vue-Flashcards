@@ -1,13 +1,12 @@
 <template>
     <div class='column'>
         <div class="borderline">
-          <span v-for="i in todo.deeps" :key="i">&nbsp;</span>
-          <button v-on:click="deepsDown"><-</button><button v-on:click="deepsUp">-></button>
+          <span v-for="i in todo.deeps" :key="i">&nbsp;&nbsp;&nbsp;</span>
+          <button v-on:click="$emit('deepsDown',id)">&laquo;</button><button v-on:click="$emit('deepsUp',id)">&raquo;</button>
           <input v-model="title" v-on:click="$emit('selectToDO',id)"  placeholder="input something">
-          </div>
+        </div>
     </div>
 </template>
-
 <script>
 export default {
   name: "ToDoItem",
@@ -24,7 +23,7 @@ export default {
       }
     },
     title:{
-       // getter
+      // getter
       get: function () {
         return this.todo.title;
       },
@@ -37,21 +36,12 @@ export default {
   },
   mounted() {},
   methods: {
-    deepsDown:function(){
-      this.todo.deeps = this.todo.deeps-1<0?0:this.todo.deeps-1
-      this.update()
-    },
-     deepsUp:function(){
-      this.todo.deeps = this.todo.deeps+1
-      this.update()
-    },
     update:function(){
         this.$aidb.open("DB_Vue_FlashCard").put("ToDos",this.todo).execude()
     }
   }
 };
 </script>
-
 <style scoped>
 @import '/css/size.css';
 .borderline{
@@ -62,6 +52,5 @@ export default {
 }
 :focus{
   outline: none;
-
 }
 </style>

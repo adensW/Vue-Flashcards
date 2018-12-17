@@ -19,11 +19,6 @@ export default {
     };
   },
   computed:{
-    _item:{
-      get:function(){
-        return this.item;
-      }
-    },
     title:{
       get:function(){
         return this.tododetail.title;

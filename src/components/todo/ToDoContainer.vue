@@ -32,8 +32,10 @@ export default {
   },
   methods: {
     selectToDO:function(id){
+     
       this.$aidb.open("DB_Vue_FlashCard").get("ToDoContent",{"ToDoId":id})
         .then((result)=>{
+           console.log(result);
               if(result){
                 this.detail = result;
                 this.$store.dispatch("setDetail",result)
@@ -41,7 +43,7 @@ export default {
                 this.detail = {
                   id:this.$uuid.v1(),
                   content:"",
-                  setId:id,
+                  ToDoId:id,
                   title:""
                 }
                 this.$store.dispatch("setDetail",this.detail)
@@ -55,18 +57,17 @@ export default {
       this.$aidb.open("DB_Vue_FlashCard").getAll("ToDos").then((result)=> {
           this.$store.commit('initToDos',result)
           this.list=this.$store.getters.AllToDos;
-          this.detail=this.$store.getters.CurrentDetail
+          this.detail=this.$aidb.open("DB_Vue_FlashCard")
+            .get("ToDoContent",{"ToDOId":this.list[0].id}).then((result)=>{
+              if(result){
+                this.detail  = result;
+              }else{
+                
+              }
+            })
           
       });
     },
-    seedData:function(){
-        // this.$aidb.initialize();
-        this.$aidb.open("DB_Vue_FlashCard").createTable("Cards",{keyPath: 'id'},{key:"SetId",unique:false})
-        this.$aidb.open("DB_Vue_FlashCard").createTable("ToDos",{keyPath: 'id'})
-        this.$aidb.open("DB_Vue_FlashCard").createTable("ToDoContent",{keyPath: 'id'},{key:"ToDoId",unique:true})
-        this.$aidb.open("DB_Vue_FlashCard").createTable("Sets",{keyPath: 'id'})
-        this.$aidb.execude()
-    }
   },
   computed: {
     CurrentDetail:function(){
