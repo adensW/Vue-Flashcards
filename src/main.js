@@ -10,7 +10,9 @@ import Router from './service/router/router'
 import AlloyFinger from 'alloyfinger'
 import AlloyFingerPlugin from './plugins/alloyfinger.vue'
 import UUID from 'vue-uuid';
-import VueAidb from './plugins/aidb/aidb.vue.js';
+import VueAidb from './plugins/aidb/aidb.vue.js'
+import Lodash from './plugins/lodash/lodash.vue.js'
+Vue.use(Lodash)
 Vue.use(VueAidb)
 Vue.use(VueResource)
 Vue.use(UUID);

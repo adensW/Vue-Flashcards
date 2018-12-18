@@ -3,7 +3,7 @@
         <div class="borderline">
           <span v-for="i in todo.deeps" :key="i">&nbsp;&nbsp;&nbsp;</span>
           <button v-on:click="$emit('deepsDown',id)">&laquo;</button><button v-on:click="$emit('deepsUp',id)">&raquo;</button>
-          <input v-model="title" v-on:click="$emit('selectToDO',id)"  placeholder="input something">
+          <input :value="title" @input="input" v-on:click="$emit('selectToDO',id)"  placeholder="input something">
         </div>
     </div>
 </template>
@@ -28,14 +28,20 @@ export default {
         return this.todo.title;
       },
       // setter
-      set: function (newValue) {
-        this.todo.title = newValue;
-        this.update();
+      set:function(value){
+        this.todo.title =value;
       }
     }
   },
   mounted() {},
   methods: {
+    self:function(){
+      return this._;
+    },
+    input:self.debounce(function(e){
+
+    }),
+      
     update:function(){
         this.$aidb.open("DB_Vue_FlashCard").put("ToDos",this.todo).execude()
     }

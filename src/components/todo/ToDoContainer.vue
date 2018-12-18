@@ -35,7 +35,6 @@ export default {
      
       this.$aidb.open("DB_Vue_FlashCard").get("ToDoContent",{"ToDoId":id})
         .then((result)=>{
-           console.log(result);
               if(result){
                 this.detail = result;
                 this.$store.dispatch("setDetail",result)
@@ -58,11 +57,11 @@ export default {
           this.$store.commit('initToDos',result)
           this.list=this.$store.getters.AllToDos;
           this.detail=this.$aidb.open("DB_Vue_FlashCard")
-            .get("ToDoContent",{"ToDOId":this.list[0].id}).then((result)=>{
+            .get("ToDoContent",{"ToDoId":this.SortedTodos[0].id}).then((result)=>{
               if(result){
                 this.detail  = result;
               }else{
-                
+                //init detail and todo
               }
             })
           

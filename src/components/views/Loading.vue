@@ -20,7 +20,9 @@ export default {
             this.$aidb.open("aidb_default").get('aidb_params',{database:"DB_Vue_FlashCard"})
             .then((result)=>{
                 if(!result){
-                    this.seedData().then(()=>{
+                    this.seedData()
+                }
+            }).then(()=>{
                         this.$aidb.open('DB_Vue_FlashCard').getAll("Sets").then((data)=>{
                         this.$store.commit("initSets",data)
                         this.$router.push({ path: '/index' })
@@ -28,9 +30,6 @@ export default {
                             this.$router.push({ path: '/error' })
                         });
                     });
-                    
-                }
-            })
            
         },
         seedData:function(){

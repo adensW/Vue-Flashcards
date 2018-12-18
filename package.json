@@ -10,6 +10,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.0.0-rc.1",
     "alloyfinger": "^0.1.15",
+    "lodash": "^4.17.11",
     "material-design-icons-iconfont": "^3.0.3",
     "roboto-fontface": "*",
     "store": "^2.0.12",

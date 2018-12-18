@@ -26,7 +26,6 @@ export default {
   mounted() {},
   methods: {
      deepsDown:function(id){
-        console.log(id)
         let a = this.todos.find(function(elem){
         return elem.id == id;
       })
@@ -36,7 +35,7 @@ export default {
       this.update(a)
     },
      deepsUp:function(id){
-       console.log(id)
+
        let a = this.todos.find(function(elem){
         return elem.id == id;
       })
