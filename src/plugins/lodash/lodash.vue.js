@@ -1,8 +1,15 @@
-import lodash from 'lodash'
+import _ from 'lodash'
 
 var Lodash={};
 
-Lodash.install=function(Vue,option){
-    Vue.prototype._ = lodash;
+Lodash.install=function(Vue){
+    // Vue.prototype._ = lodash;
+    Vue.mixin({
+        methods: {
+            _() {
+                return _;
+            }
+        }
+    });
 }
 export default Lodash;

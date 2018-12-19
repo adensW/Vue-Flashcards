@@ -2,7 +2,6 @@ const state={
     ToDos:[
         ],
     Detail:{}
-
 }
 const getters={
     AllToDos:(state)=>{
@@ -19,7 +18,6 @@ const actions={
     },
     initToDos(context,prop){
         context.commit('initToDos',prop);
-        
     },
     setDetail(context,prop){
         context.commit('setDetail',prop);
@@ -29,7 +27,6 @@ const actions={
         context.commit('setDetail',prop);
         this._vm.$aidb.open("DB_Vue_FlashCard").put("ToDoContent",prop).execude()
     }
-
 }
 const mutations={
     setDetail:(state,prop)=>{

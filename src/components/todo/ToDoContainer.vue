@@ -32,7 +32,6 @@ export default {
   },
   methods: {
     selectToDO:function(id){
-     
       this.$aidb.open("DB_Vue_FlashCard").get("ToDoContent",{"ToDoId":id})
         .then((result)=>{
               if(result){
@@ -53,6 +52,7 @@ export default {
       this.$aidb.open("DB_Vue_FlashCard").put("ToDos",val).execude()
     },
     init: function() {
+     console.log(this.$tool)
       this.$aidb.open("DB_Vue_FlashCard").getAll("ToDos").then((result)=> {
           this.$store.commit('initToDos',result)
           this.list=this.$store.getters.AllToDos;

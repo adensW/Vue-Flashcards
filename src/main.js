@@ -11,8 +11,8 @@ import AlloyFinger from 'alloyfinger'
 import AlloyFingerPlugin from './plugins/alloyfinger.vue'
 import UUID from 'vue-uuid';
 import VueAidb from './plugins/aidb/aidb.vue.js'
-import Lodash from './plugins/lodash/lodash.vue.js'
-Vue.use(Lodash)
+import atool from './plugins/tools/atinytool.vue.js'
+Vue.use(atool)
 Vue.use(VueAidb)
 Vue.use(VueResource)
 Vue.use(UUID);

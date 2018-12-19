@@ -8,6 +8,7 @@
     </div>
 </template>
 <script>
+import _ from 'lodash'
 export default {
   name: "ToDoItem",
   props:['item'],
@@ -35,12 +36,10 @@ export default {
   },
   mounted() {},
   methods: {
-    self:function(){
-      return this._;
-    },
-    input:self.debounce(function(e){
-
-    }),
+    input:_.debounce(function(e){
+        this.title = e.target.value;
+        this.update();
+      },300),
       
     update:function(){
         this.$aidb.open("DB_Vue_FlashCard").put("ToDos",this.todo).execude()
