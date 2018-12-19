@@ -4,22 +4,22 @@ export default (function (global, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         // eslint-disable-next-line
-        return define([], factory);
+        define([], factory);
       } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
         // like Node.
-        return module.exports = global.document ?
+        module.exports = global.document ?
         factory( global, true ) :
         function( w ) {
             if ( !w.document ) {
-                throw new Error( "atool requires a window with a document" );
+                throw new Error( "aTween requires a window with a document" );
             }
             return factory( w );
         };
       } else {
         // Browser globals (root is window)
-        return factory( global );
+        factory( global );
       }
     // Pass this if window is not defined yet
     // eslint-disable-next-line
@@ -42,21 +42,17 @@ export default (function (global, factory) {
         return typeof obj === "function" && typeof obj.nodeType !== "number";
     };
    
-    var atool = function () {
-        return new atool.fn.init();
+    var aTween = function () {
+        return new aTween.fn.init();
     }
-    atool.fn = atool.prototype = {
-        constructor: atool,
-        getUrlValue:function(name) {
-            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-            var r = window.location.search.substring(1).match(reg);
-            if (r != null){
-                return decodeURI(r[2]); 
-            } 
-            return null;
+    aTween.fn = aTween.prototype = {
+        constructor: aTween,
+        animate: function () {
+            // eslint-disable-next-line
+            return this;
         }
     }
-    atool.extend = atool.fn.extend = function () {
+    aTween.extend = aTween.fn.extend = function () {
         var src, copyIsArray, copy, name, options, clone,
             target = arguments[0] || {},
             i = 1,
@@ -96,17 +92,17 @@ export default (function (global, factory) {
                     }
 
                     // Recurse if we're merging plain objects or arrays
-                    if (deep && copy && (atool.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
+                    if (deep && copy && (aTween.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
                         if (copyIsArray) {
                             copyIsArray = false;
                             clone = src && Array.isArray(src) ? src : [];
 
                         } else {
-                            clone = src && atool.isPlainObject(src) ? src : {};
+                            clone = src && aTween.isPlainObject(src) ? src : {};
                         }
 
                         // Never move original objects, clone them
-                        target[name] = atool.extend(deep, clone, copy);
+                        target[name] = aTween.extend(deep, clone, copy);
 
                         // Don't bring in undefined values
                     } else if (copy !== undefined) {
@@ -120,38 +116,46 @@ export default (function (global, factory) {
         
         return target;
     };
-    atool.fn.init=function(){
+    aTween.fn.init=function(){
         
         return this;
     }
-    atool.isFunction = isFunction;
-    atool.isArray = Array.isArray;
+    aTween.isFunction = isFunction;
+    aTween.isArray = Array.isArray;
     
-    atool.extend({
+    aTween.extend({
         isPlainObject: function (obj) {
             var proto, Ctor;
+
             // Detect obvious negatives
             // Use toString instead of jQuery.type to catch host objects
             if (!obj || toString.call(obj) !== "[object Object]") {
                 return false;
             }
+
             proto = getProto(obj);
+
             // Objects with no prototype (e.g., `Object.create( null )`) are plain
             if (!proto) {
                 return true;
             }
+
             // Objects with prototype are plain iff they were constructed by a global Object function
             Ctor = hasOwn.call(proto, "constructor") && proto.constructor;
             return typeof Ctor === "function" && fnToString.call(Ctor) === ObjectFunctionString;
         }
     });
    
-    atool.fn.init.prototype = atool.fn;
-    // window.atool = atool;
+    aTween.fn.init.prototype = aTween.fn;
+    window.aTween = aTween;
     // function atween(){
-    //     return atool();
+    //     return aTween();
     // }
-    atool.fn.extend({
+    aTween.fn.extend({
+        istest:"test",
+        isExtended: function () {
+            
+            return true;
+        }
     });
-    return atool;
 })

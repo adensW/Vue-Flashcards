@@ -158,5 +158,4 @@
             return true;
         }
     });
-    return aTween;
 })

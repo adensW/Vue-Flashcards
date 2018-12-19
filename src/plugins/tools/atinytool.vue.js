@@ -1,4 +1,4 @@
-import atool from './atinytool.js'
+import {default as atool} from './atinytool.js'
 
 var tool={};
 
