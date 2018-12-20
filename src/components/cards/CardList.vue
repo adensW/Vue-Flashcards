@@ -28,13 +28,11 @@
 </template>
 <script>
 import CardListItem from "./CardListItem";
-import { VueAnime } from "vue-anime";
 
 export default {
   name: "CardList",
   components: {
     CardListItem,
-    VueAnime
   },
   data() {
     return {
