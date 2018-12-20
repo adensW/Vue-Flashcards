@@ -9,31 +9,24 @@
         <div v-if="sets" class='container--flex'>
             <div v-for="set in sets" 
             :key="set.id"
-            class='flex__item '
+            class='flex__item'
             >
             <router-link :to="{name:'card',params:{id:set.id}}">
-           
             <div class='folder shadow--2 shadow__hoverable'>
-                <i><div class='folder__name'>{{set.name}}</div></i>
+                <i><input value="123"  @input.capture="name_input" class='folder__name'/></i>
             </div>
             </router-link>
-                <!-- <div class='folder__bar'>
-                    <div>...</div><div>+</div>                    
-                </div> -->
             </div>
-            <div class='flex__item '>
+            <div class='flex__item'>
                 <div class='folder--outline shadow--2 shadow__hoverable'>
-                    <i><v-btn outline fab color='#1f7cda'><v-icon dark>add</v-icon></v-btn></i>
+                    <i><v-btn outline fab color='#1f7cda' @click="add"><v-icon dark>add</v-icon></v-btn></i>
                 </div>
-                 
             </div>
-           
         </div>
-        
     </div>
 </template>
 <script>
-
+import debounce from 'lodash.debounce'
 export default {
     name:'Dashboad',
     data(){
@@ -42,28 +35,30 @@ export default {
             loading:true,
             sets:[
             ]
-            
         }
     },
     created(){
         this.init();
     },
     mounted(){
-        
     },
-   
     methods:{
         init:function(){
-            
             this.$aidb.open('DB_Vue_FlashCard').getAll("Sets").then((data)=>{
                 this.$store.commit("initSets",data)
                 this.sets =this.$store.getters.AllSets
                 this.loading = false;
             })
         },
-        initCardStore(id){
-            console.log(id)
-        }
+        add:function(){
+            let item = {
+                id:this.$uuid.v1(),
+                name:""}
+            this.$store.dispatch("addSet",item);
+        },
+        name_input:debounce(function(e){
+            console.log(e.target.value)
+        })
     }
 }
 </script>
@@ -163,7 +158,6 @@ export default {
 }
 .folder i {
   z-index: 2;
-  
   color: #437eba;
   font-size: 2rem;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
@@ -200,7 +194,6 @@ export default {
 .shadow--5{
     box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
 }
-
 .folder--muti::after{
     content: " ";
     float: left;

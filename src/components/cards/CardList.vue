@@ -9,15 +9,12 @@
         <div v-if="cards" class='layout__viewport anim__container'
              v-finger:swipe="swipe"
         >
-       
            <div class="anim__slider layout__container" 
            v-bind:class="{'anim__slider--active':isSlider,'anim__silder--reverse':!isSlider}"
            >
             <card-list-item class="layout__item"
             v-for="card in cards" :key="card.id"
             v-bind:card="card"
-            v-on:frontinput.self="getInput(card,$event)"
-            v-on:backinput.self="card.back=$event"
             >
             </card-list-item>
            </div>
@@ -26,12 +23,11 @@
             <button v-on:click="slider(-1)">left</button>
             <button v-on:click="slider(1)">right</button>
         </div>
-      
+       <i><v-btn float fab color='#1f7cda' v-on:click="add"><v-icon dark>add</v-icon></v-btn></i>
     </div>
 </template>
 <script>
 import CardListItem from "./CardListItem";
-import {} from "@/plugins/atween.js";
 import { VueAnime } from "vue-anime";
 
 export default {
@@ -62,6 +58,17 @@ export default {
     $route: "init"
   },
   methods: {
+    add:function(){
+      let item = {
+        id:this.$uuid.v1(),
+        back:"",
+        front:"",
+        comment:"",
+        setId:this.$route.params.id
+      }
+      // this.cards.push(item);
+      this.$store.dispatch('addCard',item);
+    },
     rotate: function(evt) {
       // console.log(evt);
     },
@@ -120,19 +127,15 @@ export default {
     },
     init: function() {
       let setId = this.$route.params.id;
-    
       this.$aidb
         .open("DB_Vue_FlashCard")
         .getQuery("Cards",{ setId: setId })
         .then(data => {
-          // console.log(data)
           this.$store.commit("initCards", data);
           this.cards = this.$store.getters.AllCards;
           this.loading = false;
         });
-      // this.currentCardId = id;
-      // this.cards = this.$store.getters.AllCards
-      // console.log(this.$route.params)
+     
     },
     slider: function(dir) {
       if (typeof dir != "undefined") {

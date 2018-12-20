@@ -9,7 +9,7 @@
                             v-bind:id="frontID"
                             v-if='!flip'
                             v-model="data_card.front"
-                            v-on:input.self="$emit('frontinput',$event.target.value)"
+                            @input.self="front_input"
                             v-bind="{'readonly':flip}"
                             v-on:click.stop='focus'>
                          </textarea>
@@ -24,7 +24,7 @@
                             v-bind:id="backID"
                             v-if='flip'
                             v-model="data_card.back"
-                            v-on:input.self="$emit('backinput',$event.target.value)"
+                            @input.self="back_input"
                             v-bind="{'readonly':!flip}"
                              v-on:click.stop='focus'>
                          </textarea>
@@ -44,6 +44,7 @@
     </div>
 </template>
 <script>
+import _ from 'lodash.debounce'
 export default {
     name:"CardListItem",
     props:['card'],
@@ -73,14 +74,22 @@ export default {
             this.data_card=this.card;
             this.frontID = "textarea-front-"+this.card.id;
             this.backID = "textarea-back-"+this.card.id;
-            
         },
-        // eslint-disable-next-line
         focus:function(event){
             event.target.focus();
             this.is_focus=true;
+        },
+        front_input:_(function(e){
+            this.data_card.front = e.target.value;
+            this.update();
+        },300),
+        back_input:_(function(e){
+             this.data_card.back = e.target.value;
+             this.update();
+        },300),
+        update:function(){
+            this.$store.dispatch('updateCard',this.data_card)
         }
-       
     }    
 }
 </script>
@@ -102,7 +111,6 @@ export default {
 .flip__container{
     height:100%;
     width:100%;
-    
 }
 .flipcard{
     width:100%;
@@ -110,7 +118,6 @@ export default {
 }
 .flipcard--animflip{
     /*backface-visibility:hidden;背对屏幕时隐藏*/
-     
     transition: all 1s ease; /*为翻牌添加过渡效果*/
     transform-style: preserve-3d; /*子元素将保留其 3D 位置。*/   
 }
@@ -133,8 +140,6 @@ export default {
 }
 @keyframes anim-flip {
     0% {transform:rotateY(0deg);}
-   
-
     100% {transform:rotateY(180deg);}
 }
 </style>
