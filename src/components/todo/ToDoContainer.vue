@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="block block__60">
-      <to-do-detail v-bind:item="detail"></to-do-detail>
+      <to-do-detail v-bind:item="CurrentDetail"></to-do-detail>
     </div>
     <div class="block block__40">
       <to-do v-bind:todos="SortedTodos" v-on:selectToDO="selectToDO"></to-do>
@@ -48,28 +48,45 @@ export default {
               }
         })
     },
-    update: function(val) {
-      this.$aidb.open("DB_Vue_FlashCard").put("ToDos",val).execude()
-    },
     init: function() {
       this.$aidb.open("DB_Vue_FlashCard").getAll("ToDos").then((result)=> {
-          this.$store.commit('initToDos',result)
+        if(!result||result.length==0){
+          let item = {
+            id:this.$uuid.v1(),
+             checked:false,
+              title:"",
+              deeps:0,
+              treeId:0,
+              sort:this.currentSort
+          }
+          let ditem = {
+            id:this.$uuid.v1(),
+            content:"",
+            title:item.title,
+            ToDoId:item.id,
+          }
+          this.$store.dispatch("addToDo",item)
+          this.$store.dispatch("addContent",ditem)
           this.list=this.$store.getters.AllToDos;
-          this.detail=this.$aidb.open("DB_Vue_FlashCard")
-            .get("ToDoContent",{"ToDoId":this.SortedTodos[0].id}).then((result)=>{
-              if(result){
-                this.detail  = result;
-              }else{
-                //init detail and todo
-              }
-            })
-          
+          this.detail = ditem;
+        }else{
+            this.$store.commit('initToDos',result)
+            this.list=this.$store.getters.AllToDos;
+            this.$aidb.open("DB_Vue_FlashCard")
+              .get("ToDoContent",{"ToDoId":this.SortedTodos[0].id}).then((result)=>{
+                if(result){
+                  this.detail  = result;
+                }else{
+                  //init detail and todo
+                }
+              })
+            }
       });
     },
   },
   computed: {
     CurrentDetail:function(){
-      return this.detail;
+      return this.$store.getters.CurrentDetail;
     },
     SortedTodos: function() {
       let data = this.list;

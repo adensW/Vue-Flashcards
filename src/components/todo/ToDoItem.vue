@@ -3,7 +3,7 @@
         <div class="borderline">
           <span v-for="i in todo.deeps" :key="i">&nbsp;&nbsp;&nbsp;</span>
           <button v-on:click="$emit('deepsDown',id)">&laquo;</button><button v-on:click="$emit('deepsUp',id)">&raquo;</button>
-          <input :value="title" @input="input" v-on:click="$emit('selectToDO',id)"  placeholder="input something">
+          <input :value="title" @input="input"  placeholder="input something">
         </div>
     </div>
 </template>
@@ -42,7 +42,8 @@ export default {
       },300),
       
     update:function(){
-        this.$aidb.open("DB_Vue_FlashCard").put("ToDos",this.todo).execude()
+        this.$store.dispatch("updateToDo",this.todo)
+        // this.$aidb.open("DB_Vue_FlashCard").put("ToDos",this.todo).execude()
     }
   }
 };
