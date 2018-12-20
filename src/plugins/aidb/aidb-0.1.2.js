@@ -114,8 +114,7 @@ let aidb = (function () {
         database: null,
         args: dbset,
         initialize: function () {
-            aidb._initialize();
-            return this;
+            return aidb._initialize();
         },
         reset: function () {
             dbset = dbsetreset;
@@ -406,59 +405,68 @@ let aidb = (function () {
             return promise;
         },
         _initialize: function () {
-            let request = window.indexedDB.open(_initDefault.database);
-            //if upgrade init
-            //if success allready init  do nothing
-            request.onupgradeneeded = function (event) {
-                let database = event.target.result;
-                for (let index = 0; index < _initDefault.tables.length; index++) {
-                    const table = _initDefault.tables[index];
-                    if (!database.objectStoreNames.contains(table.name)) {
-                        let objectStore = database.createObjectStore(table.name, table.prop);
-                        if (!isNullOrWhiteSpace(table.index)) {
-                            for (let i = 0; i < table.index.length; i++) {
-                                const ele = table.index[i];
-                                objectStore.createIndex(ele.key, ele.key, { unique: ele.unique })
-                            }
-                        }
-                        if (!isNullOrWhiteSpace(table.sets)) {
-                            let head = 0;
-                            let length = table.sets.length;
-                            let addNext = function Next() {
-                                // console.log(dataArr[head]);
-                                if (head < length) {
-                                    const set = table.sets[head];
-                                    let process;
-                                    switch (set.state) {
-                                        case STATE.ADD:
-                                            process = objectStore.add(set.value)
-                                            process.onsuccess = addNext;
-                                            break;
-                                        case STATE.DELETE:
-                                            process = objectStore.delete(set.value)
-                                            process.onsuccess = addNext;
-                                            break;
-                                        case STATE.UPDATE:
-                                            process = objectStore.put(set.value)
-                                            process.onsuccess = addNext;
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                    ++head;
-                                } else {   // complete
+            let promise = new Promise(function(resolve,reject){
+                let request = window.indexedDB.open(_initDefault.database);
+                //if upgrade init
+                //if success allready init  do nothing
+                request.onupgradeneeded = function (event) {
+                    let database = event.target.result;
+                    for (let index = 0; index < _initDefault.tables.length; index++) {
+                        const table = _initDefault.tables[index];
+                        if (!database.objectStoreNames.contains(table.name)) {
+                            let objectStore = database.createObjectStore(table.name, table.prop);
+                            if (!isNullOrWhiteSpace(table.index)) {
+                                for (let i = 0; i < table.index.length; i++) {
+                                    const ele = table.index[i];
+                                    objectStore.createIndex(ele.key, ele.key, { unique: ele.unique })
                                 }
                             }
-                            // _transaction=_transaction||database.transaction(tableList,'readwrite');
-                            // let transaction=_transaction|| database.transaction(tableList,'readwrite');
-                            // let objectStore= transaction.ObjectStore(table.name);
-
-                            addNext();
+                            if (!isNullOrWhiteSpace(table.sets)) {
+                                let head = 0;
+                                let length = table.sets.length;
+                                let addNext = function Next() {
+                                    // console.log(dataArr[head]);
+                                    if (head < length) {
+                                        const set = table.sets[head];
+                                        let process;
+                                        switch (set.state) {
+                                            case STATE.ADD:
+                                                process = objectStore.add(set.value)
+                                                process.onsuccess = addNext;
+                                                break;
+                                            case STATE.DELETE:
+                                                process = objectStore.delete(set.value)
+                                                process.onsuccess = addNext;
+                                                break;
+                                            case STATE.UPDATE:
+                                                process = objectStore.put(set.value)
+                                                process.onsuccess = addNext;
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        ++head;
+                                    } else {   // complete
+                                    }
+                                }
+                                // _transaction=_transaction||database.transaction(tableList,'readwrite');
+                                // let transaction=_transaction|| database.transaction(tableList,'readwrite');
+                                // let objectStore= transaction.ObjectStore(table.name);
+    
+                                addNext();
+                            }
                         }
                     }
+    
                 }
-
-            }
+                request.onerror =function(){
+                    return reject();
+                }
+                request.onsuccess=function(){
+                    return resolve();
+                }
+            })
+            return promise;
 
         },
         _execude: function (args) {
