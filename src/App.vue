@@ -31,7 +31,6 @@
       :clipped-left="clipped"
     >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-     
     </v-toolbar>
     <v-content>
         <v-container> 
@@ -39,23 +38,18 @@
         </v-container>
     </v-content>
     <v-footer :fixed="fixed" app>
-      <span>&copy; 2017</span>
+      <span>&copy; {{CurrentYear}} Aden's ToDo</span>
     </v-footer>
   </v-app>
 </template>
-
 <script>
-// import HelloWorld from './components/HelloWorld'
-
 import CardList from './components/cards/CardList'
 import AdenBtnNew from './components/button/AdenBtnNew'
-
 export default {
   name: 'App',
   components: {
     CardList,
     AdenBtnNew
-   
   },
   data () {
     return {
@@ -101,10 +95,14 @@ export default {
   methods:{
     init:function(){
         // this.seedData();
-        
       },
-       
+    },
+  computed:{
+    CurrentYear:function(){
+      return new Date().getFullYear();
     }
+  }
+    
 }
 </script>
 <style>
