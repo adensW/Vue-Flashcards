@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="block block__60">
-      <to-do-detail v-bind:item="CurrentDetail"></to-do-detail>
+      <to-do-detail v-bind:item="Detail"></to-do-detail>
     </div>
     <div class="block block__40">
-      <to-do v-bind:todos="SortedTodos" v-on:selectToDO="selectToDO"></to-do>
+      <to-do v-bind:todos="SortedTodos"></to-do>
     </div>
   </div>
 </template>
@@ -12,6 +12,7 @@
 <script>
 import ToDo from "./ToDo";
 import ToDoDetail from "./ToDoDetail";
+import { mapGetters } from 'vuex'
 export default {
   name: "ToDoContainer",
   components: {
@@ -28,26 +29,8 @@ export default {
     this.init();
   },
   mounted() {
-
   },
   methods: {
-    selectToDO:function(id){
-      this.$aidb.open("DB_Vue_FlashCard").get("ToDoContent",{"ToDoId":id})
-        .then((result)=>{
-              if(result){
-                this.detail = result;
-                this.$store.dispatch("setDetail",result)
-              }else{
-                this.detail = {
-                  id:this.$uuid.v1(),
-                  content:"",
-                  ToDoId:id,
-                  title:""
-                }
-                this.$store.dispatch("setDetail",this.detail)
-              }
-        })
-    },
     init: function() {
       this.$aidb.open("DB_Vue_FlashCard").getAll("ToDos").then((result)=> {
         if(!result||result.length==0){
@@ -68,25 +51,37 @@ export default {
           this.$store.dispatch("addToDo",item)
           this.$store.dispatch("addContent",ditem)
           this.list=this.$store.getters.AllToDos;
-          this.detail = ditem;
         }else{
-            this.$store.commit('initToDos',result)
+            this.$store.dispatch('initToDos',result)
             this.list=this.$store.getters.AllToDos;
             this.$aidb.open("DB_Vue_FlashCard")
               .get("ToDoContent",{"ToDoId":this.SortedTodos[0].id}).then((result)=>{
                 if(result){
-                  this.detail  = result;
+                  this.$store.dispatch('setDetail',result)
                 }else{
-                  //init detail and todo
+                   this.$store.dispatch('addContent',{
+                        id:this.$uuid.v1(),
+                        title:this.SortedTodos[0].title,
+                        content:"",
+                        ToDoId:this.SortedTodos[0].id
+                        })
                 }
               })
             }
       });
     },
   },
+  watch:{
+    CurrentDetail:function(value){
+      this.detail = value;
+    }
+  },
   computed: {
-    CurrentDetail:function(){
-      return this.$store.getters.CurrentDetail;
+    ...mapGetters([
+      "CurrentDetail"
+    ]),
+    Detail:function(){
+      return this.detail;
     },
     SortedTodos: function() {
       let data = this.list;

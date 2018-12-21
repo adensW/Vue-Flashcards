@@ -3,7 +3,7 @@
         <div class="borderline">
           <span v-for="i in todo.deeps" :key="i">&nbsp;&nbsp;&nbsp;</span>
           <button v-on:click="$emit('deepsDown',id)">&laquo;</button><button v-on:click="$emit('deepsUp',id)">&raquo;</button>
-          <input :value="title" @input="input"  placeholder="input something">
+          <input :value="title" @input="input" @click="click"  placeholder="input something">
         </div>
     </div>
 </template>
@@ -40,7 +40,9 @@ export default {
         this.title = e.target.value;
         this.update();
       },300),
-      
+    click:function(){
+      this.$store.dispatch("changeDetail",this.todo)
+    },
     update:function(){
         this.$store.dispatch("updateToDo",this.todo)
         // this.$aidb.open("DB_Vue_FlashCard").put("ToDos",this.todo).execude()
