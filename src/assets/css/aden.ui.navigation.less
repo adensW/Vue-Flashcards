@@ -1,0 +1,106 @@
+@import 'aden.variable.size.less';
+@import 'aden.variable.color.less';
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+    .a-menu {
+        width:320px;
+        height:100%;
+        position: fixed;
+        max-width: 320px;
+        z-index:9999;
+        transform: translate3d(-320px, 0, 0);
+        transition: transform 0.35s;
+    }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+    .a-menu {
+        width:320px;
+        max-width: 320px;
+        position: fixed;
+        z-index:9999;
+        height:100%;
+        transform: translate3d(-320px, 0, 0);
+        transition: transform 0.35s;
+    }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+    .a-menu {
+        width:320px;
+        height:100%;
+        max-width: 320px;
+        position: fixed;
+        z-index:9999;
+        transform: translate3d(-320px, 0, 0);
+        transition: transform 0.35s;
+    }
+} 
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+    .a-menu {
+        width:400px;
+        height:100%;
+        max-width: 400px;
+        position: fixed;
+        z-index:9999;
+        transform: translate3d(-400px, 0, 0);
+        transition: transform 0.35s;
+    }
+} 
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+    .a-menu {
+        width:400px;
+        height:100%;
+        max-width: 400px;
+        position: fixed;
+        z-index:9999;
+        transform: translate3d(-400px, 0, 0);
+        transition: transform 0.35s;
+    }
+}
+.a-menu{
+    background:@Indigo-50;
+    height:100vh;
+    
+    label.a-menu-toggle{
+        position: absolute;
+        right: -60px;
+        width: 60px;
+        height: 60px;
+        // line-height: 0px;
+        display: block;
+        padding: 0;
+        /*text-indent: -9999px;*/
+    }
+}
+.a-menu__list {
+    margin-left:16px;
+    height:@48sp;
+    line-height: @48sp;
+    font-size: @14sp;
+    &:first-child{
+        margin-top: @8sp;
+    }
+}
+.a-float{
+    float:left;
+}
+.a-menu-checkbox {
+    display: none
+}
+.a-menu-checkbox:checked + .a-menu {
+    transform: translate3d(0, 0, 0)
+}
+.a-menu-toggle{
+    transform: translate3d(0, 0, 0)
+}
+.a-nav{
+    height:@56sp;
+    background-color: @nav;
+}

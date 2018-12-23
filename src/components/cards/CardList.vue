@@ -1,11 +1,5 @@
 <template>
     <div class="container--template">
-       <div v-if="loading">
-           loading
-       </div>
-       <div v-if="error">
-           error
-       </div>
         <div v-if="cards" class='layout__viewport anim__container'
              v-finger:swipe="swipe"
         >
@@ -23,16 +17,16 @@
             <button v-on:click="slider(-1)">left</button>
             <button v-on:click="slider(1)">right</button>
         </div>
-       <i><v-btn float fab color='#1f7cda' v-on:click="add"><v-icon dark>add</v-icon></v-btn></i>
+       <a-btn fab>+</a-btn>
     </div>
 </template>
 <script>
 import CardListItem from "./CardListItem";
-
+import ABtn from '@/components/ui/button/ABtn'
 export default {
   name: "CardList",
   components: {
-    CardListItem,
+    CardListItem,ABtn
   },
   data() {
     return {

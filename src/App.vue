@@ -1,55 +1,41 @@
 <template>
-  <v-app>
-    <v-navigation-drawer
-      persistent
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      v-model="drawer"
-      enable-resize-watcher
-      fixed
-      app
-      :stateless='true'
-    >
-      <v-list>
-        <v-list-tile
-          value="true"
-          v-for="(item, i) in items"
-          :key="i"
-          :to="{path:item.path}"
-        >
-          <v-list-tile-action>
-            <v-icon v-html="item.icon"></v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"></v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
-    <v-toolbar
-      app
-      :clipped-left="clipped"
-    >
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-    </v-toolbar>
-    <v-content>
-        <v-container> 
-          <router-view></router-view> 
-        </v-container>
-    </v-content>
-    <v-footer :fixed="fixed" app>
-      <span>&copy; {{CurrentYear}} Aden's ToDo</span>
-    </v-footer>
-  </v-app>
+  <div>
+    
+    <!-- <div class="left" v-bind:class="{left__close:!drawer}">
+      <button @click="drawer=!drawer">close</button>
+    </div> -->
+    <!-- <input type="checkbox" id="menu" name="menu" class="a-nav-checkbox"> -->
+    <a-drawer :drawer="drawer">
+      <a-list>
+        <label class="a-menu-toggle" @click="drawer=!drawer">
+            <i>toggle</i>
+        </label>
+        <a-list-item v-for="item in items" :key="item.title">
+            <router-link :to="item.path">{{item.title}}</router-link>
+        </a-list-item>
+      </a-list>
+    </a-drawer>
+    <a-nav></a-nav>
+    <a-mask :toggle="drawer"></a-mask>
+    <router-view></router-view>
+  </div>
 </template>
 <script>
 import CardList from './components/cards/CardList'
-import AdenBtnNew from './components/button/AdenBtnNew'
+import ADrawer from './components/ui/layout/ADrawer'
+import AList from './components/ui/layout/AList'
+import AListItem from './components/ui/layout/AListItem'
+import AMask from './components/ui/popup/AMask'
+import ANav from './components/ui/layout/ANav'
 export default {
   name: 'App',
   components: {
     CardList,
-    AdenBtnNew
+    ADrawer,
+    AList,
+    AListItem,
+    AMask,
+    ANav
   },
   data () {
     return {
@@ -111,5 +97,7 @@ html{
 }
 body{
   overflow-x: hidden;
+  margin:0px;
 }
+
 </style>

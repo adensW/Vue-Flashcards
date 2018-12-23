@@ -1,11 +1,5 @@
 <template>
-    <div class='container--template'>
-        <div v-if="loading">
-            loading
-        </div>
-         <div v-if="error">
-            error
-        </div>
+    <div class='container--template a-containter'>
         <div v-if="sets" class='container--flex'>
             <div v-for="set in sets" 
             :key="set.id"
@@ -19,20 +13,22 @@
             </div>
             <div class='flex__item'>
                 <div class='folder--outline shadow--2 shadow__hoverable'>
-                    <i><v-btn outline fab color='#1f7cda' @click="add"><v-icon dark>add</v-icon></v-btn></i>
+                    <a-btn @click="add">+</a-btn>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script>
+import ABtn from '@/components/ui/button/ABtn'
 import debounce from 'lodash.debounce'
 export default {
     name:'Dashboad',
+    components:{
+        ABtn,
+    },
     data(){
         return{
-            error:false,
-            loading:true,
             sets:[
             ]
         }
@@ -63,6 +59,9 @@ export default {
 }
 </script>
 <style scoped>
+.a-containter{
+    margin:12px 16px; 
+}
 .container--flex{
     display: flex;
     justify-content:left;

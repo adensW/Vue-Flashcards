@@ -1,9 +1,6 @@
 import '@babel/polyfill'
 import Vue from 'vue'
-import './plugins/vuetify'
 import App from './App.vue'
-import 'roboto-fontface/css/roboto/roboto-fontface.css'
-import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import VueResource from 'vue-resource'
 import store from './service/store/store'
 import Router from './service/router/router'
@@ -12,6 +9,12 @@ import AlloyFingerPlugin from './plugins/alloyfinger.vue'
 import UUID from 'vue-uuid';
 import VueAidb from './plugins/aidb/aidb.vue.js'
 import atool from './plugins/tools/atinytool.vue.js'
+import './assets/css/aden.ui.input.less'
+import './assets/css/aden.ui.native.less'
+import './assets/css/aden.ui.navigation.less'
+import './assets/css/aden.layout.less'
+import './assets/css/aden.button.less'
+
 Vue.use(atool)
 Vue.use(VueAidb)
 Vue.use(VueResource)
