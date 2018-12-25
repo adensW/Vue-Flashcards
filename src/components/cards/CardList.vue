@@ -6,7 +6,7 @@
             <card-list-item :card="card"></card-list-item>
           </a-carousel-item>
         </a-carousel>
-       <a-btn fab @click="add">+</a-btn>
+       <a-btn fab color='#ffffff' @click="add">+</a-btn>
     </div>
 </template>
 <script>

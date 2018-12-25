@@ -9,12 +9,8 @@ import AlloyFingerPlugin from './plugins/alloyfinger.vue'
 import UUID from 'vue-uuid';
 import VueAidb from './plugins/aidb/aidb.vue.js'
 import atool from './plugins/tools/atinytool.vue.js'
-import './assets/css/aden.ui.input.less'
-import './assets/css/aden.ui.native.less'
-import './assets/css/aden.ui.navigation.less'
-import './assets/css/aden.layout.less'
-import './assets/css/aden.button.less'
-import './assets/css/aden.view.carousel.less'
+import './assets/css/index.less'
+
 Vue.use(atool)
 Vue.use(VueAidb)
 Vue.use(VueResource)
