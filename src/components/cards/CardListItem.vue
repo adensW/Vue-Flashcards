@@ -35,11 +35,8 @@
                 </div>
             </div>
         </div>
-        <div class='card__foot'>
-             <v-btn flat icon color="green"
-                    v-on:click='flip=!flip'>
-                <v-icon>cached</v-icon>
-            </v-btn>
+        <div class='card__foot' >
+             <button class='a-btn' @click='flip=!flip'>flip</button> 
         </div>
     </div>
 </template>
@@ -98,8 +95,8 @@ export default {
     pointer-events: none;
 }
 .flip__wrap{
-    width: 20rem; 
-    height:24rem; 
+    width: 100%; 
+    height:90%; 
     /* width: 60vw; 
     height:70vh; */
     margin:0 auto;
@@ -127,7 +124,7 @@ export default {
     background-color: aquamarine;
 }
 .flipcard--back{
-    position: relative;/*让背面和正面重叠*/
+    position: absolute;/*让背面和正面重叠*/
     transform: rotateY(180deg);
     background-color: aquamarine;
 }

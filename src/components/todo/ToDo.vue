@@ -6,7 +6,7 @@
           v-bind:item="todo"
           v-on:deepsUp='deepsUp'
           v-on:deepsDown='deepsDown'></to-do-item>
-        <i><v-btn float fab color='#1f7cda' v-on:click="add"><v-icon dark>add</v-icon></v-btn></i>
+        <i><button v-on:click="add">add</button></i>
     </div>
 </template>
 

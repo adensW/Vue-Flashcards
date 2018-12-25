@@ -1,32 +1,24 @@
 <template>
     <div class="container--template">
-        <div v-if="cards" class='layout__viewport anim__container'
-             v-finger:swipe="swipe"
-        >
-           <div class="anim__slider layout__container" 
-           v-bind:class="{'anim__slider--active':isSlider,'anim__silder--reverse':!isSlider}"
-           >
-            <card-list-item class="layout__item"
-            v-for="card in cards" :key="card.id"
-            v-bind:card="card"
-            >
-            </card-list-item>
-           </div>
-        </div>
-        <div>
-            <button v-on:click="slider(-1)">left</button>
-            <button v-on:click="slider(1)">right</button>
-        </div>
-       <a-btn fab>+</a-btn>
+        <a-carousel class="tempdiv">
+          
+          <a-carousel-item v-for="card in cards" :key="card.id">
+            <card-list-item :card="card"></card-list-item>
+          </a-carousel-item>
+        </a-carousel>
+       <a-btn fab @click="add">+</a-btn>
     </div>
 </template>
 <script>
-import CardListItem from "./CardListItem";
 import ABtn from '@/components/ui/button/ABtn'
+import ACarousel from  '@/components/ui/view/carousel/ACarousel'
+import ACarouselItem from  '@/components/ui/view/carousel/ACarouselItem'
+import CardListItem from './CardListItem'
 export default {
   name: "CardList",
   components: {
-    CardListItem,ABtn
+    ACarousel,ACarouselItem,ABtn,
+    CardListItem
   },
   data() {
     return {
@@ -154,38 +146,11 @@ export default {
   display: block;
   height: 24rem;
 }
-.layout__container {
-  width: 100%; /* card width */
-  height: 24rem;
-  display: flex;
-}
-.layout__viewport {
-  width: 100%;
-  height: 2rem;
-  overflow: hidden;
-}
-.layout__item {
-  margin-right: 2rem;
-  /* transform: translate(-50%,0); */
-  /* position: absolute; */
-}
-.layout__item:first-child {
-  margin-left: 8rem;
-}
-.anim__container {
-  height: 100%;
-  margin-bottom: 4rem;
-}
-.anim__slider {
-  transition: all 0.5s;
-  position: absolute;
-}
-.anim__slider--active {
-  transform: translateX(0);
-}
-.anim__slider--reverse {
-  transform: translateX(0);
-}
+.tempdiv{
+  margin-left: 30%;
+  height:60Vh;
+  width: 60vw;
+  }
 </style>
 
 

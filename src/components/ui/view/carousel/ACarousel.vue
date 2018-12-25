@@ -1,7 +1,7 @@
 <template>
     <div :class="classes">
         <button type="button" :class="arrowClasses" class="left" @click="arrowEvent(-1)">
-            <Icon type="ios-arrow-back"></Icon>
+            <span>&lt;</span>
         </button>
         <div :class="[prefixCls + '-list']">
             <div :class="[prefixCls + '-track', showCopyTrack ? '' : 'higher']" :style="trackStyles" ref="originTrack">
@@ -11,26 +11,14 @@
             </div>
         </div>
         <button type="button" :class="arrowClasses" class="right" @click="arrowEvent(1)">
-            <Icon type="ios-arrow-forward"></Icon>
+            <span>&gt;</span>
         </button>
-        <!-- <ul :class="dotsClasses">
-            <template v-for="n in slides.length">
-                <li :class="[n - 1 === currentIndex ? prefixCls + '-active' : '']"
-                    @click="dotsEvent('click', n - 1)"
-                    @mouseover="dotsEvent('hover', n - 1)">
-                    <button type="button" :class="[radiusDot ? 'radius' : '']"></button>
-                </li>
-            </template>
-        </ul> -->
     </div>
 </template>
 <script>
-    // import Icon from '../icon/icon.vue';
-    // import { getStyle, oneOf } from '../../utils/assist';
-    // import { on, off } from '../../utils/dom';
-    const prefixCls = 'ivu-carousel';
+    const prefixCls = 'a-carousel';
     export default {
-        name: 'Carousel',
+        name: 'ACarousel',
         components: { 
             // Icon
              },
@@ -38,9 +26,6 @@
             arrow: {
                 type: String,
                 default: 'hover',
-                validator (value) {
-                    return oneOf(value, ['hover', 'always', 'never']);
-                }
             },
             autoplay: {
                 type: Boolean,
@@ -60,10 +45,8 @@
             },
             dots: {
                 type: String,
-                default: 'inside',
-                validator (value) {
-                    return oneOf(value, ['inside', 'outside', 'none']);
-                }
+                default: 'none',
+                
             },
             radiusDot: {
                 type: Boolean,
@@ -72,9 +55,7 @@
             trigger: {
                 type: String,
                 default: 'click',
-                validator (value) {
-                    return oneOf(value, ['click', 'hover']);
-                }
+                
             },
             value: {
                 type: Number,
@@ -203,7 +184,10 @@
                 });
             },
             handleResize () {
-                this.listWidth = parseInt(getStyle(this.$el, 'width'));
+                // console.log(this.$el.style)
+                const comp = document.defaultView.getComputedStyle(this.$el,'');
+                // console.log(this.$el.style['width']||comp?comp['width']:null)
+                this.listWidth =parseInt(this.$el.style['width']||comp?comp['width']:null) ;
                 this.updatePos();
                 this.updateOffset();
             },
@@ -310,12 +294,12 @@
             this.updateSlides(true);
             this.handleResize();
             this.setAutoplay();
-//            window.addEventListener('resize', this.handleResize, false);
-            on(window, 'resize', this.handleResize);
+            window.addEventListener('resize', this.handleResize, false);
+            // on(window, 'resize', this.handleResize);
         },
         beforeDestroy () {
-//            window.removeEventListener('resize', this.handleResize, false);
-            off(window, 'resize', this.handleResize);
+           window.removeEventListener('resize', this.handleResize, false);
+            // off(window, 'resize', this.handleResize);
         }
     };
 </script>

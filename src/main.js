@@ -14,7 +14,7 @@ import './assets/css/aden.ui.native.less'
 import './assets/css/aden.ui.navigation.less'
 import './assets/css/aden.layout.less'
 import './assets/css/aden.button.less'
-
+import './assets/css/aden.view.carousel.less'
 Vue.use(atool)
 Vue.use(VueAidb)
 Vue.use(VueResource)

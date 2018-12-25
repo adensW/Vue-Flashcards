@@ -1,11 +1,13 @@
 <template>
-    <div :class="prefixCls" :style="styles"><slot></slot></div>
+    <div :class="prefixCls" :style="styles">
+        <slot></slot>
+    </div>
 </template>
 <script>
-    const prefixCls = 'ivu-carousel-item';
+    const prefixCls = 'a-carousel-item';
     export default {
         componentName: 'carousel-item',
-        name: 'CarouselItem',
+        name: 'ACarouselItem',
         data () {
             return {
                 prefixCls: prefixCls,
