@@ -2,8 +2,12 @@
     <div class='a-row borderline'>
       <div :class="deepcol">&nbsp;</div>
       <div :class="buttoncol">
-        <button v-on:click="$emit('deepsDown',id)">&laquo;</button>
-        <button v-on:click="$emit('deepsUp',id)">&raquo;</button>
+        <button v-on:click="$emit('deepsDown',id)">
+          &lt;
+          </button>
+        <button v-on:click="$emit('deepsUp',id)">
+          &gt;
+          </button>
       </div>
       <div :class="inputcol">
         <input :value="title" @input="input" @click="click"  placeholder="input something">

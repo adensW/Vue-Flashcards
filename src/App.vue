@@ -17,7 +17,9 @@
     </a-drawer>
     <a-nav></a-nav>
     <a-mask :toggle="drawer"></a-mask>
-    <router-view></router-view>
+    <div class='a-container'>
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 <script>

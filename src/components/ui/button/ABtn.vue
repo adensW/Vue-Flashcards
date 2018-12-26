@@ -1,5 +1,5 @@
 <template>
-    <button class='a-btn' :class="{'a-btn--fab':isFab}"  @click="$emit('click')">
+    <button class='a-btn' :class="classes"  @click="$emit('click')">
         <slot></slot>
     </button>
 </template>
@@ -12,19 +12,25 @@ export default {
             type:Boolean,
             default:false,
         },
+        outlined:{
+            type:Boolean,
+            default:false,
+        },
+        text:{
+            type:Boolean,
+            default:false,
+        },
         color:{
             type:String,
             default:'transparent'
         },
     },
     computed:{
-        isFab:function(){
-            if(!this.fab){
-                return false;
-            }else{
-                return true
-            }
-            
+        classes(){
+           return [this.fab?`a-btn--fab`:'',
+           this.outlined?`a-btn--outlined`:'',
+           this.text?`a-btn--text`:'',
+           ];
         }
     }
 }

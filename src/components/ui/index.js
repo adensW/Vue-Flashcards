@@ -1,4 +1,5 @@
 import ABtn from './button/ABtn';
+import AIcon from './button/AIcon';
 import ACard from './layout/ACard';
 import ADrawer from './layout/ADrawer';
 import AListItem from './layout/AListItem';
@@ -10,6 +11,7 @@ import ACarouselItem from './view/carousel/ACarouselItem';
 import ACarousel from './view/carousel/ACarousel';
 const AUIs={
     ABtn,
+    AIcon,
     ACard,
     ADrawer,
     AListItem,
