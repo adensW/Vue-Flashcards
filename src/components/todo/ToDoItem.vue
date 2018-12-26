@@ -1,10 +1,13 @@
 <template>
-    <div class='column'>
-        <div class="borderline">
-          <span v-for="i in todo.deeps" :key="i">&nbsp;&nbsp;&nbsp;</span>
-          <button v-on:click="$emit('deepsDown',id)">&laquo;</button><button v-on:click="$emit('deepsUp',id)">&raquo;</button>
-          <input :value="title" @input="input" @click="click"  placeholder="input something">
-        </div>
+    <div class='a-row borderline'>
+      <div :class="deepcol">&nbsp;</div>
+      <div :class="buttoncol">
+        <button v-on:click="$emit('deepsDown',id)">&laquo;</button>
+        <button v-on:click="$emit('deepsUp',id)">&raquo;</button>
+      </div>
+      <div :class="inputcol">
+        <input :value="title" @input="input" @click="click"  placeholder="input something">
+      </div>
     </div>
 </template>
 <script>
@@ -17,7 +20,24 @@ export default {
       todo:this.item,
     };
   },
+  watch:{
+    item:function(val){
+      this.todo = val;
+    }
+  },
   computed:{
+    deepcol(){
+        let classList = [`a-col-${this.item.deeps}`];
+        return classList;
+    },
+    buttoncol(){
+        let classList = [`a-col-2`];
+        return classList;
+    },
+    inputcol(){
+        let classList = [`a-col-${24-2-this.item.deeps}`];
+        return classList;
+    },
     id:{
       get:function(){
         return this.todo.id;

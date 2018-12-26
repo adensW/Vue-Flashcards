@@ -1,7 +1,6 @@
 <template>
     <div class="container--template">
         <a-carousel class="tempdiv">
-          
           <a-carousel-item v-for="card in cards" :key="card.id">
             <card-list-item :card="card"></card-list-item>
           </a-carousel-item>
@@ -147,7 +146,6 @@ export default {
   height: 24rem;
 }
 .tempdiv{
-  margin-left: 30%;
   height:60Vh;
   width: 60vw;
   }

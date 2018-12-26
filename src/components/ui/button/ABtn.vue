@@ -1,6 +1,5 @@
 <template>
-    <button class='a-btn' @click="$emit('click')">
-        {{fabs}}
+    <button class='a-btn' :class="{'a-btn--fab':isFab}"  @click="$emit('click')">
         <slot></slot>
     </button>
 </template>
@@ -19,11 +18,11 @@ export default {
         },
     },
     computed:{
-        fabs:function(){
+        isFab:function(){
             if(!this.fab){
-                return `nonefab`
+                return false;
             }else{
-                return `fab`
+                return true
             }
             
         }

@@ -1,18 +1,23 @@
 <template>
-  <div>
-    <div class="block block__60">
-      <to-do-detail v-bind:item="Detail"></to-do-detail>
-    </div>
-    <div class="block block__40">
-      <to-do v-bind:todos="SortedTodos"></to-do>
-    </div>
+  <div class="a-row">
+    <a-card class="a-col-12 a-col-lg-12 a-col-md-14 a-col-sm-16 a-col-xs-18">
+      <div class="">
+        <to-do-detail v-bind:item="Detail"></to-do-detail>
+      </div>
+    </a-card>
+    <a-card class="a-col-11 a-col-offset-1 a-col-lg-11 a-col-md-9 a-col-sm-7 a-col-xs-5">
+      <div class="">
+        <to-do v-bind:todos="SortedTodos"></to-do>
+      </div>
+    </a-card>
+   
   </div>
 </template>
 
 <script>
 import ToDo from "./ToDo";
 import ToDoDetail from "./ToDoDetail";
-import { mapGetters } from 'vuex'
+import { mapGetters } from "vuex";
 export default {
   name: "ToDoContainer",
   components: {
@@ -22,65 +27,67 @@ export default {
   data() {
     return {
       list: [],
-      detail:{}
+      detail: {}
     };
   },
   created() {
     this.init();
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     init: function() {
-      this.$aidb.open("DB_Vue_FlashCard").getAll("ToDos").then((result)=> {
-        if(!result||result.length==0){
-          let item = {
-            id:this.$uuid.v1(),
-             checked:false,
-              title:"",
-              deeps:0,
-              treeId:0,
-              sort:this.currentSort
-          }
-          let ditem = {
-            id:this.$uuid.v1(),
-            content:"",
-            title:item.title,
-            ToDoId:item.id,
-          }
-          this.$store.dispatch("addToDo",item)
-          this.$store.dispatch("addContent",ditem)
-          this.list=this.$store.getters.AllToDos;
-        }else{
-            this.$store.dispatch('initToDos',result)
-            this.list=this.$store.getters.AllToDos;
-            this.$aidb.open("DB_Vue_FlashCard")
-              .get("ToDoContent",{"ToDoId":this.SortedTodos[0].id}).then((result)=>{
-                if(result){
-                  this.$store.dispatch('setDetail',result)
-                }else{
-                   this.$store.dispatch('addContent',{
-                        id:this.$uuid.v1(),
-                        title:this.SortedTodos[0].title,
-                        content:"",
-                        ToDoId:this.SortedTodos[0].id
-                        })
+      this.$aidb
+        .open("DB_Vue_FlashCard")
+        .getAll("ToDos")
+        .then(result => {
+          if (!result || result.length == 0) {
+            let item = {
+              id: this.$uuid.v1(),
+              checked: false,
+              title: "",
+              deeps: 0,
+              treeId: 0,
+              sort: this.currentSort
+            };
+            let ditem = {
+              id: this.$uuid.v1(),
+              content: "",
+              title: item.title,
+              ToDoId: item.id
+            };
+            this.$store.dispatch("addToDo", item);
+            this.$store.dispatch("addContent", ditem);
+            this.list = this.$store.getters.AllToDos;
+          } else {
+            this.$store.dispatch("initToDos", result);
+            this.list = this.$store.getters.AllToDos;
+            this.$aidb
+              .open("DB_Vue_FlashCard")
+              .get("ToDoContent", { ToDoId: this.SortedTodos[0].id })
+              .then(result => {
+                if (result) {
+                  this.$store.dispatch("setDetail", result);
+                } else {
+                  this.$store.dispatch("addContent", {
+                    id: this.$uuid.v1(),
+                    title: this.SortedTodos[0].title,
+                    content: "",
+                    ToDoId: this.SortedTodos[0].id
+                  });
                 }
-              })
-            }
-      });
-    },
+              });
+          }
+        });
+    }
   },
-  watch:{
-    CurrentDetail:function(value){
+  watch: {
+    CurrentDetail: function(value) {
       this.detail = value;
     }
   },
   computed: {
-    ...mapGetters([
-      "CurrentDetail"
-    ]),
-    Detail:function(){
+    ...mapGetters(["CurrentDetail"]),
+    Detail: function() {
       return this.detail;
     },
     SortedTodos: function() {
@@ -97,16 +104,4 @@ export default {
 </script>
 
 <style scoped>
-.block {
-  float: left;
-}
-.block__60 {
-  width: 60%;
-}
-.block__40 {
-  width: 40%;
-}
-.block:after {
-  clear: both;
-}
 </style>

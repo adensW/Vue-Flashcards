@@ -10,7 +10,8 @@ import UUID from 'vue-uuid';
 import VueAidb from './plugins/aidb/aidb.vue.js'
 import atool from './plugins/tools/atinytool.vue.js'
 import './assets/css/index.less'
-
+import AdensUI from './components/ui/index.js'
+Vue.use(AdensUI);
 Vue.use(atool)
 Vue.use(VueAidb)
 Vue.use(VueResource)
