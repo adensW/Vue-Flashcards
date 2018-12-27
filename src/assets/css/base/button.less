@@ -8,7 +8,6 @@
     height: 36px;
     line-height: 36px;
     font-size: 36px;
-    padding: 0 16px;
     text-transform: uppercase;
     vertical-align: middle;
     text-align: center;
@@ -16,14 +15,16 @@
 }
 .a-btn{
     margin: 2px 15px;
-
 }
 .a-btn{
     .a-btn-base();
     &--fab{
+        width:36px;
+        background-color: @primary-color;
+        float:left;
         border-radius: 50%;
         &:hover{
-        .btn-hover(tint(@primary-color,20%));
+        .btn-hover(tint(black,20%),tint(@primary-color,20%),tint(@primary-color,20%));
         }
     }
     &--outlined{
