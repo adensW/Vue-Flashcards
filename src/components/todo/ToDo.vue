@@ -56,7 +56,7 @@ export default {
     add:function(){
       let toDoItem = {
               id:this.$uuid.v1(),
-              checked:false,
+              isChecked:false,
               title:"",
               deeps:0,
               treeId:0,
