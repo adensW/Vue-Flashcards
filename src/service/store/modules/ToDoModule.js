@@ -86,7 +86,6 @@ const mutations={
         });
         state.ToDos[index] = prop;
     }
-
 }
 export default {
     namespaced: false,

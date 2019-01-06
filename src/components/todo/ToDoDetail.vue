@@ -7,10 +7,10 @@
           <span v-if="!preview">preview</span>
           </button>
       </div>
-      <div id="editor">
-        <textarea
-          v-if="!preview" v-model="content" @input="content_input"></textarea>
-        <div v-if="preview" v-html="compiledMarkdown"></div>
+      <div id="editor" >
+        <textarea ref="myarea"
+          v-show="!preview" v-model="content" @input="content_input" @blur="preview=true"></textarea>
+        <div class="preview-container" v-show="preview" v-html="compiledMarkdown" @click="text_input"></div>
       </div>
     </div>
 </template>
@@ -54,6 +54,13 @@ export default {
   watch:{
     item:function(newValue){
       this.tododetail = newValue
+    },
+    preview:function(val){
+      if(val){
+
+      }else{
+        this.$refs.myarea.focus();
+      }
     }
   },
   methods: {
@@ -67,7 +74,11 @@ export default {
     },300),
     update:function(){
       this.$store.dispatch("updateDetail",this.tododetail)
+    },
+    text_input:function(){
+      this.preview = false;
     }
+    
   }
 };
 </script>
@@ -82,6 +93,9 @@ input,textarea{
   width: 100%;
 }
 textarea{
+  height:70vh;
+}
+.preview-container{
   height:70vh;
 }
 </style>
