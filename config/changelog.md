@@ -14,3 +14,7 @@ npm i --save lodash
  // 2018/12/23
  //add less loader
  npm install -D less less-loader
+
+ //2019/01/07
+ //add draggable
+ npm install @shopify/draggable --save
