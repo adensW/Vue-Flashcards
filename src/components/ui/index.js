@@ -9,9 +9,7 @@ import ANav from './layout/ANav';
 import AMask from './popup/AMask';
 import ACarouselItem from './view/carousel/ACarouselItem';
 import ACarousel from './view/carousel/ACarousel';
-import ADraggableBar from './draggable/ADraggableBar';
-import ASortableBar from './draggable/ASortableBar';
-
+import ADivider from './divider/ADivider';
 const AUIs={
     ABtn,
     AIcon,
@@ -24,8 +22,7 @@ const AUIs={
     AMask,
     ACarouselItem,
     ACarousel,
-    ADraggableBar,
-    ASortableBar,
+    ADivider,
 }
 const AdensUI={}
 AdensUI.install = function (Vue) {

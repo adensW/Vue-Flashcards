@@ -1,5 +1,5 @@
 <template>
-    <i class="a-icons">
+    <i class="a-icons"  :style="rotateDeg">
         <slot></slot>
     </i>
 </template>
@@ -8,6 +8,33 @@
 export default {
     name:"AIcon",
     props:{
+        rotate:{
+            type:[String,Number],
+            default:'0'
+        },
+        flip:{
+            type:Boolean,
+            default:false,
+        }
+    },
+    data(){
+        return {
+
+        }
+    },
+    computed:{
+        rotateDeg(){
+            let style = {
+            }
+            if(this.flip){
+                return {transform:`rotateY(180deg)`}
+            }else{
+                return {
+                    transform:`rotate(${this.rotate}deg)`
+                }
+            }
+           
+        }
     }
 }
 </script>
@@ -27,7 +54,6 @@ export default {
   word-wrap: normal;
   white-space: nowrap;
   direction: ltr;
-
   /* Support for all WebKit browsers. */
   -webkit-font-smoothing: antialiased;
   /* Support for Safari and Chrome. */

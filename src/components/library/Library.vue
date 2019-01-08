@@ -44,9 +44,9 @@ export default {
         }
     },
     mounted(){
-        // this.initDraggable();
+        this.initDraggable();
         this.initSortable();
-        this.initDropable();
+        // this.initDropable();
     },
     methods:{
         initDraggable(){

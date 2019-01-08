@@ -53,7 +53,7 @@ export default {
     border:4px solid darkred;
     border-left-style: dotted;
     display: inline-block;
-    // position: absolute;
+    position: absolute;
     &>*{
     // pointer-events: none;
     user-select:none;

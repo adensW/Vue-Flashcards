@@ -1,8 +1,11 @@
 @import './_mixins.less';
+@import './_variables.less';
 
 .a-card{
     .mixins-shadow();
     display: inline-block;
+    margin-top: @14sp; 
+    padding:4px 4px;
     &:hover{
         .mixins-shadow-hover()
     }
