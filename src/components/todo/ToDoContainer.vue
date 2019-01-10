@@ -5,7 +5,7 @@
         <to-do-detail v-bind:item="Detail"></to-do-detail>
       </div>
     </a-card>
-    <a-card class="a-col-11 a-col-offset-1 a-col-lg-11 a-col-md-9 a-col-sm-7 a-col-xs-5">
+    <a-card class="a-col-10 a-col-offset-1 a-col-lg-10 a-col-md-8 a-col-sm-6 a-col-xs-4">
       <div class="">
         <to-do v-bind:todos="SortedTodos"></to-do>
       </div>

@@ -29,7 +29,9 @@
         </a-sortable-bar>
     </div>
     <div id='dropzone' class="drop-container"></div>
+    <a-clock></a-clock>
     </div>
+
 </template>
 
 <script>

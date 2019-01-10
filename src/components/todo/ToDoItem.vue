@@ -1,7 +1,7 @@
 <template>
     <div class='a-row borderline'>
       <div :class="deepcol">&nbsp;</div>
-      <div :class="buttoncol">
+      <div class="hover-btn-bar" :class="buttoncol">
         <button v-on:click="$emit('deepsDown',id)">
           &lt;
           </button>
@@ -9,7 +9,7 @@
           &gt;
           </button>
       </div>
-      <div :class="inputcol">
+      <div class="hover-blur" @hover="blur" :class="inputcol">
         <input :value="title" @input="input" @click="click"  placeholder="input something">
       </div>
     </div>
@@ -60,6 +60,9 @@ export default {
   },
   mounted() {},
   methods: {
+    blur:function(){
+      
+    },
     input:_.debounce(function(e){
         this.title = e.target.value;
         this.update();
@@ -75,7 +78,15 @@ export default {
 };
 </script>
 <style scoped>
-@import '/css/size.css';
+.a-blur--hover{
+  filter: blur(10px);
+  pointer-events: none;
+}
+.a-blur--bar{
+  position: absolute;
+  width: 100%;
+  /* pointer-events: none; */
+}
 .borderline{
   border-bottom:1px solid gray;
 }
