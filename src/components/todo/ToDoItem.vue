@@ -1,18 +1,23 @@
 <template>
+<div>
+   <div class="a-bar--float" v-if="isblur">
+        <a-btn text v-on:click="deepsDown">
+        <a-icon>arrow_back_ios</a-icon>  
+        </a-btn>
+        <a-btn text v-on:click="deepsUp">
+          <a-icon flip>arrow_back_ios</a-icon>
+        </a-btn>
+        <a-btn text v-on:click="focus">
+          <a-icon>clear</a-icon>
+        </a-btn>
+    </div>
     <div class='a-row borderline'>
       <div :class="deepcol">&nbsp;</div>
-      <div class="hover-btn-bar" :class="buttoncol">
-        <button v-on:click="$emit('deepsDown',id)">
-          &lt;
-          </button>
-        <button v-on:click="$emit('deepsUp',id)">
-          &gt;
-          </button>
-      </div>
-      <div class="hover-blur" @hover="blur" :class="inputcol">
-        <input :value="title" @input="input" @click="click"  placeholder="input something">
+      <div @mousedown="blur" @mouseup="focus" @touchstart="blur" :class="inputcol">
+        <input :value="title" @input="input" @click="click" :readonly="isblur" placeholder="input something">
       </div>
     </div>
+</div>
 </template>
 <script>
 import _ from 'lodash'
@@ -22,6 +27,8 @@ export default {
   data() {
     return {
       todo:this.item,
+      isblur:false,
+      
     };
   },
   watch:{
@@ -40,6 +47,9 @@ export default {
     },
     inputcol(){
         let classList = [`a-col-${24-2-this.item.deeps}`];
+        if(this.isblur){
+          classList.push(`a-blur--hover`)
+        }
         return classList;
     },
     id:{
@@ -60,8 +70,22 @@ export default {
   },
   mounted() {},
   methods: {
+    focus:function(){
+      console.log("focus")
+      clearTimeout(this.loop);
+      this.isblur = false;
+    },
     blur:function(){
-      
+      console.log("blur")
+      clearTimeout(this.loop);
+      this.loop()
+    },
+    loop:function(){
+      return setTimeout(()=>{
+        console.log("blur start")
+        this.isblur = true;
+    },1000);
+    
     },
     input:_.debounce(function(e){
         this.title = e.target.value;
@@ -73,16 +97,25 @@ export default {
     update:function(){
         this.$store.dispatch("updateToDo",this.todo)
         // this.$aidb.open("DB_Vue_FlashCard").put("ToDos",this.todo).execude()
+    },
+    deepsDown:function(){
+      this.$emit('deepsDown',this.id);
+      this.isblur = false;
+
+    },
+    deepsUp:function(){
+      this.$emit('deepsUp',this.id)
+      this.isblur = false;
     }
   }
 };
 </script>
 <style scoped>
 .a-blur--hover{
-  filter: blur(10px);
-  pointer-events: none;
+  filter: blur(2px);
+  /* pointer-events: none; */
 }
-.a-blur--bar{
+.a-bar--float{
   position: absolute;
   width: 100%;
   /* pointer-events: none; */

@@ -27,10 +27,11 @@ export default {
     },
     computed:{
         classes(){
-           return [this.fab?`a-btn--fab`:'',
-           this.outlined?`a-btn--outlined`:'',
-           this.text?`a-btn--text`:'',
-           ];
+            let classList = [];
+           this.fab?classList.push(`a-btn--fab`):'';
+           this.outlined?classList.push(`a-btn--outlined`):'';
+           this.text?classList.push(`a-btn--text`):'';
+           return classList;
         }
     }
 }
