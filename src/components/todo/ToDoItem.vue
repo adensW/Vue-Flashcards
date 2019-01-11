@@ -1,17 +1,16 @@
 <template>
 <div>
    <div class="a-bar--float" v-if="isblur">
-     
-        <a-btn text v-on:click="deepsDown">
+        <a-btn text @click="deepsDown">
         <a-icon>arrow_back_ios</a-icon>  
         </a-btn>
-        <a-btn text v-on:click="deepsUp">
+        <a-btn text @click="deepsUp">
           <a-icon flip>arrow_back_ios</a-icon>
         </a-btn>
         <a-btn text @click="$emit('deleteTodo',id)">
           <a-icon>delete</a-icon>
         </a-btn>
-        <a-btn text v-on:click="focus">
+        <a-btn text @click="focus">
           <a-icon>clear</a-icon>
         </a-btn>
     </div>
@@ -51,10 +50,11 @@ export default {
         return classList;
     },
     buttoncol(){
-        let classList = [`a-col-2`,
-         `a-col-lg-2` ,
-        `a-col-md-2`,
-         `a-col-sm-2`,
+        let classList = [
+          `a-col-2`,
+          `a-col-lg-2` ,
+          `a-col-md-2`,
+          `a-col-sm-2`,
           `a-col-xs-2`
         ];
         return classList;

@@ -1,13 +1,13 @@
 <template>
   <div class="a-row">
-    <a-card class="a-col-12 a-col-lg-12 a-col-md-14 a-col-sm-16 a-col-xs-18">
+    <a-card v-show="false" class="a-col-12 a-col-lg-12 a-col-md-14 a-col-sm-16 a-col-xs-18">
       <div class="">
-        <to-do-detail v-bind:item="Detail"></to-do-detail>
+        <to-do-detail :item="Detail"></to-do-detail>
       </div>
     </a-card>
-    <a-card class="a-col-10 a-col-offset-1 a-col-lg-10 a-col-md-8 a-col-sm-6 a-col-xs-4">
+    <a-card class="a-col-22 a-col-offset-0 a-col-lg-22 a-col-md-22 a-col-sm-22 a-col-xs-22">
       <div class="">
-        <to-do v-bind:todos="SortedTodos"
+        <to-do :todos="SortedTodos"
               @refresh='refresh'
         ></to-do>
       </div>

@@ -15,7 +15,7 @@ export default {
 .sortable-bar{
     border:4px solid darkred;
     border-left-style: dotted;
-    display: inline-block;
+    // display: inline-block;
     
     &:selection{
         background: transparent;
