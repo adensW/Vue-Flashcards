@@ -32,6 +32,19 @@ const actions={
                 this._vm.$aidb.open("DB_Vue_FlashCard").put("ToDoContent",result).execude()
             })
     },
+    deleteToDo(context,prop){
+        this._vm.$aidb.open("DB_Vue_FlashCard").delete("ToDos",prop).execude().then(()=>{
+            context.commit('deleteToDo',prop);
+        })
+        this._vm.$aidb.open("DB_Vue_FlashCard").get("ToDoContent",{ToDoId:prop.id}).then((result)=>{
+            if(result){
+                this._vm.$aidb.open("DB_Vue_FlashCard").delete("ToDoContent",prop).execude().then(()=>{
+                    context.commit('deleteToDo',prop);
+                })
+            }
+        })
+
+    },
     initToDos(context,prop){
         context.commit('initToDos',prop);
     },
@@ -81,10 +94,17 @@ const mutations={
         state.ToDos.push(prop);
     },
     updateToDo:(state,prop)=>{
-        let index  = state.ToDos.findIndex(function(id){
-            return id ==prop.id
+        let index  = state.ToDos.findIndex(function(value){
+            return value.id ==prop.id
         });
         state.ToDos[index] = prop;
+    },
+    deleteToDo:(state,prop)=>{
+        let index =state.ToDos.findIndex(function(value){
+            return value.id==prop.id
+        });
+        state.ToDos.splice(index,1);
+        state.Detail={}
     }
 }
 export default {

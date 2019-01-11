@@ -280,6 +280,45 @@ let aidb = (function () {
                 dbset.tables.push(table)
             }
             return this;
+        },
+        delete:function(storename,data,id){
+            let i = dbset.tables.findIndex(function (obj) { return obj.name == storename })
+            if (i >= 0) {
+
+                dbset.tables[i].state = dbset.tables[i].state || STATE.UPDATE;
+                let dataArr = []
+                if (!Array.isArray(data)) {
+                    //1.{id:1,val:""}
+                    dataArr.push({ value: data, state: STATE.DELETE, id: id || data.id });
+                } else {
+                    //2,[{},{},{}]
+                    dataArr = data;
+                    for (let i = 0; i < data.length; i++) {
+                        const element = data[i];
+                        dataArr.push({ value: element, state: STATE.DELETE, id: id || data.id })
+                    }
+                }
+                dbset.tables[i].sets = dbset.tables[i].sets.concat(dataArr);
+            } else {
+                let table = new tableset();
+                table.name = storename;
+                table.state = STATE.UPDATE;
+                let dataArr = []
+                if (!Array.isArray(data)) {
+                    //1.{id:1,val:""}
+                    dataArr.push({ value: data, state: STATE.DELETE, id: id || data.id });
+                } else {
+                    //2,[{},{},{}]
+                    dataArr = data;
+                    for (let i = 0; i < data.length; i++) {
+                        const element = data[i];
+                        dataArr.push({ value: element, state: STATE.DELETE, id: id || data.id })
+                    }
+                }
+                table.sets = dataArr;
+                dbset.tables.push(table)
+            }
+            return this;
         }
     }
     aidb.extend = aidb.fn.extend = function () {
@@ -727,7 +766,7 @@ let aidb = (function () {
                                             process.onsuccess = putNext;
                                             break;
                                         case STATE.DELETE:
-                                            process = objectStore.delete(set.value)
+                                            process = objectStore.delete(set.id||set.value.id||set.value)
                                             process.onsuccess = putNext;
                                             break;
                                         case STATE.UPDATE:

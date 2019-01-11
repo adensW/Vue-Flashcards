@@ -6,7 +6,8 @@
           v-bind:item="todo"
           v-on:deepsUp='deepsUp'
           v-on:deepsDown='deepsDown'
-          @toDoChange='toDoChange'></to-do-item>
+          @toDoChange='toDoChange'
+          @deleteTodo='deleteTodo'></to-do-item>
         <a-btn fab v-on:click="add"><a-icon>add</a-icon></a-btn>
     </div>
 </template>
@@ -25,6 +26,17 @@ export default {
   },
   mounted() {},
   methods: {
+    deleteTodo:function(id){
+      let a = this.todos.find(function(elem){
+        return elem.id == id;
+      })
+      this.$store.dispatch("deleteToDo",a);
+    // this.$aidb.open("DB_Vue_FlashCard").delete("ToDos",a).execude().then(
+    //   ()=>{
+    //     this.$emit('refresh',id);
+    //   }
+    // )
+    },
     toDoChange:function(id){
         let a = this.todos.find(function(elem){
         return elem.id == id;
@@ -59,7 +71,8 @@ export default {
       
     },
     update:function(item){
-        this.$aidb.open("DB_Vue_FlashCard").put("ToDos",item).execude()
+        this.$store.dispatch("updateToDo",item)
+        // this.$aidb.open("DB_Vue_FlashCard").put("ToDos",item).execude()
     },
     add:function(){
       let toDoItem = {

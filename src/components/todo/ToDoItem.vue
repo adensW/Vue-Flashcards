@@ -8,6 +8,9 @@
         <a-btn text v-on:click="deepsUp">
           <a-icon flip>arrow_back_ios</a-icon>
         </a-btn>
+        <a-btn text @click="$emit('deleteTodo',id)">
+          <a-icon>delete</a-icon>
+        </a-btn>
         <a-btn text v-on:click="focus">
           <a-icon>clear</a-icon>
         </a-btn>
@@ -58,9 +61,9 @@ export default {
     },
     inputcol(){
         let classList = [`a-col-${24-2-this.item.deeps}`,
-         `a-col-lg-${24-2-this.item.deeps}` ,
-        `a-col-md-${24-2-this.item.deeps}`,
-         `a-col-sm-${24-2-this.item.deeps}`,
+          `a-col-lg-${24-2-this.item.deeps}` ,
+          `a-col-md-${24-2-this.item.deeps}`,
+          `a-col-sm-${24-2-this.item.deeps}`,
           `a-col-xs-${24-2-this.item.deeps}`];
         if(this.isblur){
           classList.push(`a-blur--hover`)

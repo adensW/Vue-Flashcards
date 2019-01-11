@@ -7,7 +7,9 @@
     </a-card>
     <a-card class="a-col-10 a-col-offset-1 a-col-lg-10 a-col-md-8 a-col-sm-6 a-col-xs-4">
       <div class="">
-        <to-do v-bind:todos="SortedTodos"></to-do>
+        <to-do v-bind:todos="SortedTodos"
+              @refresh='refresh'
+        ></to-do>
       </div>
     </a-card>
    
@@ -35,6 +37,13 @@ export default {
   },
   mounted() {},
   methods: {
+    refresh:function(id){
+      let a =this.list.findIndex(function(value){
+        return value.id==id;
+      })
+      console.log(a)
+      this.list.splice(a,1)
+    },
     init: function() {
       this.$aidb
         .open("DB_Vue_FlashCard")
