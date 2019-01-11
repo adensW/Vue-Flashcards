@@ -1,6 +1,7 @@
 <template>
 <div>
    <div class="a-bar--float" v-if="isblur">
+     
         <a-btn text v-on:click="deepsDown">
         <a-icon>arrow_back_ios</a-icon>  
         </a-btn>
@@ -13,7 +14,8 @@
     </div>
     <div class='a-row borderline'>
       <div :class="deepcol">&nbsp;</div>
-      <div @mousedown="blur" @mouseup="focus" @touchstart="blur" :class="inputcol">
+      <div @mousedown="blur" @mouseup="clearcount" :class="inputcol">
+        <input type="checkbox" :checked="ischecked" @change="$emit('toDoChange',id)">
         <input :value="title" @input="input" @click="click" :readonly="isblur" placeholder="input something">
       </div>
     </div>
@@ -28,7 +30,7 @@ export default {
     return {
       todo:this.item,
       isblur:false,
-      
+      loop:function(){},
     };
   },
   watch:{
@@ -38,15 +40,28 @@ export default {
   },
   computed:{
     deepcol(){
-        let classList = [`a-col-${this.item.deeps}`];
+        let classList = [`a-col-${this.item.deeps}`,
+        `a-col-lg-${this.item.deeps}` ,
+        `a-col-md-${this.item.deeps}`,
+         `a-col-sm-${this.item.deeps}`,
+          `a-col-xs-${this.item.deeps}`];
         return classList;
     },
     buttoncol(){
-        let classList = [`a-col-2`];
+        let classList = [`a-col-2`,
+         `a-col-lg-2` ,
+        `a-col-md-2`,
+         `a-col-sm-2`,
+          `a-col-xs-2`
+        ];
         return classList;
     },
     inputcol(){
-        let classList = [`a-col-${24-2-this.item.deeps}`];
+        let classList = [`a-col-${24-2-this.item.deeps}`,
+         `a-col-lg-${24-2-this.item.deeps}` ,
+        `a-col-md-${24-2-this.item.deeps}`,
+         `a-col-sm-${24-2-this.item.deeps}`,
+          `a-col-xs-${24-2-this.item.deeps}`];
         if(this.isblur){
           classList.push(`a-blur--hover`)
         }
@@ -66,22 +81,27 @@ export default {
       set:function(value){
         this.todo.title =value;
       }
+    },
+    ischecked:function(){
+      return this.todo.checked;
     }
   },
   mounted() {},
   methods: {
+    clearcount:function(){
+      clearTimeout(this.loop);
+    },
     focus:function(){
-      console.log("focus")
       clearTimeout(this.loop);
       this.isblur = false;
     },
     blur:function(){
-      console.log("blur")
       clearTimeout(this.loop);
-      this.loop()
+      this.setloop()
     },
-    loop:function(){
-      return setTimeout(()=>{
+    setloop:function(){
+      
+      this.loop=setTimeout(()=>{
         console.log("blur start")
         this.isblur = true;
     },1000);
@@ -113,15 +133,18 @@ export default {
 <style scoped>
 .a-blur--hover{
   filter: blur(2px);
-  /* pointer-events: none; */
+  pointer-events: none;
 }
 .a-bar--float{
   position: absolute;
   width: 100%;
-  /* pointer-events: none; */
+  pointer-events: all;
+  z-index: 999;
 }
 .borderline{
   border-bottom:1px solid gray;
+  height:36px;
+  line-height: 36px;
 }
 .input:focus{
   outline: none;

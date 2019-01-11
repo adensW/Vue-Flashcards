@@ -5,7 +5,8 @@
           :key="todo.id" 
           v-bind:item="todo"
           v-on:deepsUp='deepsUp'
-          v-on:deepsDown='deepsDown'></to-do-item>
+          v-on:deepsDown='deepsDown'
+          @toDoChange='toDoChange'></to-do-item>
         <a-btn fab v-on:click="add"><a-icon>add</a-icon></a-btn>
     </div>
 </template>
@@ -24,6 +25,13 @@ export default {
   },
   mounted() {},
   methods: {
+    toDoChange:function(id){
+        let a = this.todos.find(function(elem){
+        return elem.id == id;
+      })
+      a.checked=!a.checked;
+      this.update(a)
+    },
      deepsDown:function(id){
         let a = this.todos.find(function(elem){
         return elem.id == id;

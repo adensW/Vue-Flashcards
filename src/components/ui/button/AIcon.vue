@@ -64,5 +64,6 @@ export default {
 
   /* Support for IE. */
   font-feature-settings: 'liga';
+  overflow: hidden;
 }
 </style>
