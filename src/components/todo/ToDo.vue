@@ -115,6 +115,21 @@ export default {
         let data = response.data;
         let oldIndex = data.oldIndex;
         let newIndex = data.newIndex;
+        let reToDos = this.todos.filter(function(val){
+          return val.sort>=newIndex&&val.sort<oldIndex;
+        })
+        let curToDo = this.todos.filter(function(val){
+          return val.sort===oldIndex;
+        })
+        reToDos.forEach(element => {
+          element.sort+=1;
+        });
+        curToDo[0].sort = newIndex;
+        this.$store.dispatch("updateToDo",curToDo)
+        this.$store.dispatch("updateToDo",reToDos)
+
+        console.log(reToDos)
+        console.log(curToDo)
       });
     }
   }

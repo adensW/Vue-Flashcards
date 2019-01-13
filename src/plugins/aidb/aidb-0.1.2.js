@@ -157,7 +157,7 @@ let aidb = (function () {
         },
         execude: function () {
             return aidb._execude().then(function () {
-                dbset = dbsetreset;
+                // dbset = dbsetreset;
             });
         },
         set(table) {
@@ -535,8 +535,8 @@ let aidb = (function () {
                 let tablesClr = [];
                 let tablesPut = [];
                 let tableList = [];
-                for (let index = 0; index < tables.length; index++) {
-                    const element = tables[index];
+                while (tables.length>0) {
+                    const element = tables.pop();
                     if (element.state) {
                         switch (element.state) {
                             case STATE.ADD:
@@ -566,8 +566,8 @@ let aidb = (function () {
                             request.onupgradeneeded = function (event) {
                                 //tableadd
                                 let database = event.target.result;
-                                for (let index = 0; index < tablesAdd.length; index++) {
-                                    const table = tablesAdd[index];
+                                while (tablesAdd.length>0) {
+                                    const table = tablesAdd.pop();
                                     if (!database.objectStoreNames.contains(table.name)) {
                                         let objectStore = database.createObjectStore(table.name, table.prop);
                                         if (!isNullOrWhiteSpace(table.index)) {
@@ -577,53 +577,49 @@ let aidb = (function () {
                                             }
                                         }
                                         if (!isNullOrWhiteSpace(table.sets)) {
-                                            let head = 0;
-                                            let length = table.sets.length;
-                                            let addNext = function Next() {
-                                                // console.log(dataArr[head]);
-                                                if (head < length) {
-                                                    const set = table.sets[head];
+                                            const sets = table.sets;
+                                            let addNext = function(sets){
+                                                while (sets.length>0) {
+                                                    const set = sets.pop();
                                                     let process;
                                                     switch (set.state) {
                                                         case STATE.ADD:
-                                                            process = objectStore.add(set.value)
-                                                            process.onsuccess = addNext;
+                                                            process = objectStore.add(set.value);
+                                                            process.onsuccess = addNext(sets);
                                                             break;
                                                         case STATE.DELETE:
                                                             process = objectStore.delete(set.value)
-                                                            process.onsuccess = addNext;
+                                                            process.onsuccess = addNext(sets);
                                                             break;
                                                         case STATE.UPDATE:
                                                             process = objectStore.put(set.value)
-                                                            process.onsuccess = addNext;
+                                                            process.onsuccess = addNext(sets);
                                                             break;
                                                         default:
                                                             break;
                                                     }
-                                                    ++head;
-                                                } else {   // complete
+                                                   
                                                 }
                                             }
-                                            // _transaction=_transaction||database.transaction(tableList,'readwrite');
-                                            // let transaction=_transaction|| database.transaction(tableList,'readwrite');
-                                            // let objectStore= transaction.ObjectStore(table.name);
-
-                                            addNext();
+                                            addNext(sets);
+                                           
                                         }
                                     }else{
                                         //handle create index
                                         let transaction = event.target.transaction;
                                         let objectStore = transaction.objectStore(table.name);
                                         if (!isNullOrWhiteSpace(table.index)) {
-                                            for (let i = 0; i < table.index.length; i++) {
-                                                const ele = table.index[i];
-                                                objectStore.createIndex(ele.key, ele.key, { unique: ele.unique })
+                                            const indexes = table.index;
+                                            while (indexes.length>0) {
+                                                const eleIndex = indexes.pop();
+                                                objectStore.createIndex(eleIndex.key, eleIndex.key, { unique: eleIndex.unique })
+
                                             }
                                         }
                                     }
                                 }
-                                for (let index = 0; index < tablesDel.length; index++) {
-                                    const element = tablesDel[index];
+                                while (tablesDel.length>0) {
+                                    const element = tablesDel.pop();
                                     database.deleteObjectStore(element.name);
                                 }
                                 if (isNullOrWhiteSpace(tablesPut)) {
@@ -635,45 +631,44 @@ let aidb = (function () {
                                 // console.log('debug',set)
                                 let database = event.target.result;
                                 let transaction = database.transaction(tableList, 'readwrite');
-                                for (let index = 0; index < tablesPut.length; index++) {
-                                    const element = tablesPut[index];
+                                while (tablesPut.length > 0) {
+                                    const element = tablesPut.pop();
                                     let objectStore = transaction.objectStore(element.name)
-                                    let head = 0;
-                                    let length = element.sets.length;
                                     if (element.sets) {
-                                        let putNext = function Next() {
+                                        let putNext = function (sets) {
                                             // console.log(dataArr[head]);
-                                            if (head < length) {
-                                                const set = element.sets[head];
+                                            while (sets.length > 0) {
+                                                const set = element.sets.pop();
                                                 let process;
                                                 switch (set.state) {
                                                     case STATE.ADD:
                                                         process = objectStore.add(set.value)
-                                                        process.onsuccess = putNext;
+                                                        process.onsuccess = putNext(sets);
                                                         break;
                                                     case STATE.DELETE:
                                                         process = objectStore.delete(set.value)
-                                                        process.onsuccess = putNext;
+                                                        process.onsuccess = putNext(sets);
                                                         break;
                                                     case STATE.UPDATE:
                                                         process = objectStore.put(set.value)
-                                                        process.onsuccess = putNext;
+                                                        process.onsuccess = putNext(sets);
                                                         break;
                                                     default:
                                                         break;
                                                 }
-                                                ++head;
-                                            } else {   // complete
+
                                             }
+
                                         }
                                         putNext();
                                     }
                                 }
-                                for (let index = 0; index < tablesClr.length; index++) {
-                                    const element = tablesClr[index];
+                                while (tablesClr.length>0) {
+                                    const element = tablesClr.pop();
                                     let objectStore = transaction.objectStore(element.name)
                                     objectStore.clear();
                                 }
+                                
                                 return resolve();
                             }
                             request.onerror = function (event) {
@@ -686,58 +681,55 @@ let aidb = (function () {
                     });
                 } else {
                     let request = window.indexedDB.open(set.database);
-
                     request.onupgradeneeded = function (event) {
                         //tableadd
-
                         let database = event.target.result;
-                        for (let index = 0; index < tablesAdd.length; index++) {
-                            const table = tablesAdd[index];
+                        console.log("length",tablesAdd.length)
+                        while (tablesAdd.length>0) {
+                            console.log("length2",tablesAdd.length)
+                            const table = tablesAdd.pop();
                             if (!database.objectStoreNames.contains(table.name)) {
                                 let objectStore = database.createObjectStore(table.name, table.prop);
                                 if (!isNullOrWhiteSpace(table.index)) {
-                                    for (let i = 0; i < table.index.length; i++) {
-                                        const ele = table.index[i];
+                                    while (table.index.length>0) {
+                                        const ele = table.index.pop();
                                         objectStore.createIndex(ele.key, ele.key, { unique: ele.unique })
+                                    
                                     }
+                                   
                                 }
                                 if (!isNullOrWhiteSpace(table.sets)) {
-                                    let addNext = function Next() {
+                                    const sets = table.sets
+                                    let addNext = function Next(sets) {
                                         // console.log(dataArr[head]);
-                                        if (head < length) {
-                                            const set = table.sets[head];
+                                        while (sets.length>0) {
+                                            const set = sets.pop();
                                             let process;
                                             switch (set.state) {
                                                 case STATE.Add:
                                                     process = objectStore.add(set.value)
-                                                    process.onsuccess = addNext;
+                                                    process.onsuccess = addNext(sets);
                                                     break;
                                                 case STATE.DELETE:
                                                     process = objectStore.delete(set.value)
-                                                    process.onsuccess = addNext;
+                                                    process.onsuccess = addNext(sets);
                                                     break;
                                                 case STATE.UPDATE:
                                                     process = objectStore.put(set.value)
-                                                    process.onsuccess = addNext;
+                                                    process.onsuccess = addNext(sets);
                                                     break;
                                                 default:
                                                     break;
                                             }
-                                            ++head;
-                                        } else {   // complete
-                                        }
+                                            
+                                        } 
                                     }
-                                    // _transaction=_transaction||database.transaction(tableList,'readwrite');
-                                    // let transaction=_transaction|| database.transaction(tableList,'readwrite');
-                                    // let objectStore= transaction.ObjectStore(table.name);
-                                    let head = 0;
-                                    let length = table.sets.length;
-                                    addNext();
+                                    addNext(sets);
                                 }
                             }
                         }
-                        for (let index = 0; index < tablesDel.length; index++) {
-                            const element = tablesDel[index];
+                        while (tablesDel.length>0) {
+                            const element = tablesDel.pop();
                             database.deleteObjectStore(element.name);
                         }
                         if (isNullOrWhiteSpace(tablesPut)) {
@@ -749,42 +741,38 @@ let aidb = (function () {
                         let database = event.target.result;
 
                         let transaction = database.transaction(tableList, 'readwrite');
-
-                        for (let index = 0; index < tablesPut.length; index++) {
-
-                            const element = tablesPut[index];
+                        while (tablesPut.length>0) {
+                            const element = tablesPut.pop();
                             let objectStore = transaction.objectStore(element.name)
-                            let head = 0;
-                            let length = element.sets.length;
-                            let putNext = function Next() {
-                                if (head < length) {
-                                    const set = element.sets[head];
+                            const sets = element.sets;
+                            let putNext = function Next(sets) {
+                                while (sets.length>0)  {
+                                    let set = sets.pop()
                                     let process;
                                     switch (set.state) {
                                         case STATE.ADD:
                                             process = objectStore.add(set.value)
-                                            process.onsuccess = putNext;
+                                            process.onsuccess = putNext(sets);
                                             break;
                                         case STATE.DELETE:
                                             process = objectStore.delete(set.id||set.value.id||set.value)
-                                            process.onsuccess = putNext;
+                                            process.onsuccess = putNext(sets);
                                             break;
                                         case STATE.UPDATE:
                                             process = objectStore.put(set.value)
-                                            process.onsuccess = putNext;
+                                            process.onsuccess = putNext(sets);
                                             break;
                                         default:
                                             break;
                                     }
-                                    ++head;
-                                } else {   // complete
-                                }
+                                    
+                                } 
 
                             }
-                            putNext();
+                            putNext(sets);
                         }
-                        for (let index = 0; index < tablesClr.length; index++) {
-                            const element = tablesClr[index];
+                        while (tablesClr.length>0) {
+                            const element = tablesClr.pop();
                             let objectStore = transaction.objectStore(element.name)
                             objectStore.clear();
                         }

@@ -14,23 +14,32 @@ const getters={
 const actions={
     updateToDo(context,prop){
         //actions
-        context.commit('updateToDo',prop);
-        this._vm.$aidb.open("DB_Vue_FlashCard").put("ToDos",prop).execude()
-        this._vm.$aidb.open("DB_Vue_FlashCard").get("ToDoContent",{ToDoId:prop.id})
-            .then((result)=>{
-                if(result){
-                    result.title = prop.title;
-                }else{
-                     result={
-                        id:this._vm.$uuid.v1(),
-                        title:prop.title,
-                        ToDoId:prop.id,
-                        content:""
-                    } 
-                }
-                context.commit('setDetail',result);
-                this._vm.$aidb.open("DB_Vue_FlashCard").put("ToDoContent",result).execude()
-            })
+        let arr = [];
+        if(Array.isArray(prop)){
+            arr.push(...prop);
+        }else{
+            arr.push(prop);
+        }
+        arr.forEach((value)=>{
+            context.commit('updateToDo',value);
+            this._vm.$aidb.open("DB_Vue_FlashCard").put("ToDos",value).execude()
+            this._vm.$aidb.open("DB_Vue_FlashCard").get("ToDoContent",{ToDoId:value.id})
+                .then((result)=>{
+                    if(result){
+                        result.title = value.title;
+                    }else{
+                         result={
+                            id:this._vm.$uuid.v1(),
+                            title:value.title,
+                            ToDoId:value.id,
+                            content:""
+                        } 
+                    }
+                    context.commit('setDetail',result);
+                    this._vm.$aidb.open("DB_Vue_FlashCard").put("ToDoContent",result).execude()
+                })
+        })
+        
     },
     deleteToDo(context,prop){
         this._vm.$aidb.open("DB_Vue_FlashCard").delete("ToDos",prop).execude().then(()=>{

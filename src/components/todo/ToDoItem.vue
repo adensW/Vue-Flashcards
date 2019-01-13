@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class='point-none'>
    <div class="a-bar--float" v-if="isblur">
         <a-btn text @click="deepsDown">
         <a-icon>arrow_back_ios</a-icon>  
@@ -103,12 +103,12 @@ export default {
       this.setloop()
     },
     setloop:function(){
-      
+      if(!this.isblur){
       this.loop=setTimeout(()=>{
         console.log("blur start")
         this.isblur = true;
     },1000);
-    
+    }
     },
     input:_.debounce(function(e){
         this.title = e.target.value;
@@ -148,6 +148,7 @@ export default {
   border-bottom:1px solid gray;
   height:36px;
   line-height: 36px;
+  z-index: 2;
 }
 .input:focus{
   outline: none;
