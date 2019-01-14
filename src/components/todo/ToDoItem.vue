@@ -1,5 +1,5 @@
 <template>
-<div class='point-none'>
+<div class = "a-row">
    <div class="a-bar--float" v-if="isblur">
         <a-btn text @click="deepsDown">
         <a-icon>arrow_back_ios</a-icon>  
@@ -16,6 +16,7 @@
     </div>
     <div class='a-row borderline'>
       <div :class="deepcol">&nbsp;</div>
+      <slot></slot>
       <div @mousedown="blur" @mouseup="clearcount" :class="inputcol">
         <input type="checkbox" :checked="ischecked" @change="$emit('toDoChange',id)">
         <input :value="title" @input="input" @click="click" :readonly="isblur" placeholder="input something">
@@ -140,12 +141,10 @@ export default {
 }
 .a-bar--float{
   position: absolute;
-  width: 100%;
-  pointer-events: all;
-  z-index: 999;
+  z-index: 3;
 }
 .borderline{
-  border-bottom:1px solid gray;
+  /* border-bottom:1px solid gray; */
   height:36px;
   line-height: 36px;
   z-index: 2;
