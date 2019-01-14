@@ -8,7 +8,7 @@
         @toDoChange="toDoChange"
         @deleteTodo="deleteTodo"
       >
-      <a-icon v-if="todo.hasChildren" @click="fold(todo.id)">keyboard_arrow_up</a-icon>
+      <a-icon v-if="todo.hasChildren" @click="fold(todo.id)" >keyboard_arrow_up</a-icon>
       </to-do-item>
     </a-sortable-bar>
     <a-btn fab @click="add">
@@ -20,7 +20,6 @@
 <script>
 import ToDoItem from "./ToDoItem";
 import { Sortable } from "@shopify/draggable";
-import func from './vue-temp/vue-editor-bridge';
 export default {
   name: "ToDo",
   props: ["todos"],
@@ -68,28 +67,28 @@ export default {
       this.update(a);
     },
     fold:function(id){
-      // let parentTodo =this.todos.filter(function(val){
-      //   return val.id===id
-      // });
-      // let childrenTodo =[];
-      // let islast = false;
-      // let index = 0
-      // while (!islast) {
-      //   let elem = this.todos[index]
-      //   if(elem.sort>parentTodo.sort)
-      //   {
-      //     if(elem.deeps<=parentTodo.sort){
-      //       islast= true;
-      //     }else{
-      //       elem.fold = true;
-      //       childrenTodo.push(elem);
-      //     }
-      //   }
-      //   index++;
-      // }
-      // console.log(childrenTodo)
+      let parentTodo =this.todos.filter(function(val){
+        return val.id===id
+      })[0];
+      let childrenTodo =[];
+      let islast = false;
+      let index = 0
+      while (!islast) {
+        let elem = this.todos[index]
+        if(elem.sort>parentTodo.sort)
+        {
+          if(elem.deeps<=parentTodo.deeps){
+            islast= true;
+          }else{
+            elem.isFold = !elem.isFold;
+            childrenTodo.push(elem);
+          }
+        }
+        index++;
+      }
+      console.log(childrenTodo)
 
-      // this.$store.dispatch('updateToDo',childrenTodo)
+      this.$store.dispatch('updateToDo',childrenTodo)
     },
     deepsDown: function(id) {
       let a = this.todos.find(function(elem) {
