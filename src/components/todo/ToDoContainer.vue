@@ -5,12 +5,12 @@
         <to-do-detail :item="Detail"></to-do-detail>
       </div>
     </a-card>
-    <a-card class="a-col-22 a-col-offset-0 a-col-lg-22 a-col-md-22 a-col-sm-22 a-col-xs-22">
-      <div class="">
+    <a-card class="a-col-22 a-col-offset-1 a-col-lg-22 a-col-md-22 a-col-sm-22 a-col-xs-22">
+      
         <to-do :todos="SortedTodos"
               @refresh='refresh'
         ></to-do>
-      </div>
+    
     </a-card>
    
   </div>
@@ -56,7 +56,9 @@ export default {
               title: "",
               deeps: 0,
               treeId: 0,
-              sort: this.currentSort
+              sort: this.currentSort,
+              isFold:false,
+              hasChildren:false,
             };
             let ditem = {
               id: this.$uuid.v1(),

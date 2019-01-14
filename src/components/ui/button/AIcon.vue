@@ -1,5 +1,5 @@
 <template>
-    <i class="a-icons"  :style="rotateDeg">
+    <i class="a-icons" @click="$emit('click')"  :style="rotateDeg">
         <slot></slot>
     </i>
 </template>
