@@ -148,7 +148,10 @@ export default {
           classes:{'mirror':'sortable-bar--drag'}
         }
       );
-      sortable.on("sortable:start", response => {});
+      sortable.on("sortable:start", response => {
+        let index = response.data.startIndex;
+        console.log(index)
+      });
       sortable.on("sortable:sort", response => {});
       sortable.on("sortable:sorted", response => {});
       sortable.on("sortable:stop", response => {

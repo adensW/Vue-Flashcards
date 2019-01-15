@@ -214,7 +214,6 @@ let aidb = (function () {
                     dataArr.push({ value: data, state: STATE.ADD });
                 } else {
                     //2,[{},{},{}]
-                    dataArr = data;
                     for (let i = 0; i < data.length; i++) {
                         const element = data[i];
                         dataArr.push({ value: element, state: STATE.ADD })
@@ -231,7 +230,6 @@ let aidb = (function () {
                     dataArr.push({ value: data, state: STATE.ADD });
                 } else {
                     //2,[{},{},{}]
-                    dataArr = data;
                     for (let i = 0; i < data.length; i++) {
                         const element = data[i];
                         dataArr.push({ value: element, state: STATE.ADD })
@@ -253,7 +251,6 @@ let aidb = (function () {
                     dataArr.push({ value: data, state: STATE.UPDATE, id: id || data.id });
                 } else {
                     //2,[{},{},{}]
-                    dataArr = data;
                     for (let i = 0; i < data.length; i++) {
                         const element = data[i];
                         dataArr.push({ value: element, state: STATE.UPDATE, id: id || data.id })
@@ -270,7 +267,6 @@ let aidb = (function () {
                     dataArr.push({ value: data, state: STATE.UPDATE, id: id || data.id });
                 } else {
                     //2,[{},{},{}]
-                    dataArr = data;
                     for (let i = 0; i < data.length; i++) {
                         const element = data[i];
                         dataArr.push({ value: element, state: STATE.UPDATE, id: id || data.id })
@@ -292,7 +288,6 @@ let aidb = (function () {
                     dataArr.push({ value: data, state: STATE.DELETE, id: id || data.id });
                 } else {
                     //2,[{},{},{}]
-                    dataArr = data;
                     for (let i = 0; i < data.length; i++) {
                         const element = data[i];
                         dataArr.push({ value: element, state: STATE.DELETE, id: id || data.id })
@@ -309,7 +304,6 @@ let aidb = (function () {
                     dataArr.push({ value: data, state: STATE.DELETE, id: id || data.id });
                 } else {
                     //2,[{},{},{}]
-                    dataArr = data;
                     for (let i = 0; i < data.length; i++) {
                         const element = data[i];
                         dataArr.push({ value: element, state: STATE.DELETE, id: id || data.id })
@@ -386,7 +380,7 @@ let aidb = (function () {
         return target;
     };
     aidb.fn.init = function () {
-
+        
         //必须申明this或aidb 
         //无法访问
         // console.log('a')
