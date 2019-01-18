@@ -60,7 +60,7 @@ export default {
 </script>
 <style scoped>
 .a-containter{
-    margin:12px 16px; 
+    margin:0px 0px; 
 }
 .container--flex{
     display: flex;
