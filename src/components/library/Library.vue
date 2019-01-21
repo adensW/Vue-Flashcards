@@ -28,7 +28,23 @@
             <div>4444</div>
         </a-sortable-bar>
     </div>
-    <div id='dropzone' class="drop-container"></div>
+    <div class='dropable-container'>
+        <a-dropable-bar>
+            <div class='dropable-bar--item'>111</div>
+        </a-dropable-bar>
+        <a-dropable-bar>
+            <div class='dropable-bar--item'>222</div>
+        </a-dropable-bar>
+        <a-dropable-bar>
+            <div class='dropable-bar--item'>333</div>
+        </a-dropable-bar>
+        <a-dropable-bar>
+            <div class='dropable-bar--item'>444</div>
+        </a-dropable-bar>
+    </div>
+    <div class='dropable-container'>
+        <div id='dropzone' class="drop-container dropzone"></div>
+    </div>
     <a-clock></a-clock>
     </div>
 
@@ -46,9 +62,9 @@ export default {
         }
     },
     mounted(){
-        this.initDraggable();
-        this.initSortable();
-        // this.initDropable();
+        // this.initDraggable();
+        // this.initSortable();
+        this.initDropable();
     },
     methods:{
         initDraggable(){
@@ -78,12 +94,12 @@ export default {
             sortable.on('sortable:stop', () => console.log('sortable:stop'));
         },
         initDropable(){
-            const droppable = new Droppable(document.querySelectorAll('.draggable-container'), {
-                draggable: '.draggable-bar',
-                dropzone: '#dropzone'
+            const droppable = new Droppable(document.querySelectorAll('.dropable-container'), {
+                draggable: '.dropable-bar--item',
+                dropzone: '.dropzone'
                 });
-                droppable.on('droppable:dropped', () => console.log('droppable:dropped'));
-                droppable.on('droppable:returned', () => console.log('droppable:returned'));
+                droppable.on('droppable:dropped', (res) => console.log('droppable:dropped',res));
+                droppable.on('droppable:returned', (res) => console.log('droppable:returned',res));
         }
     }
 }

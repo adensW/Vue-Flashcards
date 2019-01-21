@@ -42,16 +42,25 @@ const actions={
         
     },
     deleteToDo(context,prop){
-        this._vm.$aidb.open("DB_Vue_FlashCard").delete("ToDos",prop).execude().then(()=>{
-            context.commit('deleteToDo',prop);
+        let arr = [];
+        if(Array.isArray(prop)){
+            arr.push(...prop);
+        }else{
+            arr.push(prop);
+        }
+        arr.forEach((value)=>{
+            this._vm.$aidb.open("DB_Vue_FlashCard").delete("ToDos",value).execude().then(()=>{
+                context.commit('deleteToDo',value);
+            })
+            this._vm.$aidb.open("DB_Vue_FlashCard").get("ToDoContent",{ToDoId:value.id}).then((result)=>{
+                if(result){
+                    this._vm.$aidb.open("DB_Vue_FlashCard").delete("ToDoContent",value).execude().then(()=>{
+                        context.commit('deleteToDo',value);
+                    })
+                }
+            })
         })
-        this._vm.$aidb.open("DB_Vue_FlashCard").get("ToDoContent",{ToDoId:prop.id}).then((result)=>{
-            if(result){
-                this._vm.$aidb.open("DB_Vue_FlashCard").delete("ToDoContent",prop).execude().then(()=>{
-                    context.commit('deleteToDo',prop);
-                })
-            }
-        })
+        
 
     },
     initToDos(context,prop){

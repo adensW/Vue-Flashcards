@@ -8,7 +8,11 @@
         @toDoChange="toDoChange"
         @deleteTodo="deleteTodo"
       >
-      <a-icon v-if="todo.hasChildren" @click="fold(todo.id)" >keyboard_arrow_up</a-icon>
+        <a-icon
+          class="a-cursor--click hoverable--outline"
+          v-if="todo.hasChildren"
+          @click="fold(todo.id)"
+        >keyboard_arrow_up</a-icon>
       </to-do-item>
     </a-sortable-bar>
     <a-btn fab @click="add">
@@ -24,7 +28,7 @@ export default {
   name: "ToDo",
   props: ["todos"],
   components: {
-    ToDoItem,
+    ToDoItem
   },
   data() {
     return {};
@@ -32,32 +36,46 @@ export default {
   mounted() {
     this.initSortable();
   },
-  computed:{
-    filterTodos:function(){
-      return this.todos.filter(function(val){
+  computed: {
+    filterTodos: function() {
+      return this.todos.filter(function(val) {
         return val.isFold == false;
-      })
+      });
     }
   },
   methods: {
     deleteTodo: function(id) {
+      let deleteToDos = [];
+      let updateToDos =[];
+      let sortNum = 1;
+      let startSort = 0;
       let a = this.todos.find(function(elem) {
         return elem.id == id;
       });
-      let b = this.todos.filter(function(elem){
-        return elem.sort>a.sort;
-      })
-      b.forEach(element => {
-        element.sort = element.sort-1;
-        this.$store.dispatch("updateToDo",element)
+      if (a.hasChildren) {
+        for (let index = 0; index < this.todos.length; index++) {
+          const element = this.todos[index];
+          let endFlag = false;
+          if (element.sort > a.sort && element.deeps > a.deeps && !endFlag) {
+            sortNum += 1;
+            startSort = element.sort;
+            deleteToDos.push(element);
+          } else {
+            endFlag = true;
+          }
+        }
+      } else {
+        deleteToDos.push(a);
+      }
+      let b = this.todos.filter(function(elem) {
+        return elem.sort > startSort;
       });
-      // console.log(b)
-      this.$store.dispatch("deleteToDo", a);
-      // this.$aidb.open("DB_Vue_FlashCard").delete("ToDos",a).execude().then(
-      //   ()=>{
-      //     this.$emit('refresh',id);
-      //   }
-      // )
+      b.forEach(element => {
+        element.sort = element.sort - sortNum;
+        updateToDos.push(element);
+      });
+      this.$store.dispatch("updateToDo", updateToDos);
+      this.$store.dispatch("deleteToDo", deleteToDos);
     },
     toDoChange: function(id) {
       let a = this.todos.find(function(elem) {
@@ -66,29 +84,28 @@ export default {
       a.checked = !a.checked;
       this.update(a);
     },
-    fold:function(id){
-      let parentTodo =this.todos.filter(function(val){
-        return val.id===id
+    fold: function(id) {
+      let parentTodo = this.todos.filter(function(val) {
+        return val.id === id;
       })[0];
-      let childrenTodo =[];
+      let childrenTodo = [];
       let islast = false;
-      let index = 0
+      let index = 0;
       while (!islast) {
-        let elem = this.todos[index]
-        if(elem.sort>parentTodo.sort)
-        {
-          if(elem.deeps<=parentTodo.deeps){
-            islast= true;
-          }else{
+        let elem = this.todos[index];
+        if (elem.sort > parentTodo.sort) {
+          if (elem.deeps <= parentTodo.deeps) {
+            islast = true;
+          } else {
             elem.isFold = !elem.isFold;
             childrenTodo.push(elem);
           }
         }
         index++;
       }
-      console.log(childrenTodo)
+      console.log(childrenTodo);
 
-      this.$store.dispatch('updateToDo',childrenTodo)
+      this.$store.dispatch("updateToDo", childrenTodo);
     },
     deepsDown: function(id) {
       let a = this.todos.find(function(elem) {
@@ -114,7 +131,6 @@ export default {
         // this.todo.deeps = this.todo.deeps+1
         this.update(a);
         this.update(this.todos[index - 1]);
-
       }
     },
     update: function(item) {
@@ -129,9 +145,8 @@ export default {
         deeps: 0,
         treeId: 0,
         sort: this.todos.length,
-        isFold:false,
-        hasChildren:false,
-
+        isFold: false,
+        hasChildren: false
       };
       this.todos.push(toDoItem);
       this.$aidb
@@ -144,76 +159,70 @@ export default {
         document.querySelectorAll(".sortable-container"),
         {
           draggable: ".sortable-bar",
-          handle:".sortable-handle",
-          classes:{'mirror':'sortable-bar--drag'}
+          handle: ".sortable-handle",
+          classes: { mirror: "sortable-bar--drag" }
         }
       );
       sortable.on("sortable:start", response => {
         let index = response.data.startIndex;
-        console.log(index)
+        console.log(index);
       });
       sortable.on("sortable:sort", response => {});
       sortable.on("sortable:sorted", response => {});
       sortable.on("sortable:stop", response => {
-        console.log(response)
         let data = response.data;
         let oldIndex = data.oldIndex;
         let newIndex = data.newIndex;
-        let minIndex = oldIndex < newIndex?oldIndex:newIndex;
-        let maxIndex = oldIndex > newIndex?oldIndex:newIndex;
-        let reToDos = this.todos.filter(function(val){
-          if(oldIndex>newIndex){
-            return val.sort>=minIndex&&val.sort<maxIndex;
-          }else{
-            return val.sort>minIndex&&val.sort<=maxIndex;
-          }
-        })
-        
-        let curToDo = this.todos.filter(function(val){
-          return val.sort===oldIndex;
-        })
-        reToDos.forEach(element => {
-          if(newIndex<oldIndex){
-            element.sort+=1;
-          }else{
-            element.sort-=1;
+        let minIndex = oldIndex < newIndex ? oldIndex : newIndex;
+        let maxIndex = oldIndex > newIndex ? oldIndex : newIndex;
+        let reToDos = this.todos.filter(function(val) {
+          if (oldIndex > newIndex) {
+            return val.sort >= minIndex && val.sort < maxIndex;
+          } else {
+            return val.sort > minIndex && val.sort <= maxIndex;
           }
         });
-        let curPrev = this.todos.filter(function(val){
-          return val.sort===newIndex-1;
-        })
-        console.log(curPrev)
+
+        let curToDo = this.todos.filter(function(val) {
+          return val.sort === oldIndex;
+        });
+        reToDos.forEach(element => {
+          if (newIndex < oldIndex) {
+            element.sort += 1;
+          } else {
+            element.sort -= 1;
+          }
+        });
+        let curPrev = this.todos.filter(function(val) {
+          return val.sort === newIndex - 1;
+        });
         curToDo[0].sort = newIndex;
-        
-        this.$store.dispatch("updateToDo",curToDo)
-        this.$store.dispatch("updateToDo",reToDos)
-        if(oldIndex < newIndex){
+
+        this.$store.dispatch("updateToDo", curToDo);
+        this.$store.dispatch("updateToDo", reToDos);
+        if (oldIndex < newIndex) {
           this.redeeps();
         }
       });
     },
-    redeeps(){
+    redeeps() {
       let prevDeeps = this.todos[0].deeps;
       let prevToDo = this.todos[0];
       for (let index = 0; index < this.todos.length; index++) {
-        if(this.todos[index].sort===0){
+        if (this.todos[index].sort === 0) {
           prevDeeps = this.todos[index].deeps;
-          this.todos[index].deeps=0;
+          this.todos[index].deeps = 0;
           prevToDo = this.todos[index];
-        }else{
-          if(this.todos[index].deeps>prevDeeps){
+        } else {
+          if (this.todos[index].deeps > prevDeeps) {
             prevDeeps = this.todos[index].deeps;
-            this.todos[index].deeps = prevToDo.deeps-1+2;
-          }else if(this.todos[index].deeps===prevDeeps){
+            this.todos[index].deeps = prevToDo.deeps - 1 + 2;
+          } else if (this.todos[index].deeps === prevDeeps) {
             this.todos[index].deeps = prevToDo.deeps;
-          }else{
-
           }
           prevToDo = this.todos[index];
         }
       }
-     
-      console.log("redeeps")
     }
   }
 };

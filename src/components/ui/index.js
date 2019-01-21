@@ -12,6 +12,8 @@ import ACarousel from './view/carousel/ACarousel';
 import ADivider from './divider/ADivider';
 import ADraggableBar from './draggable/ADraggableBar';
 import ASortableBar from './draggable/ASortableBar';
+import ADropableBar from './draggable/ADropableBar';
+
 import AClock from './clock/AClock';
 
 const AUIs={
@@ -29,6 +31,7 @@ const AUIs={
     ADivider,
     ADraggableBar,
     ASortableBar,
+    ADropableBar,
     AClock,
 }
 const AdensUI={}
