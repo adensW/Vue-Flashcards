@@ -10,7 +10,7 @@
       >
         <a-icon
           class="a-cursor--click hoverable--outline"
-          v-if="todo.hasChildren"
+          v-if="todo.childrenIds.length>0"
           @click="fold(todo.id)"
         >keyboard_arrow_up</a-icon>
       </to-do-item>
@@ -52,7 +52,7 @@ export default {
       let a = this.todos.find(function(elem) {
         return elem.id == id;
       });
-      if (a.hasChildren) {
+      if (a.childrenToDos.length>0) {
         for (let index = 0; index < this.todos.length; index++) {
           const element = this.todos[index];
           let endFlag = false;
@@ -92,19 +92,21 @@ export default {
       let islast = false;
       let index = 0;
       while (!islast) {
-        let elem = this.todos[index];
-        if (elem.sort > parentTodo.sort) {
-          if (elem.deeps <= parentTodo.deeps) {
-            islast = true;
-          } else {
-            elem.isFold = !elem.isFold;
-            childrenTodo.push(elem);
+        if(index<this.todos.length){
+          let elem = this.todos[index];
+          if (elem.sort > parentTodo.sort) {
+            if (elem.deeps <= parentTodo.deeps) {
+              islast = true;
+            } else {
+              elem.isFold = !elem.isFold;
+              childrenTodo.push(elem);
+            }
           }
+          index++;
+        }else{
+          islast = true;
         }
-        index++;
       }
-      console.log(childrenTodo);
-
       this.$store.dispatch("updateToDo", childrenTodo);
     },
     deepsDown: function(id) {
@@ -112,7 +114,23 @@ export default {
         return elem.id == id;
       });
       a.deeps = a.deeps - 1 < 0 ? 0 : a.deeps - 1;
-
+      let childrenToDos = this.todos.filter(function(val){
+        return a.childrenIds.includes(val.id);
+      })
+      childrenToDos.map(function(val){
+        val.deeps-=1;
+      });
+      this.update(childrenToDos)
+      // this.update(ch);
+      let parentId = a.deepIds.splice(-2,1)[0];
+      let parent = this.todos.find(function(val){
+        return val.id == parentId;
+      })
+      let index =parent.childrenIds.findIndex(function(val){
+          return val==a.id;
+      })
+      parent.childrenIds.splice(index,1);
+      this.update(parent)
       // this.todos.deeps = this.todo.deeps-1<0?0:this.todo.deeps-1
       this.update(a);
     },
@@ -123,14 +141,31 @@ export default {
 
       let index = this.todos.indexOf(a);
 
-      if (this.todos.length > index && index > 0) {
-        //
-        let prevDeep = this.todos[index - 1].deeps;
-        this.todos[index - 1].hasChildren = true;
-        a.deeps = a.deeps - 1 + 2 > prevDeep + 1 ? a.deeps : a.deeps - 1 + 2;
+      let prevDeep = this.todos[index - 1<0?0:index-1].deeps;
+        
+        let isBottom =a.deeps - 1 + 2 > prevDeep + 1
+        if(!isBottom){
+          a.deeps = a.deeps- 1 + 2;
+          a.deepIds =[...new Set(this.todos[index - 1].deepIds.slice(0,a.deeps))];
+          a.deepIds.push(a.id)
+          let parentsIds = a.deepIds.slice(0,-1);
+          let parentToDos = this.todos.filter(function(val){
+             return parentsIds.includes(val.id)
+          })
+
+          parentToDos.forEach((val)=>{
+            val.childrenIds.push(a.id)
+            if(val.childrenIds.length>1){
+              
+              val.childrenIds=[...new Set(val.childrenIds)]
+
+            }
+          })
+          
+          this.update(parentToDos);
         // this.todo.deeps = this.todo.deeps+1
         this.update(a);
-        this.update(this.todos[index - 1]);
+        
       }
     },
     update: function(item) {
@@ -138,15 +173,16 @@ export default {
       // this.$aidb.open("DB_Vue_FlashCard").put("ToDos",item).execude()
     },
     add: function() {
+      let uid =this.$uuid.v1();
       let toDoItem = {
-        id: this.$uuid.v1(),
+        id: uid,
         isChecked: false,
         title: "",
         deeps: 0,
-        treeId: 0,
+        deepIds: [uid],
         sort: this.todos.length,
         isFold: false,
-        hasChildren: false
+        childrenIds: []
       };
       this.todos.push(toDoItem);
       this.$aidb

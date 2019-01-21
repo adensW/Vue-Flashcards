@@ -30,20 +30,31 @@
     </div>
     <div class='dropable-container'>
         <a-dropable-bar>
-            <div class='dropable-bar--item'>111</div>
+            <div class=''>111</div>
         </a-dropable-bar>
         <a-dropable-bar>
-            <div class='dropable-bar--item'>222</div>
+            <div class=''>222</div>
         </a-dropable-bar>
         <a-dropable-bar>
-            <div class='dropable-bar--item'>333</div>
+            <div class=''>333</div>
         </a-dropable-bar>
         <a-dropable-bar>
-            <div class='dropable-bar--item'>444</div>
+            <div class=''>444</div>
         </a-dropable-bar>
     </div>
     <div class='dropable-container'>
-        <div id='dropzone' class="drop-container dropzone"></div>
+        <div class="drop-container dropzone">
+        </div>
+        <div class="drop-container dropzone">
+        </div>
+        <div class="drop-container dropzone">
+        </div>
+        <div class="drop-container dropzone">
+        </div>
+        <div class="drop-container dropzone">
+        </div>
+        <div class="drop-container dropzone">
+        </div>
     </div>
     <a-clock></a-clock>
     </div>

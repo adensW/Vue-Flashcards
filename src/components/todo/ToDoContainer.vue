@@ -50,15 +50,16 @@ export default {
         .getAll("ToDos")
         .then(result => {
           if (!result || result.length == 0) {
+            let uid= this.$uuid.v1();
             let item = {
-              id: this.$uuid.v1(),
+              id: uid,
               checked: false,
               title: "",
               deeps: 0,
-              treeId: 0,
+              deepIds: [uid],
               sort: this.currentSort,
               isFold:false,
-              hasChildren:false,
+              childrenIds:[],
             };
             let ditem = {
               id: this.$uuid.v1(),
