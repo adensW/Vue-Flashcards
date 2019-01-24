@@ -1,5 +1,8 @@
 <template>
 <div>
+    <div>
+        <date-reminder></date-reminder>
+    </div>
     <div class='draggable-container'>
         <a-draggable-bar ref="0" data-val="0">
             <div>test</div>
@@ -65,8 +68,12 @@
 import { Draggable } from '@shopify/draggable';
 import { Sortable } from '@shopify/draggable';
 import { Droppable } from '@shopify/draggable';
+import DateReminder from '@/components/public/DateReminder.vue'
 export default {
     name:"library",
+    components:{
+        DateReminder
+    },
     data(){
         return{
 
