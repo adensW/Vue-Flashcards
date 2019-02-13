@@ -96,6 +96,9 @@ const actions={
         context.commit("addToDo",prop);
         this._vm.$aidb.open("DB_Vue_FlashCard").add("ToDos",prop).execude()
     },
+    addStoreToDo(context,prop){
+        context.commit("addToDo",...prop);
+    },
     addContent(context,prop){
         context.commit("setDetail",prop);
         this._vm.$aidb.open("DB_Vue_FlashCard").add("ToDoContent",prop).execude()

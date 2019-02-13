@@ -41,13 +41,12 @@ export default {
       let a =this.list.findIndex(function(value){
         return value.id==id;
       })
-      console.log(a)
       this.list.splice(a,1)
     },
     init: function() {
       this.$aidb
         .open("DB_Vue_FlashCard")
-        .getAll("ToDos")
+        .getQuery("ToDos",{"parentId":0})
         .then(result => {
           if (!result || result.length == 0) {
             let uid= this.$uuid.v1();
@@ -56,10 +55,10 @@ export default {
               checked: false,
               title: "",
               deeps: 0,
-              deepIds: [uid],
               sort: this.currentSort,
               isFold:false,
-              childrenIds:[],
+              parentId:0,
+              childrenNum:0,
             };
             let ditem = {
               id: this.$uuid.v1(),

@@ -7,10 +7,11 @@
         @deepsDown="deepsDown"
         @toDoChange="toDoChange"
         @deleteTodo="deleteTodo"
+        @add="add"
       >
         <a-icon
           class="a-cursor--click hoverable--outline"
-          v-if="todo.childrenIds.length>0"
+          v-if="todo.childrenNum>0"
           @click="fold(todo.id)"
         >keyboard_arrow_up</a-icon>
       </to-do-item>
@@ -52,7 +53,7 @@ export default {
       let a = this.todos.find(function(elem) {
         return elem.id == id;
       });
-      if (a.childrenToDos.length>0) {
+      if (a.hasChildren>0) {
         for (let index = 0; index < this.todos.length; index++) {
           const element = this.todos[index];
           let endFlag = false;
@@ -85,29 +86,13 @@ export default {
       this.update(a);
     },
     fold: function(id) {
-      let parentTodo = this.todos.filter(function(val) {
-        return val.id === id;
-      })[0];
-      let childrenTodo = [];
-      let islast = false;
-      let index = 0;
-      while (!islast) {
-        if(index<this.todos.length){
-          let elem = this.todos[index];
-          if (elem.sort > parentTodo.sort) {
-            if (elem.deeps <= parentTodo.deeps) {
-              islast = true;
-            } else {
-              elem.isFold = !elem.isFold;
-              childrenTodo.push(elem);
-            }
-          }
-          index++;
-        }else{
-          islast = true;
-        }
-      }
-      this.$store.dispatch("updateToDo", childrenTodo);
+      let childrenToDos=[];
+      this.$aidb.getQuery("ToDos",{"parentId":id}).then(function(data){
+        data.map(function(val){
+          childrenToDos.push(val)
+        })
+      })
+      this.$store.dispatch("addStoreToDo", childrenToDos);
     },
     deepsDown: function(id) {
       let a = this.todos.find(function(elem) {
@@ -172,23 +157,29 @@ export default {
       this.$store.dispatch("updateToDo", item);
       // this.$aidb.open("DB_Vue_FlashCard").put("ToDos",item).execude()
     },
-    add: function() {
-      let uid =this.$uuid.v1();
-      let toDoItem = {
-        id: uid,
-        isChecked: false,
-        title: "",
-        deeps: 0,
-        deepIds: [uid],
-        sort: this.todos.length,
-        isFold: false,
-        childrenIds: []
-      };
-      this.todos.push(toDoItem);
-      this.$aidb
-        .open("DB_Vue_FlashCard")
-        .add("ToDos", toDoItem)
-        .execude();
+    add: function(pid) {
+       let uid =this.$uuid.v1();
+        let toDoItem = {
+          id: uid,
+            isChecked: false,
+            title: "",
+            deeps: 0,
+            sort: this.todos.length,
+            isFold: false,
+            parentId:pid||0,
+            childrenNum:0
+          };
+         
+        if(pid){
+          let parent= this.todos.find(function(val){
+              return val.id = pid  
+          })
+          toDoItem.sort=parent.childrenNum;
+          toDoItem.deeps = parent.deeps+1;
+          parent.childrenNum += 1;
+          this.$store.dispatch('updateToDo',parent)
+        }
+        this.$store.dispatch('addToDo',toDoItem)
     },
     initSortable() {
       const sortable = new Sortable(
@@ -199,12 +190,12 @@ export default {
           classes: { mirror: "sortable-bar--drag" }
         }
       );
-      sortable.on("sortable:start", response => {
-        let index = response.data.startIndex;
-        console.log(index);
-      });
-      sortable.on("sortable:sort", response => {});
-      sortable.on("sortable:sorted", response => {});
+      // sortable.on("sortable:start", response => {
+      //   let index = response.data.startIndex;
+      //   // console.log(index);
+      // });
+      // sortable.on("sortable:sort", response => {});
+      // sortable.on("sortable:sorted", response => {});
       sortable.on("sortable:stop", response => {
         let data = response.data;
         let oldIndex = data.oldIndex;
@@ -229,9 +220,9 @@ export default {
             element.sort -= 1;
           }
         });
-        let curPrev = this.todos.filter(function(val) {
-          return val.sort === newIndex - 1;
-        });
+        // let curPrev = this.todos.filter(function(val) {
+        //   return val.sort === newIndex - 1;
+        // });
         curToDo[0].sort = newIndex;
 
         this.$store.dispatch("updateToDo", curToDo);
