@@ -6,16 +6,12 @@
       </div>
     </a-card>
     <a-card class="a-col-22 a-col-offset-1 a-col-lg-22 a-col-md-22 a-col-sm-22 a-col-xs-22">
-      
         <to-do :todos="SortedTodos"
               @refresh='refresh'
         ></to-do>
-    
     </a-card>
-   
   </div>
 </template>
-
 <script>
 import ToDo from "./ToDo";
 import ToDoDetail from "./ToDoDetail";
