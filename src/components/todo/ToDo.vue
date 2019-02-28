@@ -8,6 +8,7 @@
         @toDoChange="toDoChange"
         @deleteTodo="deleteTodo"
         @add="add"
+        :depth="depth+1"
       >
         <a-icon
           class="a-cursor--click hoverable--outline"
@@ -29,10 +30,13 @@ export default {
   name: "ToDo",
   props: ["todos"],
   components: {
-    ToDoItem
+    ToDoItem,
+
   },
   data() {
-    return {};
+    return {
+      depth:0,
+    };
   },
   mounted() {
     this.initSortable();
@@ -167,7 +171,6 @@ export default {
             sort: this.todos.length,
             isFold: false,
             parentId:pid||0,
-            childrenNum:0
           };
          
         if(pid){

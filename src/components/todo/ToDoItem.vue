@@ -19,7 +19,6 @@
     </div>
     <div class="a-row borderline">
       <div :class="deepcol">&nbsp;</div>
-      <slot></slot>
       <div @mousedown="blur" @mouseup="clearcount" :class="inputcol">
         <input type="checkbox" :checked="ischecked" @change="$emit('toDoChange',id)">
         <input
@@ -30,19 +29,40 @@
           placeholder="input something"
         >
       </div>
+      <slot></slot>
+
+    </div>
+    <div>
+      <to-do-item v-for="todo in childrenToDos" :key="todo.id"
+        :item="todo"
+        @deepsUp="deepsUp"
+        @deepsDown="deepsDown"
+        @toDoChange="toDoChange"
+        @deleteTodo="deleteTodo"
+        @add="add"
+        :depth="curdepth+1"
+      >
+
+      </to-do-item>
     </div>
   </div>
 </template>
 <script>
 import _ from "lodash";
+import ToDoItem from "./ToDoItem"
 export default {
   name: "ToDoItem",
-  props: ["item"],
+  components:{
+    ToDoItem
+  },
+  props: ["item","depth"],
   data() {
     return {
       todo: this.item,
       isblur: false,
-      loop: function() {}
+      curdepth:this.depth||0,
+      loop: function() {},
+      childrenToDos:[],
     };
   },
   watch: {
@@ -53,11 +73,11 @@ export default {
   computed: {
     deepcol() {
       let classList = [
-        `a-col-${this.item.deeps}`,
-        `a-col-lg-${this.item.deeps}`,
-        `a-col-md-${this.item.deeps}`,
-        `a-col-sm-${this.item.deeps}`,
-        `a-col-xs-${this.item.deeps}`
+        `a-col-${this.curdepth}`,
+        `a-col-lg-${this.curdepth}`,
+        `a-col-md-${this.curdepth}`,
+        `a-col-sm-${this.curdepth}`,
+        `a-col-xs-${this.curdepth}`
       ];
       return classList;
     },
@@ -73,11 +93,11 @@ export default {
     },
     inputcol() {
       let classList = [
-        `a-col-${24 - 2 - this.item.deeps}`,
-        `a-col-lg-${24 - 2 - this.item.deeps}`,
-        `a-col-md-${24 - 2 - this.item.deeps}`,
-        `a-col-sm-${24 - 2 - this.item.deeps}`,
-        `a-col-xs-${24 - 2 - this.item.deeps}`
+        `a-col-${24 - 2 - this.curdepth}`,
+        `a-col-lg-${24 - 2 - this.curdepth}`,
+        `a-col-md-${24 - 2 - this.curdepth}`,
+        `a-col-sm-${24 - 2 - this.curdepth}`,
+        `a-col-xs-${24 - 2 - this.curdepth}`
       ];
       if (this.isblur) {
         classList.push(`a-blur--hover`);
@@ -103,8 +123,18 @@ export default {
       return this.todo.checked;
     }
   },
-  mounted() {},
+  mounted() {
+    this.init();
+  },
   methods: {
+    init:function(){
+      this.$aidb.open("DB_Vue_FlashCard")
+        .getQuery("ToDos",{"parentId":this.todo.id}).then(result=>{
+          if(result){
+            this.childrenToDos = result;
+          }
+        })
+    },
     clearcount: function() {
       clearTimeout(this.loop);
     },
@@ -142,10 +172,36 @@ export default {
       this.$emit("deepsUp", this.id);
       this.isblur = false;
     },
-    add: function() {
-      this.$emit("add", this.id);
-      this.isblur = false;
-    }
+    add: function(pid) {
+      let uid =this.$uuid.v1();
+        let toDoItem = {
+          id: uid,
+            isChecked: false,
+            title: "",
+            deeps: 0,
+            sort: this.todo.length||0,
+            isFold: false,
+            parentId:pid||this.todo.id||0,
+          };
+         
+        if(pid){
+          let parent= this.todos.find(function(val){
+              return val.id = pid  
+          });
+          toDoItem.sort=parent.childrenNum;
+          toDoItem.deeps = parent.deeps+1;
+          parent.childrenNum += 1;
+          this.$store.dispatch('updateToDo',parent);
+        }
+        this.$store.dispatch('addToDo',toDoItem);
+        this.isblur = false;
+    },
+    toDoChange: function(id) {
+      this.$emit("toDoChange", this.id);
+    },
+    deleteTodo: function(id) {
+      this.$emit("deleteTodo", this.id);
+    },
   }
 };
 </script>

@@ -54,7 +54,6 @@ export default {
               sort: this.currentSort,
               isFold:false,
               parentId:0,
-              childrenNum:0,
             };
             let ditem = {
               id: this.$uuid.v1(),
@@ -111,4 +110,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>
