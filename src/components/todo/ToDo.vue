@@ -8,7 +8,8 @@
         @toDoChange="toDoChange"
         @deleteTodo="deleteTodo"
         @add="add"
-        :depth="depth+1"
+        @addToDo="addToDo"
+        :depth="depth"
       >
         <a-icon
           class="a-cursor--click hoverable--outline"
@@ -31,7 +32,6 @@ export default {
   props: ["todos"],
   components: {
     ToDoItem,
-
   },
   data() {
     return {
@@ -99,29 +99,19 @@ export default {
       this.$store.dispatch("addStoreToDo", childrenToDos);
     },
     deepsDown: function(id) {
-      let a = this.todos.find(function(elem) {
-        return elem.id == id;
-      });
-      a.deeps = a.deeps - 1 < 0 ? 0 : a.deeps - 1;
-      let childrenToDos = this.todos.filter(function(val){
-        return a.childrenIds.includes(val.id);
-      })
-      childrenToDos.map(function(val){
-        val.deeps-=1;
-      });
-      this.update(childrenToDos)
-      // this.update(ch);
-      let parentId = a.deepIds.splice(-2,1)[0];
-      let parent = this.todos.find(function(val){
-        return val.id == parentId;
-      })
-      let index =parent.childrenIds.findIndex(function(val){
-          return val==a.id;
-      })
-      parent.childrenIds.splice(index,1);
-      this.update(parent)
-      // this.todos.deeps = this.todo.deeps-1<0?0:this.todo.deeps-1
-      this.update(a);
+      if(cid){
+        console.log(cid)
+        let op_todo = this.childrenToDos.find(function(elem) {
+            return elem.id == cid;
+        });
+        let startIndex = this.childrenToDos.findIndex(function(elem) {
+            return elem.id == cid;
+        });
+        this.childrenToDos.splice(startIndex,1)
+        op_todo.parentId = 0;
+        this.$emit("addToDo", op_todo);
+        this.isblur = false;
+      }
     },
     deepsUp: function(id) {
       let a = this.todos.find(function(elem) {
@@ -160,6 +150,10 @@ export default {
     update: function(item) {
       this.$store.dispatch("updateToDo", item);
       // this.$aidb.open("DB_Vue_FlashCard").put("ToDos",item).execude()
+    },
+    addToDo:function(todo){
+      this.$aidb.open("DB_Vue_FlashCard").put("ToDos",todo).execude()
+      this.todos.push(todo);
     },
     add: function(pid) {
        let uid =this.$uuid.v1();

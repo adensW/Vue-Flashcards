@@ -54,7 +54,10 @@ export default (function (global, factory) {
                 return decodeURI(r[2]); 
             } 
             return null;
-        }
+        },
+        getValueFromArray:function(array,value){
+
+        },
     }
     atool.extend = atool.fn.extend = function () {
         var src, copyIsArray, copy, name, options, clone,

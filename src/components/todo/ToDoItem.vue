@@ -19,9 +19,10 @@
     </div>
     <div class="a-row borderline">
       <div :class="deepcol">&nbsp;</div>
-      <div @mousedown="blur" @mouseup="clearcount" :class="inputcol">
-        <input type="checkbox" :checked="ischecked" @change="$emit('toDoChange',id)">
+      <div class="a-row" @mousedown="blur" @mouseup="clearcount" :class="inputcol">
+        <input class="a-col-1" type="checkbox" :checked="ischecked" @change="$emit('toDoChange',id)">
         <input
+          class="a-col-22"
           :value="title"
           @input="input"
           @click="click"
@@ -40,6 +41,7 @@
         @toDoChange="toDoChange"
         @deleteTodo="deleteTodo"
         @add="add"
+        @addToDo="addToDo"
         :depth="curdepth+1"
       >
 
@@ -164,13 +166,37 @@ export default {
       this.$store.dispatch("updateToDo", this.todo);
       // this.$aidb.open("DB_Vue_FlashCard").put("ToDos",this.todo).execude()
     },
-    deepsDown: function() {
-      this.$emit("deepsDown", this.id);
-      this.isblur = false;
+    deepsDown: function(cid) {
+      
+      if(cid){
+        console.log(cid)
+        let op_todo = this.childrenToDos.find(function(elem) {
+            return elem.id == cid;
+        });
+        let startIndex = this.childrenToDos.findIndex(function(elem) {
+            return elem.id == cid;
+        });
+        this.childrenToDos.splice(startIndex,1)
+        op_todo.parentId = this.todo.parentId;
+        this.$emit("addToDo", op_todo);
+        this.isblur = false;
+      }else{
+        this.childrenToDos = [];
+        this.$emit("deepsDown", this.id);
+        this.isblur = false;
+      }
     },
-    deepsUp: function() {
-      this.$emit("deepsUp", this.id);
-      this.isblur = false;
+    deepsUp: function(cid) {
+      if(cid){
+        console.log(cid)
+      }else{
+        this.$emit("deepsUp", this.id);
+        this.isblur = false;
+      }
+    },
+    addToDo:function(todo){
+      this.$aidb.open("DB_Vue_FlashCard").put("ToDos",todo).execude()
+        this.childrenToDos.push(todo);
     },
     add: function(pid) {
       let uid =this.$uuid.v1();
@@ -184,16 +210,7 @@ export default {
             parentId:pid||this.todo.id||0,
           };
          
-        if(pid){
-          let parent= this.todos.find(function(val){
-              return val.id = pid  
-          });
-          toDoItem.sort=parent.childrenNum;
-          toDoItem.deeps = parent.deeps+1;
-          parent.childrenNum += 1;
-          this.$store.dispatch('updateToDo',parent);
-        }
-        this.$store.dispatch('addToDo',toDoItem);
+        this.childrenToDos.push(toDoItem)
         this.isblur = false;
     },
     toDoChange: function(id) {
