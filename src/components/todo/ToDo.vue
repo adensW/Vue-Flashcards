@@ -1,15 +1,16 @@
 <template>
   <div class="sortable-container a-row">
-    <a-sortable-bar v-for="todo in filterTodos" :key="todo.id">
-      <to-do-item
+    
+      <to-do-item v-for="todo in filterTodos" :key="todo.id"
         :item="todo"
         @deepsUp="deepsUp"
         @deepsDown="deepsDown"
         @toDoChange="toDoChange"
         @deleteTodo="deleteTodo"
-        @add="add"
+        @add="add"        
         @addToDo="addToDo"
         :depth="depth"
+        :ref="todo.id"
       >
         <a-icon
           class="a-cursor--click hoverable--outline"
@@ -17,7 +18,7 @@
           @click="fold(todo.id)"
         >keyboard_arrow_up</a-icon>
       </to-do-item>
-    </a-sortable-bar>
+    
     <a-btn fab @click="add">
       <a-icon>add</a-icon>
     </a-btn>
@@ -32,6 +33,7 @@ export default {
   props: ["todos"],
   components: {
     ToDoItem,
+
   },
   data() {
     return {
@@ -99,52 +101,44 @@ export default {
       this.$store.dispatch("addStoreToDo", childrenToDos);
     },
     deepsDown: function(id) {
-      if(cid){
-        console.log(cid)
-        let op_todo = this.childrenToDos.find(function(elem) {
-            return elem.id == cid;
-        });
-        let startIndex = this.childrenToDos.findIndex(function(elem) {
-            return elem.id == cid;
-        });
-        this.childrenToDos.splice(startIndex,1)
-        op_todo.parentId = 0;
-        this.$emit("addToDo", op_todo);
-        this.isblur = false;
-      }
-    },
-    deepsUp: function(id) {
       let a = this.todos.find(function(elem) {
         return elem.id == id;
       });
+      a.deeps = a.deeps - 1 < 0 ? 0 : a.deeps - 1;
+      let childrenToDos = this.todos.filter(function(val){
+        return a.childrenIds.includes(val.id);
+      })
+      childrenToDos.map(function(val){
+        val.deeps-=1;
+      });
+      this.update(childrenToDos)
+      // this.update(ch);
+      let parentId = a.deepIds.splice(-2,1)[0];
+      let parent = this.todos.find(function(val){
+        return val.id == parentId;
+      })
+      let index =parent.childrenIds.findIndex(function(val){
+          return val==a.id;
+      })
+      parent.childrenIds.splice(index,1);
+      this.update(parent)
+      // this.todos.deeps = this.todo.deeps-1<0?0:this.todo.deeps-1
+      this.update(a);
+    },
+    deepsUp: function(id) {
+      let cur = this.todos.find(function(elem) {
+        return elem.id == id;
+      });
+      if(cur.sort>0){
+        let prev = this.todos.find(function(elem){
+          return elem.sort == (cur.sort-1)
+        })
+        cur.parentId = prev.id;
+        cur.sort = this.$refs[prev.id][0].childrenToDos.length||0;
+        this.update(cur);
+        this.$refs[prev.id][0].childrenToDos.push(cur);
 
-      let index = this.todos.indexOf(a);
-
-      let prevDeep = this.todos[index - 1<0?0:index-1].deeps;
-        
-        let isBottom =a.deeps - 1 + 2 > prevDeep + 1
-        if(!isBottom){
-          a.deeps = a.deeps- 1 + 2;
-          a.deepIds =[...new Set(this.todos[index - 1].deepIds.slice(0,a.deeps))];
-          a.deepIds.push(a.id)
-          let parentsIds = a.deepIds.slice(0,-1);
-          let parentToDos = this.todos.filter(function(val){
-             return parentsIds.includes(val.id)
-          })
-
-          parentToDos.forEach((val)=>{
-            val.childrenIds.push(a.id)
-            if(val.childrenIds.length>1){
-              
-              val.childrenIds=[...new Set(val.childrenIds)]
-
-            }
-          })
-          
-          this.update(parentToDos);
-        // this.todo.deeps = this.todo.deeps+1
-        this.update(a);
-        
+        this.$store.dispatch("deleteToDoLogic", cur);
       }
     },
     update: function(item) {
@@ -152,20 +146,20 @@ export default {
       // this.$aidb.open("DB_Vue_FlashCard").put("ToDos",item).execude()
     },
     addToDo:function(todo){
-      this.$aidb.open("DB_Vue_FlashCard").put("ToDos",todo).execude()
-      this.todos.push(todo);
-    },
+          this.$aidb.open("DB_Vue_FlashCard").put("ToDos",todo).execude()
+          this.todos.push(todo);
+        },
     add: function(pid) {
-       let uid =this.$uuid.v1();
-        let toDoItem = {
-          id: uid,
-            isChecked: false,
-            title: "",
-            deeps: 0,
-            sort: this.todos.length,
-            isFold: false,
-            parentId:pid||0,
-          };
+          let uid =this.$uuid.v1();
+            let toDoItem = {
+              id: uid,
+                isChecked: false,
+                title: "",
+                deeps: 0,
+                sort: this.todos.length,
+                isFold: false,
+                parentId:pid||0,
+              };
          
         if(pid){
           let parent= this.todos.find(function(val){

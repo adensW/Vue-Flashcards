@@ -63,6 +63,22 @@ const actions={
         
 
     },
+    deleteToDoLogic(context,prop){
+        let arr = [];
+        if(Array.isArray(prop)){
+            arr.push(...prop);
+        }else{
+            arr.push(prop);
+        }
+        arr.forEach((value)=>{
+            
+                context.commit('deleteToDoLogic',value);
+            
+            
+        })
+        
+
+    },
     initToDos(context,prop){
         context.commit('initToDos',prop);
     },
@@ -121,6 +137,13 @@ const mutations={
         state.ToDos[index] = prop;
     },
     deleteToDo:(state,prop)=>{
+        let index =state.ToDos.findIndex(function(value){
+            return value.id==prop.id
+        });
+        state.ToDos.splice(index,1);
+        state.Detail={}
+    },
+    deleteToDoLogic:(state,prop)=>{
         let index =state.ToDos.findIndex(function(value){
             return value.id==prop.id
         });

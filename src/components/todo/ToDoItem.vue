@@ -20,7 +20,12 @@
     <div class="a-row borderline">
       <div :class="deepcol">&nbsp;</div>
       <div class="a-row" @mousedown="blur" @mouseup="clearcount" :class="inputcol">
-        <input class="a-col-1" type="checkbox" :checked="ischecked" @change="$emit('toDoChange',id)">
+        <input
+          class="a-col-1"
+          type="checkbox"
+          :checked="ischecked"
+          @change="$emit('toDoChange',id)"
+        >
         <input
           class="a-col-22"
           :value="title"
@@ -31,10 +36,11 @@
         >
       </div>
       <slot></slot>
-
     </div>
     <div>
-      <to-do-item v-for="todo in childrenToDos" :key="todo.id"
+      <to-do-item
+        v-for="todo in sortedChildrenToDos"
+        :key="todo.id"
         :item="todo"
         @deepsUp="deepsUp"
         @deepsDown="deepsDown"
@@ -43,28 +49,26 @@
         @add="add"
         @addToDo="addToDo"
         :depth="curdepth+1"
-      >
-
-      </to-do-item>
+      ></to-do-item>
     </div>
   </div>
 </template>
 <script>
 import _ from "lodash";
-import ToDoItem from "./ToDoItem"
+import ToDoItem from "./ToDoItem";
 export default {
   name: "ToDoItem",
-  components:{
+  components: {
     ToDoItem
   },
-  props: ["item","depth"],
+  props: ["item", "depth"],
   data() {
     return {
       todo: this.item,
       isblur: false,
-      curdepth:this.depth||0,
+      curdepth: this.depth || 0,
       loop: function() {},
-      childrenToDos:[],
+      childrenToDos: []
     };
   },
   watch: {
@@ -123,19 +127,27 @@ export default {
     },
     ischecked: function() {
       return this.todo.checked;
+    },
+    sortedChildrenToDos() {
+      let data = this.childrenToDos;
+      return data.sort(function(a, b) {
+        return a.sort - b.sort;
+      });
     }
   },
   mounted() {
     this.init();
   },
   methods: {
-    init:function(){
-      this.$aidb.open("DB_Vue_FlashCard")
-        .getQuery("ToDos",{"parentId":this.todo.id}).then(result=>{
-          if(result){
+    init: function() {
+      this.$aidb
+        .open("DB_Vue_FlashCard")
+        .getQuery("ToDos", { parentId: this.todo.id })
+        .then(result => {
+          if (result) {
             this.childrenToDos = result;
           }
-        })
+        });
     },
     clearcount: function() {
       clearTimeout(this.loop);
@@ -167,58 +179,82 @@ export default {
       // this.$aidb.open("DB_Vue_FlashCard").put("ToDos",this.todo).execude()
     },
     deepsDown: function(cid) {
-      
-      if(cid){
-        console.log(cid)
+      if (cid) {
+        console.log(cid);
         let op_todo = this.childrenToDos.find(function(elem) {
-            return elem.id == cid;
+          return elem.id == cid;
         });
         let startIndex = this.childrenToDos.findIndex(function(elem) {
-            return elem.id == cid;
+          return elem.id == cid;
         });
-        this.childrenToDos.splice(startIndex,1)
+        this.childrenToDos.splice(startIndex, 1);
         op_todo.parentId = this.todo.parentId;
+        op_todo.sort = this.todo.sort + 1;
         this.$emit("addToDo", op_todo);
         this.isblur = false;
-      }else{
+      } else {
         this.childrenToDos = [];
         this.$emit("deepsDown", this.id);
         this.isblur = false;
       }
     },
-    deepsUp: function(cid) {
-      if(cid){
-        console.log(cid)
-      }else{
-        this.$emit("deepsUp", this.id);
-        this.isblur = false;
+    deepsUp: function() {
+      if (this.$parent.childrenToDos) {
+        let pa = this.$parent.childrenToDos;
+        let index = pa.findIndex(elem => {
+          return elem.id == this.todo.id;
+        });
+        if (index > 0) {
+          this.todo.sort =
+            this.$parent.$children[index - 1].childrenToDos.length || 0;
+          this.todo.parentId = this.$parent.$children[index - 1].id;
+          this.$aidb
+            .open("DB_Vue_FlashCard")
+            .put("ToDos", this.todo)
+            .execude();
+          this.$parent.$children[index - 1].childrenToDos.push(this.todo);
+          this.$parent.childrenToDos.splice(index, 1);
+        }
+      } else{
+        console.log(1)
+        this.$emit("deepsUp",this.todo.id)
       }
+      this.isblur = false;
     },
-    addToDo:function(todo){
-      this.$aidb.open("DB_Vue_FlashCard").put("ToDos",todo).execude()
-        this.childrenToDos.push(todo);
+    addToDo: function(todo) {
+      this.childrenToDos.forEach(function(value, index) {
+        if (value.sort >= todo.sort) {
+          value.sort += 1;
+        }
+      });
+
+      this.childrenToDos.push(todo);
+      this.$aidb
+        .open("DB_Vue_FlashCard")
+        .put("ToDos", this.childrenToDos)
+        .execude();
     },
     add: function(pid) {
-      let uid =this.$uuid.v1();
-        let toDoItem = {
-          id: uid,
-            isChecked: false,
-            title: "",
-            deeps: 0,
-            sort: this.todo.length||0,
-            isFold: false,
-            parentId:pid||this.todo.id||0,
-          };
-         
-        this.childrenToDos.push(toDoItem)
-        this.isblur = false;
+      let uid = this.$uuid.v1();
+      let toDoItem = {
+        id: uid,
+        isChecked: false,
+        title: "",
+        deeps: 0,
+        sort: this.childrenToDos.length || 0,
+        isFold: false,
+        parentId: pid || this.todo.id || 0
+      };
+
+      this.childrenToDos.push(toDoItem);
+      this.isblur = false;
     },
     toDoChange: function(id) {
       this.$emit("toDoChange", this.id);
     },
     deleteTodo: function(id) {
       this.$emit("deleteTodo", this.id);
-    },
+    }
   }
 };
 </script>
