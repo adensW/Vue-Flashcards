@@ -5,7 +5,6 @@
         :item="todo"
         @deepsUp="deepsUp"
         @deepsDown="deepsDown"
-        @toDoChange="toDoChange"
         @deleteTodo="deleteTodo"
         @add="add"        
         @addToDo="addToDo"
@@ -24,7 +23,6 @@
     </a-btn>
   </div>
 </template>
-
 <script>
 import ToDoItem from "./ToDoItem";
 import { Sortable } from "@shopify/draggable";
@@ -33,7 +31,6 @@ export default {
   props: ["todos"],
   components: {
     ToDoItem,
-
   },
   data() {
     return {
@@ -62,13 +59,6 @@ export default {
         .delete("ToDos", deleteToDos)
         .execude();
       }
-    },
-    toDoChange: function(id) {
-      let a = this.todos.find(function(elem) {
-        return elem.id == id;
-      });
-      a.checked = !a.checked;
-      this.update(a);
     },
     fold: function(id) {
       let childrenToDos=[];
@@ -116,7 +106,6 @@ export default {
         cur.sort = this.$refs[prev.id][0].childrenToDos.length||0;
         this.update(cur);
         this.$refs[prev.id][0].childrenToDos.push(cur);
-
         this.$store.dispatch("deleteToDoLogic", cur);
       }
     },

@@ -24,7 +24,7 @@
           class="a-col-1"
           type="checkbox"
           :checked="ischecked"
-          @change="$emit('toDoChange',id)"
+          @change="toDoChange"
         >
         <input
           class="a-col-22"
@@ -180,7 +180,6 @@ export default {
     },
     deepsDown: function(cid) {
       if (cid) {
-        console.log(cid);
         let op_todo = this.childrenToDos.find(function(elem) {
           return elem.id == cid;
         });
@@ -216,13 +215,12 @@ export default {
           this.$parent.childrenToDos.splice(index, 1);
         }
       } else{
-        console.log(1)
         this.$emit("deepsUp",this.todo.id)
       }
       this.isblur = false;
     },
     addToDo: function(todo) {
-      this.childrenToDos.forEach(function(value, index) {
+      this.childrenToDos.forEach(function(value) {
         if (value.sort >= todo.sort) {
           value.sort += 1;
         }
@@ -249,8 +247,12 @@ export default {
       this.childrenToDos.push(toDoItem);
       this.isblur = false;
     },
-    toDoChange: function(id) {
-      this.$emit("toDoChange", this.id);
+    toDoChange: function() {
+     this.todo.checked = !this.todo.checked;
+     this.$aidb
+        .open("DB_Vue_FlashCard")
+        .put("ToDos",  this.todo)
+        .execude();
     },
     deleteTodo: function(id) {
       if(id){

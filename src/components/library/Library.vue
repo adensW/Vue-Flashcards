@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div>
+    <!-- <div>
         <date-reminder></date-reminder>
     </div>
     <div class='draggable-container'>
@@ -59,7 +59,8 @@
         <div class="drop-container dropzone">
         </div>
     </div>
-    <a-clock></a-clock>
+    <a-clock></a-clock> -->
+    <controller-panel :id="1"></controller-panel>
     </div>
 
 </template>
@@ -69,10 +70,12 @@ import { Draggable } from '@shopify/draggable';
 import { Sortable } from '@shopify/draggable';
 import { Droppable } from '@shopify/draggable';
 import DateReminder from '@/components/public/DateReminder.vue'
+import ControllerPanel from '@/components/public/ControllerPanel.vue'
 export default {
     name:"library",
     components:{
-        DateReminder
+        DateReminder,
+        ControllerPanel
     },
     data(){
         return{
