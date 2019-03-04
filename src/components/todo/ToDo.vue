@@ -52,37 +52,38 @@ export default {
   },
   methods: {
     deleteTodo: function(id) {
-      let deleteToDos = [];
-      let updateToDos =[];
-      let sortNum = 1;
-      let startSort = 0;
-      let a = this.todos.find(function(elem) {
-        return elem.id == id;
-      });
-      if (a.hasChildren>0) {
-        for (let index = 0; index < this.todos.length; index++) {
-          const element = this.todos[index];
-          let endFlag = false;
-          if (element.sort > a.sort && element.deeps > a.deeps && !endFlag) {
-            sortNum += 1;
-            startSort = element.sort;
-            deleteToDos.push(element);
-          } else {
-            endFlag = true;
-          }
-        }
-      } else {
-        deleteToDos.push(a);
-      }
-      let b = this.todos.filter(function(elem) {
-        return elem.sort > startSort;
-      });
-      b.forEach(element => {
-        element.sort = element.sort - sortNum;
-        updateToDos.push(element);
-      });
-      this.$store.dispatch("updateToDo", updateToDos);
-      this.$store.dispatch("deleteToDo", deleteToDos);
+      console.log("3",id)
+      // let deleteToDos = [];
+      // let updateToDos =[];
+      // let sortNum = 1;
+      // let startSort = 0;
+      // let a = this.todos.find(function(elem) {
+      //   return elem.id == id;
+      // });
+      // if (a.hasChildren>0) {
+      //   for (let index = 0; index < this.todos.length; index++) {
+      //     const element = this.todos[index];
+      //     let endFlag = false;
+      //     if (element.sort > a.sort && element.deeps > a.deeps && !endFlag) {
+      //       sortNum += 1;
+      //       startSort = element.sort;
+      //       deleteToDos.push(element);
+      //     } else {
+      //       endFlag = true;
+      //     }
+      //   }
+      // } else {
+      //   deleteToDos.push(a);
+      // }
+      // let b = this.todos.filter(function(elem) {
+      //   return elem.sort > startSort;
+      // });
+      // b.forEach(element => {
+      //   element.sort = element.sort - sortNum;
+      //   updateToDos.push(element);
+      // });
+      // this.$store.dispatch("updateToDo", updateToDos);
+      // this.$store.dispatch("deleteToDo", deleteToDos);
     },
     toDoChange: function(id) {
       let a = this.todos.find(function(elem) {

@@ -10,7 +10,7 @@
       <a-btn text @click="deepsUp">
         <a-icon flip>arrow_back_ios</a-icon>
       </a-btn>
-      <a-btn text @click="$emit('deleteTodo',id)">
+      <a-btn text @click="deleteTodo">
         <a-icon>delete</a-icon>
       </a-btn>
       <a-btn text @click="focus">
@@ -253,7 +253,24 @@ export default {
       this.$emit("toDoChange", this.id);
     },
     deleteTodo: function(id) {
-      this.$emit("deleteTodo", this.id);
+      if(id){
+          let index = this.childrenToDos.findIndex((elem)=>{
+          return elem.id==id
+        })
+        let deleteToDos= this.childrenToDos.splice(index,1);
+        this.$aidb
+        .open("DB_Vue_FlashCard")
+        .delete("ToDos", deleteToDos)
+        .execude();
+        // this.$store.dispatch("deleteToDo", deleteToDos);
+      }else{
+        // console.log(this.childrenToDos)
+        this.$aidb
+        .open("DB_Vue_FlashCard")
+        .delete("ToDos", this.childrenToDos)
+        .execude();
+        this.$emit("deleteTodo", this.id);
+      }
     }
   }
 };
@@ -269,6 +286,7 @@ export default {
 }
 .borderline {
   /* border-bottom:1px solid gray; */
+  /* */
   height: 36px;
   line-height: 36px;
   z-index: 2;
